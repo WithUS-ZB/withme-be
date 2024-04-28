@@ -1,5 +1,4 @@
 FROM amazoncorretto:17-alpine-jdk
-ENV SPRING_PROFILES_ACTIVE="dev"
-WORKDIR /app
+VOLUME /app
 COPY build/libs/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]

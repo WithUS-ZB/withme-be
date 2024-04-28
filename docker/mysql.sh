@@ -4,5 +4,5 @@ docker run -d \
 -e MYSQL_USER="withus" \
 -e MYSQL_PASSWORD="withuspassword" \
 -e MYSQL_DATABASE="withme" \
--p 3310:3310 \
+-p 3306:3306 \
 mysql:latest
