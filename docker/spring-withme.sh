@@ -1,4 +1,5 @@
 docker run -d \
 --name spring-withme \
--p 8090:8090 \
+--add-host=host.docker.internal:host-gateway
+-p 8080:8080 \
 withuszb/withme:0.0.1
