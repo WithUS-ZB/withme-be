@@ -40,6 +40,7 @@ public class AuthService {
             request.toEntity(passwordEncoder.encode(request.password()), getUniqueNickName())));
   }
 
+  @Transactional(readOnly = true)
   public SigninDto.Response signin(SigninDto.Request request) {
     Member member = memberRepository.findByEmail(request.email())
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));

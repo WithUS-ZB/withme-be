@@ -13,7 +13,7 @@ public record SigninDto() {
   }
 
   public record Response(
-      String token
+      String accessToken
   ) {
 
   }
