@@ -20,9 +20,10 @@ public enum ExceptionCode {
   // Unauthorized: 401
 
   // FORBIDDEN: 403
-
+  TOKEN_EXPIRED(UNAUTHORIZED, "토큰이 만료되었습니다."),
+  AUTHENTICATION_ISSUE(UNAUTHORIZED, "인증 이슈가 있습니다."),
   // NOT_FOUND: 404
-  ENTITY_NOT_FOUND(NOT_FOUND, "개체를 찾지 못했습니다.")
+  ENTITY_NOT_FOUND(NOT_FOUND, "개체를 찾지 못했습니다."),
 
   // Conflict: 409
   ;
