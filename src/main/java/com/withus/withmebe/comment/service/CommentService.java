@@ -31,8 +31,7 @@ public class CommentService {
     long memberId = 1L; // TODO member.getId으로 교체
     String memberNickName = "홍길동";
 
-    Comment newComment = commentRepository.save(
-        Comment.fromRequest(gatheringId, memberId, request));
+    Comment newComment = commentRepository.save(request.toEntity(gatheringId, memberId));
 
     return CommentResponse.fromEntity(newComment, memberNickName);
   }

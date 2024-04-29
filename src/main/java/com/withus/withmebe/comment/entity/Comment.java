@@ -42,13 +42,6 @@ public class Comment {
   LocalDateTime modifiedDttm;
   LocalDateTime deletedDttm;
 
-  public static Comment fromRequest(long gatheringId, long memberId, AddCommentRequest request) {
-    return Comment.builder()
-        .gatheringId(gatheringId)
-        .memberId(memberId)
-        .content(request.getContent())
-        .build();
-  }
   public Comment delete() {
     return Comment.builder()
         .id(this.id)
