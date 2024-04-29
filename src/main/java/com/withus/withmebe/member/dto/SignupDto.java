@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record SignupDto() {
   public record Request(
@@ -27,12 +27,14 @@ public record SignupDto() {
       Gender gender
   ) {
 
-    public Member toEntity(PasswordEncoder passwordEncoder) {
+    public Member toEntity(String encodedPassword, String nickName) {
       return Member.builder()
           .email(this.email)
-          .password(passwordEncoder.encode(this.password))
+          .password(encodedPassword)
+          .nickName(nickName)
           .birthDate(this.birthDate)
           .gender(this.gender)
+          .signupDttm(LocalDateTime.now())
           .build();
     }
   }

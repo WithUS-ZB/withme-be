@@ -1,6 +1,7 @@
 package com.withus.withmebe.member.entity;
 
 import static com.withus.withmebe.member.type.Membership.FREE;
+import static com.withus.withmebe.member.type.Role.ROLE_MEMBER;
 import static com.withus.withmebe.member.type.SignupPath.NORMAL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -38,17 +39,18 @@ public class Member extends BaseEntity {
   @Column(unique = true, nullable = false)
   private String nickName;
 
-  private final LocalDate birthDate;
+  private LocalDate birthDate;
 
   @Enumerated(EnumType.STRING)
-  private final Gender gender;
+  private Gender gender;
 
   private String phoneNumber;
 
   private String profileImg;
 
   @Enumerated(EnumType.STRING)
-  private Role role;
+  @Column(nullable = false)
+  private Role role = ROLE_MEMBER;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -62,11 +64,13 @@ public class Member extends BaseEntity {
   private Membership membership = FREE;
 
   @Builder
-  public Member(Long memberId, String email, String password, LocalDate birthDate, Gender gender){
+  public Member(Long memberId, String email, String password, String nickName, LocalDate birthDate, Gender gender, LocalDateTime signupDttm){
     this.id = memberId;
     this.email = email;
     this.password = password;
+    this.nickName = nickName;
     this.birthDate = birthDate;
     this.gender = gender;
+    this.signupDttm = signupDttm;
   }
 }
