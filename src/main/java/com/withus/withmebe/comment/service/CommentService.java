@@ -1,5 +1,6 @@
 package com.withus.withmebe.comment.service;
 
+import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
@@ -46,10 +47,11 @@ public class CommentService {
     List<CommentResponse> commentResponses = new ArrayList<>();
     for (Comment comment : comments) {
       // TODO 멤버 아이디로 멤버 이름 가져오기
-      String memberName = "홍길동";
-      commentResponses.add(CommentResponse.fromEntity(comment, memberName));
+      String memberNickName = "홍길동";
+      commentResponses.add(CommentResponse.fromEntity(comment, memberNickName));
     }
-    return new PageImpl<CommentResponse>(commentResponses, adjustedPageable, commentResponses.size());
+    return new PageImpl<CommentResponse>(commentResponses, adjustedPageable,
+        commentResponses.size());
   }
 
   private Pageable adjustPageable(Pageable pageable) {
@@ -64,5 +66,19 @@ public class CommentService {
     }
 
     return PageRequest.of(page, size);
+  }
+
+  public CommentResponse updateComment(long commentId, SetCommentRequest request) {
+    Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
+        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
+    // TODO 모임 유효성 검사
+    // TODO AuthContext에서 멤버ID 획득 추가
+    // TODO 멤버 일치 검사
+
+    // TODO 멤버 아이디로 멤버 이름 가져오기
+    String memberNickName = "홍길동";
+
+    Comment newComment = commentRepository.save(request.toEntity(comment));
+    return CommentResponse.fromEntity(newComment, memberNickName);
   }
 }
