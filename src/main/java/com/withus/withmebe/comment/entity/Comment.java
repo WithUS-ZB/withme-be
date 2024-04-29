@@ -36,7 +36,9 @@ public class Comment {
 
   @CreatedDate
   LocalDateTime createdDttm;
+
   @LastModifiedDate
+  @Column(insertable = false)
   LocalDateTime modifiedDttm;
   LocalDateTime deletedDttm;
 

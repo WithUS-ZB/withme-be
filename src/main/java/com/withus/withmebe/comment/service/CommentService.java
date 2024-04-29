@@ -21,7 +21,6 @@ public class CommentService {
     // TODO 멤버 받기
     long memberId = 1L; // TODO member.getId으로 교체
 
-    // TODO 멤버ID 유효성 검사
 
     Comment newComment = commentRepository.save(Comment.fromRequest(gatheringId, memberId, request));
     return CommentResponse.builder()
