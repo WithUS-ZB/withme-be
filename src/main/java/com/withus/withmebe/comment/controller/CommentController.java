@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,10 @@ public class CommentController {
   public ResponseEntity<?> setComment(@PathVariable long commentId,
       @RequestBody SetCommentRequest request) {
     return ResponseEntity.ok(commentService.updateComment(commentId, request));
+  }
+
+  @DeleteMapping("/{commentId}")
+  public ResponseEntity<?> removeComment(@PathVariable long commentId) {
+    return ResponseEntity.ok(commentService.deleteComment(commentId));
   }
 }

@@ -49,4 +49,13 @@ public class Comment {
         .content(request.getContent())
         .build();
   }
+  public Comment delete() {
+    return Comment.builder()
+        .id(this.id)
+        .gatheringId(this.gatheringId)
+        .memberId(this.memberId)
+        .createdDttm(this.createdDttm)
+        .deletedDttm(LocalDateTime.now())
+        .build();
+  }
 }

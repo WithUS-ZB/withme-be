@@ -14,18 +14,20 @@ import lombok.NoArgsConstructor;
 public class CommentResponse {
 
   long id;
-  String nick_Name;
+  String nickName;
   String content;
   LocalDateTime createdDttm;
   LocalDateTime modifiedDttm;
+  LocalDateTime deletedDttm;
 
-  public static CommentResponse fromEntity(Comment comment, String name) {
+  public static CommentResponse fromEntity(Comment comment, String nickName) {
     return CommentResponse.builder()
         .id(comment.getId())
-        .nick_Name(name)
+        .nickName(nickName)
         .content(comment.getContent())
         .createdDttm(comment.getCreatedDttm())
         .modifiedDttm(comment.getModifiedDttm())
+        .deletedDttm(comment.getDeletedDttm())
         .build();
   }
 }

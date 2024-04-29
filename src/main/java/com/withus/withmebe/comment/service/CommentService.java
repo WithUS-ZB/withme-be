@@ -81,4 +81,18 @@ public class CommentService {
     Comment newComment = commentRepository.save(request.toEntity(comment));
     return CommentResponse.fromEntity(newComment, memberNickName);
   }
+
+  public CommentResponse deleteComment(long commentId) {
+    Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
+        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
+    // TODO AuthContext에서 멤버ID 획득 추가
+    // TODO 멤버 일치 검사
+
+    // TODO 멤버 아이디로 멤버 이름 가져오기
+    String memberNickName = "홍길동";
+
+    Comment deletedComment = commentRepository.save(comment.delete());
+
+    return CommentResponse.fromEntity(deletedComment, memberNickName);
+  }
 }
