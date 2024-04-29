@@ -4,6 +4,7 @@ import static com.withus.withmebe.member.type.Membership.FREE;
 import static com.withus.withmebe.member.type.SignupPath.NORMAL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
+import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.type.Gender;
 import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.member.type.Role;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(force = true)
-public class Member {
+public class Member extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   @Column(name = "member_id")
