@@ -24,6 +24,7 @@ public enum ExceptionCode {
   AUTHENTICATION_ISSUE(UNAUTHORIZED, "인증 이슈가 있습니다."),
   // NOT_FOUND: 404
   ENTITY_NOT_FOUND(NOT_FOUND, "개체를 찾지 못했습니다."),
+  PASSWORD_MISMATCH(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
   // Conflict: 409
   EMAIL_CONFLICT(CONFLICT, "이메일이 중복됩니다.")

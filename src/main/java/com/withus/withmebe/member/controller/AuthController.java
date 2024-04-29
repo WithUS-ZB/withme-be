@@ -1,5 +1,6 @@
 package com.withus.withmebe.member.controller;
 
+import com.withus.withmebe.member.dto.SigninDto;
 import com.withus.withmebe.member.dto.SignupDto;
 import com.withus.withmebe.member.service.AuthService;
 import jakarta.validation.Valid;
@@ -20,5 +21,9 @@ public class AuthController {
   @PostMapping("/signup")
   public ResponseEntity<SignupDto.Response> signup(@Valid @RequestBody SignupDto.Request request) {
     return ResponseEntity.ok(authService.signup(request));
+  }
+  @PostMapping("/signin")
+  public ResponseEntity<SigninDto.Response> signin(@Valid @RequestBody SigninDto.Request request) {
+    return ResponseEntity.ok(authService.signin(request));
   }
 }
