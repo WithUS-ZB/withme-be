@@ -1,0 +1,4 @@
+### 멤버 간략조회
+GET http://localhost:8080/api/member/detail/1
+Content-Type: application/json
+Authorization: Bearer {jwt토큰}
