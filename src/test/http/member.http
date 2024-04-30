@@ -1,4 +1,7 @@
-### 멤버 간략조회
+### 멤버 간략 조회
 GET http://localhost:8080/api/member/detail/1
-Content-Type: application/json
-Authorization: Bearer {jwt토큰}
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NDk0NzkyLCJleHAiOjE3MTQ0OTgzOTJ9.iEeObAf_J-UPLpG-gvObQic5mBhuz-9bT3Wqa3w7GBE
+
+### 내 정보 상세 조회
+GET http://localhost:8080/api/member/detail
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NDk0NzkyLCJleHAiOjE3MTQ0OTgzOTJ9.iEeObAf_J-UPLpG-gvObQic5mBhuz-9bT3Wqa3w7GBE
