@@ -52,15 +52,9 @@ public class CommentService {
   }
 
   private Pageable adjustPageable(Pageable pageable) {
-    int size = pageable.getPageSize();
-    int page = pageable.getPageNumber();
 
-    if (size < 1) {
-      size = 1;
-    }
-    if (page < 0) {
-      page = 0;
-    }
+    int size = Math.max(pageable.getPageSize(), 1);
+    int page = Math.max(pageable.getPageNumber(), 0);
 
     return PageRequest.of(page, size);
   }
