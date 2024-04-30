@@ -42,13 +42,11 @@ public final class Comment {
 
   private LocalDateTime deletedDttm;
 
-  public Comment delete() {
+  public void delete() {
     deletedDttm = LocalDateTime.now();
-    return this;
   }
 
-  public Comment setContent(String content) {
+  public void setContent(String content) {
     this.content = String.valueOf(content);
-    return this;
   }
 }

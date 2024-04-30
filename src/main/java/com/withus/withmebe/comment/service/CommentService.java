@@ -84,7 +84,8 @@ public class CommentService {
     // TODO 멤버 받기
     String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
-    Comment deletedComment = commentRepository.save(comment.delete());
+    comment.delete();
+    Comment deletedComment = commentRepository.save(comment);
     return CommentResponse.fromEntity(deletedComment, memberNickName);
   }
 }
