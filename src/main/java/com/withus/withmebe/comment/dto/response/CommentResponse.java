@@ -5,13 +5,12 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-
 public record CommentResponse(
     Long id,
     String nickName,
     String commentContent,
     LocalDateTime createdDttm,
-    LocalDateTime modifiedDttm,
+    LocalDateTime updatedDttm,
     LocalDateTime deletedDttm
 ) {
 
@@ -22,7 +21,7 @@ public record CommentResponse(
         .nickName(nickName)
         .commentContent(comment.getCommentContent())
         .createdDttm(comment.getCreatedDttm())
-        .modifiedDttm(comment.getModifiedDttm())
+        .updatedDttm(comment.getUpdatedDttm())
         .deletedDttm(comment.getDeletedDttm())
         .build();
   }
