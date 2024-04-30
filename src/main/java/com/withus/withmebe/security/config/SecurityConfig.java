@@ -52,9 +52,9 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
 
     config.setAllowCredentials(true);
-    config.addAllowedOrigin("*");
+    config.setAllowedOriginPatterns(Arrays.asList("*"));
     config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
-    config.addAllowedHeader("*");
+    config.setAllowedHeaders(Arrays.asList("*"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
