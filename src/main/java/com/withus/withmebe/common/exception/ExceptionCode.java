@@ -22,6 +22,7 @@ public enum ExceptionCode {
   AUTHENTICATION_ISSUE(UNAUTHORIZED, "인증 이슈가 있습니다."),
 
   // FORBIDDEN: 403
+  AUTHORIZATION_ISSUE(FORBIDDEN, "권한이 없는 사용자입니다."),
 
   // NOT_FOUND: 404
   ENTITY_NOT_FOUND(NOT_FOUND, "개체를 찾지 못했습니다."),
