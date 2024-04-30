@@ -1,5 +1,6 @@
 package com.withus.withmebe.member.controller;
 
+import com.withus.withmebe.member.dto.MemberDetailDto;
 import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
 import com.withus.withmebe.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,8 @@ public class MemberController {
   public ResponseEntity<MemberSimpleDetailDto> get(@PathVariable Long userId){
     return ResponseEntity.ok(memberService.read(userId));
   }
-
+  @GetMapping("/detail")
+  public ResponseEntity<MemberDetailDto> getCurrentLoginMemberDetail(){
+    return ResponseEntity.ok(memberService.readCurretLoginMemberDetail());
+  }
 }

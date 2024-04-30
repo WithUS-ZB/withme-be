@@ -17,4 +17,8 @@ public class MySecurityUtil {
     }
     return (CustomUserDetails) principal;
   }
+
+  public static Long getCurrentLoginMemberId(){
+    return getCustomUserDetails().getMemberId();
+  }
 }
