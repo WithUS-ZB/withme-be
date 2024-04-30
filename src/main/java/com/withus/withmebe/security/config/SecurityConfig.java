@@ -52,9 +52,9 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
 
     config.setAllowCredentials(true);
-    config.setAllowedOrigins(Arrays.asList("http://hidden:8080"));
+    config.addAllowedOrigin("*");
     config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
-    config.setAllowedHeaders(Arrays.asList("*"));
+    config.addAllowedHeader("*");
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
