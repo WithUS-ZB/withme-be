@@ -43,13 +43,12 @@ public final class Comment {
   private LocalDateTime deletedDttm;
 
   public Comment delete() {
-    return Comment.builder()
-        .id(this.id)
-        .gatheringId(this.gatheringId)
-        .memberId(this.memberId)
-        .content(this.content)
-        .createdDttm(this.createdDttm)
-        .deletedDttm(LocalDateTime.now())
-        .build();
+    deletedDttm = LocalDateTime.now();
+    return this;
+  }
+
+  public Comment setContent(String content) {
+    this.content = String.valueOf(content);
+    return this;
   }
 }

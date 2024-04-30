@@ -70,8 +70,8 @@ public class CommentService {
     // TODO 멤버 받기
     String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
-    Comment newComment = commentRepository.save(request.toEntity(comment));
-    return CommentResponse.fromEntity(newComment, memberNickName);
+    Comment updatedComment = commentRepository.save(request.toEntity(comment));
+    return CommentResponse.fromEntity(updatedComment, memberNickName);
   }
 
   @Transactional
