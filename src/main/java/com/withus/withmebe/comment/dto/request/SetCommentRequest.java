@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class SetCommentRequest {
+public final class SetCommentRequest {
 
-  String content;
+  private String content;
 
   public Comment toEntity(Comment comment) {
     return Comment.builder()

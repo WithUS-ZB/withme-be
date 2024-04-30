@@ -1,6 +1,5 @@
 package com.withus.withmebe.comment.entity;
 
-import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,31 +21,33 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Getter
 @EntityListeners(value = AuditingEntityListener.class)
-public class Comment {
+public final class Comment {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "comment_id")
-  long id;
+  private Long id;
 
-  long gatheringId;
-  long memberId;
+  private Long gatheringId;
+  private Long memberId;
 
-  String content;
+  private String content;
 
   @CreatedDate
-  LocalDateTime createdDttm;
+  @Column(updatable = false)
+  private LocalDateTime createdDttm;
 
   @LastModifiedDate
-  @Column(insertable = false)
-  LocalDateTime modifiedDttm;
-  LocalDateTime deletedDttm;
+  private LocalDateTime modifiedDttm;
+
+  private LocalDateTime deletedDttm;
 
   public Comment delete() {
     return Comment.builder()
         .id(this.id)
         .gatheringId(this.gatheringId)
         .memberId(this.memberId)
+        .content(this.content)
         .createdDttm(this.createdDttm)
         .deletedDttm(LocalDateTime.now())
         .build();

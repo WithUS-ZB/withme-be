@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class CommentResponse {
+@AllArgsConstructor
+public final class CommentResponse {
 
-  long id;
-  String nickName;
-  String content;
-  LocalDateTime createdDttm;
-  LocalDateTime modifiedDttm;
-  LocalDateTime deletedDttm;
+  private Long id;
+  private String nickName;
+  private String content;
+  private LocalDateTime createdDttm;
+  private LocalDateTime modifiedDttm;
+  private LocalDateTime deletedDttm;
 
   public static CommentResponse fromEntity(Comment comment, String nickName) {
     return CommentResponse.builder()

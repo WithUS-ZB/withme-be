@@ -7,14 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class AddCommentRequest {
+public final class AddCommentRequest {
 
-  String content;
+  private String content;
 
-  public Comment toEntity(long gatheringId, long memberId) {
+  public Comment toEntity(Long gatheringId, Long memberId) {
     return Comment.builder()
         .gatheringId(gatheringId)
         .memberId(memberId)

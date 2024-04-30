@@ -25,14 +25,12 @@ public class CommentService {
   public CommentResponse createComment(long gatheringId, AddCommentRequest request) {
 
     // TODO 모임 유효성 검사
-    // TODO AuthContext에서 멤버ID 획득 추가
+    Long memberId = 1L; // TODO AuthContext에서 멤버ID 획득으로 변경
     // TODO 멤버 유효성 검사
     // TODO 멤버 받기
-    long memberId = 1L; // TODO member.getId으로 교체
-    String memberNickName = "홍길동";
+    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, memberId));
-
     return CommentResponse.fromEntity(newComment, memberNickName);
   }
 
@@ -45,8 +43,8 @@ public class CommentService {
 
     List<CommentResponse> commentResponses = new ArrayList<>();
     for (Comment comment : comments) {
-      // TODO 멤버 아이디로 멤버 이름 가져오기
-      String memberNickName = "홍길동";
+      // TODO 멤버 받기
+      String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
       commentResponses.add(CommentResponse.fromEntity(comment, memberNickName));
     }
     return new PageImpl<CommentResponse>(commentResponses, adjustedPageable,
@@ -67,6 +65,7 @@ public class CommentService {
     return PageRequest.of(page, size);
   }
 
+  @Transactional
   public CommentResponse updateComment(long commentId, SetCommentRequest request) {
     Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
         .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
@@ -74,24 +73,24 @@ public class CommentService {
     // TODO AuthContext에서 멤버ID 획득 추가
     // TODO 멤버 일치 검사
 
-    // TODO 멤버 아이디로 멤버 이름 가져오기
-    String memberNickName = "홍길동";
+    // TODO 멤버 받기
+    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
     Comment newComment = commentRepository.save(request.toEntity(comment));
     return CommentResponse.fromEntity(newComment, memberNickName);
   }
 
+  @Transactional
   public CommentResponse deleteComment(long commentId) {
     Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
         .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
     // TODO AuthContext에서 멤버ID 획득 추가
     // TODO 멤버 일치 검사
 
-    // TODO 멤버 아이디로 멤버 이름 가져오기
-    String memberNickName = "홍길동";
+    // TODO 멤버 받기
+    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
     Comment deletedComment = commentRepository.save(comment.delete());
-
     return CommentResponse.fromEntity(deletedComment, memberNickName);
   }
 }
