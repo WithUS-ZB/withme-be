@@ -71,7 +71,7 @@ public class CommentService {
     String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
     request.updateEntity(comment);
 
-    Comment updatedComment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
+    Comment updatedComment = commentRepository.findById(commentId)
         .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
     return CommentResponse.fromEntity(updatedComment, memberNickName);
   }
@@ -87,7 +87,8 @@ public class CommentService {
     String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
 
     comment.delete();
-    Comment deletedComment = commentRepository.save(comment);
+    Comment deletedComment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
     return CommentResponse.fromEntity(deletedComment, memberNickName);
   }
 }
