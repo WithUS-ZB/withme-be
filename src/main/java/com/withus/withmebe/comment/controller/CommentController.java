@@ -2,10 +2,11 @@ package com.withus.withmebe.comment.controller;
 
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import com.withus.withmebe.comment.dto.request.SetCommentRequest;
+import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,25 +26,25 @@ public class CommentController {
   private final CommentService commentService;
 
   @PostMapping("/add/{gatheringId}")
-  public ResponseEntity<?> addComment(@PathVariable long gatheringId,
+  public ResponseEntity<CommentResponse> addComment(@PathVariable long gatheringId,
       @RequestBody AddCommentRequest request) {
     return ResponseEntity.ok(commentService.createComment(gatheringId, request));
   }
 
   @GetMapping("/list/{gatheringId}")
-  public ResponseEntity<?> getComments(@PathVariable long gatheringId,
-      @PageableDefault(size = 10, sort = "createdDttm", direction = Direction.DESC) Pageable pageble) {
+  public ResponseEntity<Page<CommentResponse>> getComments(@PathVariable long gatheringId,
+      @PageableDefault(size = 10, sort = "createdDttm") Pageable pageble) {
     return ResponseEntity.ok(commentService.readComments(gatheringId, pageble));
   }
 
   @PutMapping("/{commentId}")
-  public ResponseEntity<?> setComment(@PathVariable long commentId,
+  public ResponseEntity<CommentResponse> setComment(@PathVariable long commentId,
       @RequestBody SetCommentRequest request) {
     return ResponseEntity.ok(commentService.updateComment(commentId, request));
   }
 
   @DeleteMapping("/{commentId}")
-  public ResponseEntity<?> removeComment(@PathVariable long commentId) {
+  public ResponseEntity<CommentResponse> removeComment(@PathVariable long commentId) {
     return ResponseEntity.ok(commentService.deleteComment(commentId));
   }
 }
