@@ -24,15 +24,15 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 public class Member extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   @Column(name = "member_id")
-  private final Long id;
+  private Long id;
 
   @Column(unique = true, nullable = false)
-  private final String email;
+  private String email;
 
   private String password;
 
@@ -64,8 +64,7 @@ public class Member extends BaseEntity {
   private Membership membership = FREE;
 
   @Builder
-  public Member(Long memberId, String email, String password, String nickName, LocalDate birthDate, Gender gender, LocalDateTime signupDttm){
-    this.id = memberId;
+  public Member(String email, String password, String nickName, LocalDate birthDate, Gender gender, LocalDateTime signupDttm){
     this.email = email;
     this.password = password;
     this.nickName = nickName;
