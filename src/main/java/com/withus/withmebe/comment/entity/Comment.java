@@ -31,7 +31,7 @@ public final class Comment {
   private Long gatheringId;
   private Long memberId;
 
-  private String content;
+  private String commentContent;
 
   @CreatedDate
   @Column(updatable = false)
@@ -46,7 +46,7 @@ public final class Comment {
     deletedDttm = LocalDateTime.now();
   }
 
-  public void setContent(String content) {
-    this.content = content;
+  public void setCommentContent(String commentContent) {
+    this.commentContent = commentContent;
   }
 }

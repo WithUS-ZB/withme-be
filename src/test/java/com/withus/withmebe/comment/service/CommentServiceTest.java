@@ -40,7 +40,7 @@ class CommentServiceTest {
             .id(1L)
             .gatheringId(gatheringId)
             .memberId(memberId)
-            .content(request.getContent())
+            .commentContent(request.commentContent())
             .createdDttm(createdDttm)
             .build()
         );// TODO 멤버 정보 추후 추가.
@@ -48,11 +48,11 @@ class CommentServiceTest {
     CommentResponse commentResponse = commentService.createComment(gatheringId, request);
 
     //then
-    assertEquals(1L, commentResponse.getId());
+    assertEquals(1L, commentResponse.id());
     // assertEquals(member.getNickName(), commentResponse.getNick_Name());
-    assertEquals(request.getContent(), commentResponse.getContent());
-    assertEquals(createdDttm, commentResponse.getCreatedDttm());
-    assertNull(commentResponse.getModifiedDttm());
+    assertEquals(request.commentContent(), commentResponse.commentContent());
+    assertEquals(createdDttm, commentResponse.createdDttm());
+    assertNull(commentResponse.modifiedDttm());
   }
   
   // TODO 모임조회 실패 테스트
