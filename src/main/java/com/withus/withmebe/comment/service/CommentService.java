@@ -69,8 +69,10 @@ public class CommentService {
 
     // TODO 멤버 받기
     String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
+    request.updateEntity(comment);
 
-    Comment updatedComment = commentRepository.save(request.toEntity(comment));
+    Comment updatedComment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
+        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
     return CommentResponse.fromEntity(updatedComment, memberNickName);
   }
 

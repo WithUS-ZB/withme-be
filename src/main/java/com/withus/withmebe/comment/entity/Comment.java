@@ -47,6 +47,6 @@ public final class Comment {
   }
 
   public void setContent(String content) {
-    this.content = String.valueOf(content);
+    this.content = content;
   }
 }
