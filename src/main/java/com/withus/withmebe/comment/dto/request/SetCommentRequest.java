@@ -15,6 +15,7 @@ public final class SetCommentRequest {
   private String content;
 
   public Comment toEntity(Comment comment) {
-    return comment.setContent(content);
+    comment.setContent(content);
+    return comment;
   }
 }
