@@ -38,8 +38,7 @@ public class CommentService {
   public Page<CommentResponse> readComments(long gatheringId, Pageable pageable) {
 
     Pageable adjustedPageable = adjustPageable(pageable);
-    Page<Comment> comments = commentRepository.findCommentsByGatheringId(
-        gatheringId, adjustedPageable);
+    Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, adjustedPageable);
     return comments.map(CommentResponse::fromEntity);
   }
 

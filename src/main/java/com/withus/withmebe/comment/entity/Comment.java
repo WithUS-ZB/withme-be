@@ -4,10 +4,10 @@ import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @Getter
 @Where(clause = "deletedDttm is null")
-@SQLDelete(sql = "UPDATE comment SET deletedDttm = LocalDateTime.now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE Comment SET deletedDttm = NOW() WHERE comment_id = ?")
 public class Comment extends BaseEntity {
 
   @Id
@@ -31,6 +31,7 @@ public class Comment extends BaseEntity {
   private Long gatheringId;
 
   @ManyToOne
+  @JoinColumn(name = "member_id")
   private Member member;
 
   @Setter
