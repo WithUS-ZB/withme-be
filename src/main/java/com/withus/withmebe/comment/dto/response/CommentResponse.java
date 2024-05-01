@@ -22,7 +22,6 @@ public record CommentResponse(
         .commentContent(comment.getCommentContent())
         .createdDttm(comment.getCreatedDttm())
         .updatedDttm(comment.getUpdatedDttm())
-        .deletedDttm(comment.getDeletedDttm())
         .build();
   }
 }
