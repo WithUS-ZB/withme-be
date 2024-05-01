@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,11 +31,8 @@ public class Comment extends BaseEntity {
   private Long gatheringId;
   private Long memberId;
 
+  @Setter
   private String commentContent;
-
-  public void setCommentContent(String commentContent) {
-    this.commentContent = commentContent;
-  }
 
   @Builder
   public Comment(Long gatheringId, Long memberId, String commentContent) {
