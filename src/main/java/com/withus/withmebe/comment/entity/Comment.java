@@ -1,27 +1,27 @@
 package com.withus.withmebe.comment.entity;
 
+import com.withus.withmebe.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
+@Where(clause = "deletedDttm is null")
+@SQLDelete(sql = "UPDATE comment SET deletedDttm = LocalDateTime.now() WHERE id = ?")
 @EntityListeners(value = AuditingEntityListener.class)
-public final class Comment {
+public class Comment extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,22 +31,13 @@ public final class Comment {
   private Long gatheringId;
   private Long memberId;
 
+  @Setter
   private String commentContent;
 
-  @CreatedDate
-  @Column(updatable = false)
-  private LocalDateTime createdDttm;
-
-  @LastModifiedDate
-  private LocalDateTime modifiedDttm;
-
-  private LocalDateTime deletedDttm;
-
-  public void delete() {
-    deletedDttm = LocalDateTime.now();
-  }
-
-  public void setCommentContent(String commentContent) {
+  @Builder
+  public Comment(Long gatheringId, Long memberId, String commentContent) {
+    this.gatheringId = gatheringId;
+    this.memberId = memberId;
     this.commentContent = commentContent;
   }
 }
