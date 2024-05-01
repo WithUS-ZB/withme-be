@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,5 +25,25 @@ public class MemberController {
   @GetMapping("/detail")
   public ResponseEntity<MemberDetailDto> getCurrentLoginMemberDetail(){
     return ResponseEntity.ok(memberService.readCurretLoginMemberDetail());
+  }
+
+  @GetMapping("/check/email")
+  public ResponseEntity<Boolean> existsEmail(@RequestParam String email){
+    return ResponseEntity.ok(memberService.existsEmail(email));
+  }
+
+  @GetMapping("/check/nickname")
+  public ResponseEntity<Boolean> existsNickname(@RequestParam String nickname){
+    return ResponseEntity.ok(memberService.existsNickname(nickname));
+  }
+
+  @PutMapping("/profile_img")
+  public ResponseEntity<MemberDetailDto> setProfileImg(@RequestParam String profileImg){
+    return ResponseEntity.ok(memberService.updateProfileImg(profileImg));
+  }
+
+  @PutMapping("/nickname")
+  public ResponseEntity<MemberDetailDto> setNickname(@RequestParam String nickname){
+    return ResponseEntity.ok(memberService.updateNickname(nickname));
   }
 }
