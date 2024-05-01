@@ -1,12 +1,20 @@
 package com.withus.withmebe.comment.service;
 
+import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
+import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
+
 import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
+import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.member.entity.Member;
+import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.security.util.MySecurityUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,33 +28,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
+  private final MemberRepository memberRepository;
 
   @Transactional
   public CommentResponse createComment(long gatheringId, AddCommentRequest request) {
 
-    // TODO 모임 유효성 검사
-    Long memberId = 1L; // TODO AuthContext에서 멤버ID 획득으로 변경
-    // TODO 멤버 유효성 검사
-    // TODO 멤버 받기
-    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
-
-    Comment newComment = commentRepository.save(request.toEntity(gatheringId, memberId));
-    return CommentResponse.fromEntity(newComment, memberNickName);
+    Member requester = readRequester();
+    Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester.getId()));
+    return CommentResponse.fromEntity(newComment, requester.getNickName());
   }
 
   @Transactional(readOnly = true)
   public Page<CommentResponse> readComments(long gatheringId, Pageable pageable) {
 
     Pageable adjustedPageable = adjustPageable(pageable);
-    Page<Comment> comments = commentRepository.findCommentsByGatheringIdAndDeletedDttmIsNull(
+    Page<Comment> comments = commentRepository.findCommentsByGatheringId(
         gatheringId, adjustedPageable);
 
     List<CommentResponse> commentResponses = new ArrayList<>();
     for (Comment comment : comments) {
-      // TODO 멤버 받기
-      String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
-      commentResponses.add(CommentResponse.fromEntity(comment, memberNickName));
+      Optional<Member> writer = memberRepository.findById(comment.getMemberId());
+      writer.ifPresent(member -> commentResponses.add(
+          CommentResponse.fromEntity(comment, member.getNickName())));
     }
+
     return new PageImpl<CommentResponse>(commentResponses, adjustedPageable,
         commentResponses.size());
   }
@@ -55,40 +60,52 @@ public class CommentService {
 
     int size = Math.max(pageable.getPageSize(), 1);
     int page = Math.max(pageable.getPageNumber(), 0);
-
     return PageRequest.of(page, size);
   }
 
   @Transactional
   public CommentResponse updateComment(long commentId, SetCommentRequest request) {
-    Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
-        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
-    // TODO 모임 유효성 검사
-    // TODO AuthContext에서 멤버ID 획득 추가
-    // TODO 멤버 일치 검사
 
-    // TODO 멤버 받기
-    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
+    Comment comment = readEditableComment(commentId);
+
     comment.setCommentContent(request.commentContent());
-
-    Comment updatedComment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
-    return CommentResponse.fromEntity(updatedComment, memberNickName);
+    Comment updatedComment = readComment(commentId);
+    return CommentResponse.fromEntity(updatedComment, getRequesterNickName());
   }
 
   @Transactional
   public CommentResponse deleteComment(long commentId) {
-    Comment comment = commentRepository.findByIdAndDeletedDttmIsNull(commentId)
-        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
-    // TODO AuthContext에서 멤버ID 획득 추가
-    // TODO 멤버 일치 검사
 
-    // TODO 멤버 받기
-    String memberNickName = "홍길동"; //TODO  member.getNickName으로 변경
-    comment.delete();
+    Comment comment = readEditableComment(commentId);
+    commentRepository.delete(comment);
+    return CommentResponse.fromEntity(comment, getRequesterNickName());
+  }
 
-    Comment deletedComment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("유효하지 않은 댓글id")); // TODO 커스텀 익셉션
-    return CommentResponse.fromEntity(deletedComment, memberNickName);
+  private Comment readEditableComment(long commentId) {
+    Comment comment = readComment(commentId);
+
+    if (comment.getMemberId() != getRequesterId()) {
+      throw new CustomException(AUTHORIZATION_ISSUE);
+    }
+    return comment;
+  }
+
+  private Comment readComment(long commentId) {
+    return commentRepository.findById(commentId)
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+  }
+
+  private String getRequesterNickName() {
+    return readRequester().getNickName();
+  }
+
+  private Member readRequester() {
+    return memberRepository.findById(getRequesterId())
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+  }
+
+  private long getRequesterId() {
+    String memberId = MySecurityUtil.getCustomUserDetails().getUsername();
+    return Long.parseLong(memberId);
   }
 }
