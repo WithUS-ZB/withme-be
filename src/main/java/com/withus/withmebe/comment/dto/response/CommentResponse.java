@@ -15,10 +15,10 @@ public record CommentResponse(
 ) {
 
 
-  public static CommentResponse fromEntity(Comment comment, String nickName) {
+  public static CommentResponse fromEntity(Comment comment) {
     return CommentResponse.builder()
         .id(comment.getId())
-        .nickName(nickName)
+        .nickName(comment.getMember().getNickName())
         .commentContent(comment.getCommentContent())
         .createdDttm(comment.getCreatedDttm())
         .updatedDttm(comment.getUpdatedDttm())

@@ -1,12 +1,14 @@
 package com.withus.withmebe.comment.entity;
 
 import com.withus.withmebe.common.entity.BaseEntity;
+import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,15 +31,17 @@ public class Comment extends BaseEntity {
   private Long id;
 
   private Long gatheringId;
-  private Long memberId;
+
+  @ManyToOne
+  private Member member;
 
   @Setter
   private String commentContent;
 
   @Builder
-  public Comment(Long gatheringId, Long memberId, String commentContent) {
+  public Comment(Long gatheringId, Member member, String commentContent) {
     this.gatheringId = gatheringId;
-    this.memberId = memberId;
+    this.member = member;
     this.commentContent = commentContent;
   }
 }

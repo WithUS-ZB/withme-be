@@ -12,12 +12,8 @@ import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.security.util.MySecurityUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,8 +30,8 @@ public class CommentService {
   public CommentResponse createComment(long gatheringId, AddCommentRequest request) {
 
     Member requester = readRequester();
-    Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester.getId()));
-    return CommentResponse.fromEntity(newComment, requester.getNickName());
+    Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
+    return CommentResponse.fromEntity(newComment);
   }
 
   @Transactional(readOnly = true)
@@ -44,16 +40,7 @@ public class CommentService {
     Pageable adjustedPageable = adjustPageable(pageable);
     Page<Comment> comments = commentRepository.findCommentsByGatheringId(
         gatheringId, adjustedPageable);
-
-    List<CommentResponse> commentResponses = new ArrayList<>();
-    for (Comment comment : comments) {
-      Optional<Member> writer = memberRepository.findById(comment.getMemberId());
-      writer.ifPresent(member -> commentResponses.add(
-          CommentResponse.fromEntity(comment, member.getNickName())));
-    }
-
-    return new PageImpl<CommentResponse>(commentResponses, adjustedPageable,
-        commentResponses.size());
+    return comments.map(CommentResponse::fromEntity);
   }
 
   private Pageable adjustPageable(Pageable pageable) {
@@ -70,7 +57,7 @@ public class CommentService {
 
     comment.setCommentContent(request.commentContent());
     Comment updatedComment = readComment(commentId);
-    return CommentResponse.fromEntity(updatedComment, getRequesterNickName());
+    return CommentResponse.fromEntity(updatedComment);
   }
 
   @Transactional
@@ -78,13 +65,13 @@ public class CommentService {
 
     Comment comment = readEditableComment(commentId);
     commentRepository.delete(comment);
-    return CommentResponse.fromEntity(comment, getRequesterNickName());
+    return CommentResponse.fromEntity(comment);
   }
 
   private Comment readEditableComment(long commentId) {
     Comment comment = readComment(commentId);
 
-    if (comment.getMemberId() != getRequesterId()) {
+    if (comment.getMember().getId() != getRequesterId()) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     return comment;
@@ -93,10 +80,6 @@ public class CommentService {
   private Comment readComment(long commentId) {
     return commentRepository.findById(commentId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-  }
-
-  private String getRequesterNickName() {
-    return readRequester().getNickName();
   }
 
   private Member readRequester() {
