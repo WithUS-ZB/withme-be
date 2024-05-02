@@ -6,6 +6,8 @@ import static com.withus.withmebe.common.exception.ExceptionCode.NICKNAME_CONFLI
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.member.dto.MemberDetailDto;
 import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
+import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
+import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.security.util.MySecurityUtil;
@@ -43,20 +45,22 @@ public class MemberService {
   }
 
   @Transactional
-  public MemberDetailDto updateProfileImg(String profileImg) {
+  public UpdateMemberProfileImgDto.Response updateProfileImg(UpdateMemberProfileImgDto.Request request) {
     Member currentMember = getCurrentMember();
-    currentMember.setProfileImg(profileImg);
-    return MemberDetailDto.fromEntity(currentMember);
+    // TODO: S3로 이미지 처리 필요
+    currentMember.setProfileImg(request.profileImg());
+    return UpdateMemberProfileImgDto.Response.fromEntity(currentMember);
   }
 
   @Transactional
-  public MemberDetailDto updateNickname(String nickname) {
-    Member currentMember = getCurrentMember();
-    if(memberRepository.existsByNickName(nickname)){
+  public UpdateMemberNickNameDto.Response updateNickname(UpdateMemberNickNameDto.Request request) {
+    String requestNickName = request.nickName();
+    if(memberRepository.existsByNickName(requestNickName)){
       throw new CustomException(NICKNAME_CONFLICT);
     }
-    currentMember.setProfileImg(nickname);
-    return MemberDetailDto.fromEntity(currentMember);
+    Member currentMember = getCurrentMember();
+    currentMember.setNickName(requestNickName);
+    return UpdateMemberNickNameDto.Response.fromEntity(currentMember);
   }
 
   private Member getMemberById(Long id) {

@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @Target({METHOD, TYPE})
 @Retention(RUNTIME)
-@PreAuthorize("hasRole('USER')")
-public @interface RoleUser {
+@PreAuthorize("hasRole('MEMBER')")
+public @interface RoleMember {
 
 }
