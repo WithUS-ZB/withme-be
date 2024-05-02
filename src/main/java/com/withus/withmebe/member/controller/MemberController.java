@@ -3,6 +3,7 @@ package com.withus.withmebe.member.controller;
 import com.withus.withmebe.member.dto.MemberDetailDto;
 import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
 import com.withus.withmebe.member.service.MemberService;
+import com.withus.withmebe.security.anotation.RoleUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@RoleUser
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
