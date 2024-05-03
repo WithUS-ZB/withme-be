@@ -25,7 +25,7 @@ public class MemberController {
 
   private final MemberService memberService;
 
-  @GetMapping("/detail/{userId}")
+  @GetMapping("/simple_detail/{userId}")
   public ResponseEntity<MemberSimpleDetailDto> get(@PathVariable Long userId) {
     return ResponseEntity.ok(memberService.read(userId));
   }
