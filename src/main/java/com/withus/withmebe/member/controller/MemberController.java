@@ -5,7 +5,6 @@ import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
 import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.service.MemberService;
-import com.withus.withmebe.security.anotation.RoleMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RoleMember
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
