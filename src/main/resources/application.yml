@@ -20,6 +20,6 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: BUCKET_NAME
+      bucket: ${ BUCKET_NAME }
     stack:
       auto: false
