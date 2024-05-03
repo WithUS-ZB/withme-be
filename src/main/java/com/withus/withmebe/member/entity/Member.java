@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -36,6 +37,7 @@ public class Member extends BaseEntity {
 
   private String password;
 
+  @Setter
   @Column(unique = true, nullable = false)
   private String nickName;
 
@@ -46,6 +48,7 @@ public class Member extends BaseEntity {
 
   private String phoneNumber;
 
+  @Setter
   private String profileImg;
 
   @Enumerated(EnumType.STRING)

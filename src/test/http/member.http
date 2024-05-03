@@ -1,0 +1,34 @@
+### 멤버 간략 조회
+GET http://localhost:8080/api/member/detail/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NDk0NzkyLCJleHAiOjE3MTQ0OTgzOTJ9.iEeObAf_J-UPLpG-gvObQic5mBhuz-9bT3Wqa3w7GBE
+
+### 내 정보 상세 조회
+GET http://localhost:8080/api/member/detail
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NDk0NzkyLCJleHAiOjE3MTQ0OTgzOTJ9.iEeObAf_J-UPLpG-gvObQic5mBhuz-9bT3Wqa3w7GBE
+
+### 이메일 중복 여부 조회
+GET http://localhost:8080/api/member/check/email?email=example1@example.com
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NDk0NzkyLCJleHAiOjE3MTQ0OTgzOTJ9.iEeObAf_J-UPLpG-gvObQic5mBhuz-9bT3Wqa3w7GBE
+
+### 닉네임 중복 여부 조회
+GET http://localhost:8080/api/member/check/nickname?nickname=78cf1feb-eac3-4bfa-8e7a-fefda2300a40
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NjQyMTU4LCJleHAiOjE3MTQ2NDU3NTh9.HHcYuEH4ayS6fbiuEg5VBZc3jMGNloc9BNQrtPX9cZ8
+
+### 프로필 이미지 변경
+PUT http://localhost:8080/api/member/profile_img
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NjY4OTgyLCJleHAiOjE3MTQ2NzI1ODJ9.hzsoRMNKZHVkzGMnq3x0hvI6rSe6y5TZbRyjC68QD2g
+Content-Type: application/json
+
+{
+  "profileImg": "asfasd.jpg"
+}
+
+
+### 닉네임 변경
+PUT http://localhost:8080/api/member/nickname
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NjY4OTgyLCJleHAiOjE3MTQ2NzI1ODJ9.hzsoRMNKZHVkzGMnq3x0hvI6rSe6y5TZbRyjC68QD2g
+Content-Type: application/json
+
+{
+  "nickName": "asfasd"
+}

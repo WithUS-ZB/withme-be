@@ -29,7 +29,8 @@ public enum ExceptionCode {
   PASSWORD_MISMATCH(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
   // Conflict: 409
-  EMAIL_CONFLICT(CONFLICT, "이메일이 중복됩니다.")
+  EMAIL_CONFLICT(CONFLICT, "이메일이 중복됩니다."),
+  NICKNAME_CONFLICT(CONFLICT, "닉네임이 중복됩니다.")
   ;
 
   private final HttpStatus status;
