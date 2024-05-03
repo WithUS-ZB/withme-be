@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Gathering extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "gathering_id")
@@ -77,15 +76,15 @@ public class Gathering extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status = Status.PROGRESS;
-
+    private final Status status = Status.PROGRESS;
 
     @Builder
-    public Gathering(String title, String content, GatheringType gatheringType, Long maximumParticipant,
+    public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
                      LocalDateTime startDttm, LocalDateTime endDttm, LocalDateTime applicationDeadLine, String address,
                      String detailedAddress, String location, String mainImg, ParticipantsType participantsType,
                      Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
+        this.memberId = memberId;
         this.title = title;
         this.content = content;
         this.gatheringType = gatheringType;
