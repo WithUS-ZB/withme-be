@@ -13,3 +13,21 @@ spring:
     url: jdbc:mysql://localhost:3306/withme?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: withus
     password: withuspassword
+  data:
+    redis:
+      host: localhost
+      port: 6379
+cool-sms:
+  api-key: cool-sms.api-key
+  api-secret-key: cool-sms.api-secret-key
+  domain: https://api.coolsms.co.kr
+  sender-phone-number: cool-sms.sender-phone-number
+auth-sms-service:
+  text-content-template: "[with me] 인증 문자는 [%s] 입니다."
+  expiration-seconds: 60
+  auth-code-length: 6
+redis:
+  key:
+    prefix:
+      auth-sms: "AuthSms: "
+
