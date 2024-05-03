@@ -20,8 +20,6 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: s3-withme
+      bucket: BUCKET_NAME
     stack:
       auto: false
-    region:
-      static: ap-northeast-2
