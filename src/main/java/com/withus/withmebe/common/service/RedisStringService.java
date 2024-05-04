@@ -18,4 +18,8 @@ public class RedisStringService {
   public Object getValues(String key) {
     return redisTemplate.opsForValue().get(key);
   }
+
+  public Boolean deleteKey(String key) {
+    return redisTemplate.delete(key);
+  }
 }

@@ -46,6 +46,7 @@ public class Member extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
+  @Setter
   private String phoneNumber;
 
   @Setter
