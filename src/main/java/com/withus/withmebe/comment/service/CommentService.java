@@ -59,7 +59,6 @@ public class CommentService {
     return CommentResponse.fromEntity(updatedComment);
   }
 
-  @Transactional
   public CommentResponse deleteComment(long commentId) {
 
     Comment comment = readEditableComment(commentId);
