@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -29,13 +30,15 @@ public class Comment extends BaseEntity {
   @Column(name = "comment_id")
   private Long id;
 
+  @Column(nullable = false)
   private Long gatheringId;
 
   @ManyToOne
-  @JoinColumn(name = "member_id")
+  @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
   @Setter
+  @Column(nullable = false)
   private String commentContent;
 
   @Builder
