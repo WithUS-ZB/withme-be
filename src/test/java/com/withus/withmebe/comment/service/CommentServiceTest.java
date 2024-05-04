@@ -197,6 +197,39 @@ class CommentServiceTest {
     assertNotNull(commentResponse.updatedDttm());
   }
 
+  @Test
+  void failToDeleteCommentByCommentNotFound() {
+    //given
+    given(commentRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> commentService.deleteComment(memberId, commentId));
+
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToDeleteCommentByRequesterIsNotWriter() {
+    //given
+    Member writer = getStubbedMember(memberId);
+    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+
+    given(commentRepository.findById(anyLong()))
+        .willReturn(Optional.of(comment));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> commentService.deleteComment(memberId + 1, commentId));
+
+    //then
+    assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
   private Member getStubbedMember(long memberId) {
     Member member = Member.builder()
         .nickName("홍길동" + memberId)
