@@ -177,6 +177,26 @@ class CommentServiceTest {
     assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
   }
 
+  @Test
+  void seccessToDeleteComment() {
+    //given
+    Member writer = getStubbedMember(memberId);
+    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+
+    given(commentRepository.findById(anyLong()))
+        .willReturn(Optional.of(comment));
+
+    //when
+    CommentResponse commentResponse = commentService.deleteComment(memberId, commentId);
+
+    //then
+    assertEquals(commentId, commentResponse.id());
+    assertEquals(writer.getNickName(), commentResponse.nickName());
+    assertEquals(comment.getCommentContent(), commentResponse.commentContent());
+    assertNotNull(commentResponse.createdDttm());
+    assertNotNull(commentResponse.updatedDttm());
+  }
+
   private Member getStubbedMember(long memberId) {
     Member member = Member.builder()
         .nickName("홍길동" + memberId)
