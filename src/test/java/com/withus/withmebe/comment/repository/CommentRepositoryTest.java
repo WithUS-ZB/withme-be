@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.withus.withmebe.comment.entity.Comment;
-import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,13 +27,10 @@ class CommentRepositoryTest {
   @Autowired
   private CommentRepository commentRepository;
 
-  @Autowired
-  private MemberRepository memberRepository;
-
   private final long gatheringId = 1L;
 
   @Test
-  void readCommentsByGatheringId() {
+  void testToReadCommentsByGatheringId() {
     //given
 
     Pageable pageable = PageRequest.of(0,10);
@@ -47,23 +42,23 @@ class CommentRepositoryTest {
     assertEquals(2, comments.getTotalElements());
     assertEquals(1, comments.getTotalPages());
 
-    Comment pageElement1 = comments.getContent().get(0);
-    assertTrue(pageElement1.getId() != null && pageElement1.getId() > 0);
-    assertEquals(gatheringId, pageElement1.getGatheringId());
-    assertEquals(1L, pageElement1.getMember().getId());
-    assertEquals("첫 번째 댓글입니다.", pageElement1.getCommentContent());
-    assertNotNull(pageElement1.getCreatedDttm());
-    assertNotNull(pageElement1.getUpdatedDttm());
-    assertNull(pageElement1.getDeletedDttm());
+    Comment comment1 = comments.getContent().get(0);
+    assertEquals(1L, comment1.getId());
+    assertEquals(gatheringId, comment1.getGatheringId());
+    assertEquals(1L, comment1.getMember().getId());
+    assertEquals("comment1", comment1.getCommentContent());
+    assertNotNull(comment1.getCreatedDttm());
+    assertNotNull(comment1.getUpdatedDttm());
+    assertNull(comment1.getDeletedDttm());
 
-    Comment pageElement2 = comments.getContent().get(1);
-    assertTrue(pageElement2.getId() != null && pageElement2.getId() > 0);
-    assertEquals(gatheringId, pageElement2.getGatheringId());
-    assertEquals(2L, pageElement2.getMember().getId());
-    assertEquals("두 번째 댓글입니다.", pageElement2.getCommentContent());
-    assertNotNull(pageElement2.getCreatedDttm());
-    assertNotNull(pageElement2.getUpdatedDttm());
-    assertNull(pageElement2.getDeletedDttm());
+    Comment comment2 = comments.getContent().get(1);
+    assertEquals(2L, comment2.getId());
+    assertEquals(gatheringId, comment2.getGatheringId());
+    assertEquals(2L, comment2.getMember().getId());
+    assertEquals("comment2", comment2.getCommentContent());
+    assertNotNull(comment2.getCreatedDttm());
+    assertNotNull(comment2.getUpdatedDttm());
+    assertNull(comment2.getDeletedDttm());
   }
 
 }
