@@ -3,6 +3,7 @@ package com.withus.withmebe.comment.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -149,7 +150,6 @@ class CommentControllerTest {
     //when
     //then
     mockMvc.perform(get(baseUrl + "/list/" + gatheringId)
-            .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.totalElements").value(2))
@@ -174,7 +174,6 @@ class CommentControllerTest {
     //when
     //then
     mockMvc.perform(get(baseUrl + "/list")
-            .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
@@ -207,7 +206,6 @@ class CommentControllerTest {
     //when
     //then
     mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
-            .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
@@ -254,6 +252,75 @@ class CommentControllerTest {
     mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
             .contentType(MediaType.APPLICATION_JSON)
             .content(gson.toJson(jsonObject))
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void seccessToDeleteComment() throws Exception {
+    //given
+    given(commentService.deleteComment(anyLong(), anyLong()))
+        .willReturn(commentResponse);
+
+    //when
+    //then
+    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(commentResponse.id()))
+        .andExpect(jsonPath("$.nickName").value(commentResponse.nickName()))
+        .andExpect(jsonPath("$.commentContent").value(commentResponse.commentContent()))
+        .andExpect(jsonPath("$.createdDttm").value(commentResponse.createdDttm().toString()))
+        .andExpect(jsonPath("$.updatedDttm").value(commentResponse.updatedDttm().toString()));
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToDeleteCommentByBadRequest() throws Exception {
+    //given
+    //when
+    //then
+    mockMvc.perform(delete(baseUrl + "/adfad")
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToDeleteCommentByNotFound() throws Exception {
+    //given
+    given(commentService.deleteComment(anyLong(), anyLong()))
+        .willThrow(new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
+
+    //when
+    //then
+    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToDeleteCommentByAuthenticationIssue() throws Exception {
+    //given
+    given(commentService.deleteComment(anyLong(), anyLong()))
+        .willThrow(new CustomException(ExceptionCode.AUTHENTICATION_ISSUE));
+    //when
+    //then
+    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isUnauthorized());
+  }
+  @Test
+  @WithMockCustomUser
+  void failToDeleteCommentByAuthorizationIssue() throws Exception {
+    //given
+    given(commentService.deleteComment(anyLong(), anyLong()))
+        .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
+    //when
+    //then
+    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isForbidden());
   }
