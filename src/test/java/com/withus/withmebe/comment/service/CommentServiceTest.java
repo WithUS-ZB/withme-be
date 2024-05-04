@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.lenient;
 
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import com.withus.withmebe.comment.dto.request.SetCommentRequest;
