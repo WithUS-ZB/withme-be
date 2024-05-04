@@ -14,6 +14,7 @@ import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.time.LocalDateTime;
@@ -40,6 +41,9 @@ class CommentServiceTest {
   @Mock
   private CommentRepository commentRepository;
 
+  @Mock
+  private GatheringRepository gatheringRepository;
+
   @InjectMocks
   private CommentService commentService;
 
@@ -54,6 +58,8 @@ class CommentServiceTest {
     Member requester = getStubbedMember(memberId);
     Comment comment = getStubbedNewComment(commentId, gatheringId, requester, request);
 
+    given(gatheringRepository.existsById(gatheringId))
+        .willReturn(true);
     given(memberRepository.findById(anyLong()))
         .willReturn(Optional.of(new Member()));
     given(commentRepository.save(any()))

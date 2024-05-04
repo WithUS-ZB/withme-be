@@ -9,6 +9,7 @@ import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,14 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
   private final MemberRepository memberRepository;
+  private final GatheringRepository gatheringRepository;
 
   @Transactional
   public CommentResponse createComment(long requesterId, long gatheringId, AddCommentRequest request) {
 
     Member requester = readRequester(requesterId);
+    checkGatheringExist(gatheringId);
+
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
     return newComment.toResponse();
   }
@@ -83,5 +87,11 @@ public class CommentService {
   private Member readRequester(long requesterId) {
     return memberRepository.findById(requesterId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+  }
+
+  private void checkGatheringExist(long gatheringId) {
+    if(!gatheringRepository.existsById(gatheringId)) {
+      throw new CustomException(ENTITY_NOT_FOUND);
+    }
   }
 }
