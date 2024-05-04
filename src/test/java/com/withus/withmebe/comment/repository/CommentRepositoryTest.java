@@ -38,6 +38,7 @@ class CommentRepositoryTest {
 
     assertEquals(2, comments.getTotalElements());
     assertEquals(1, comments.getTotalPages());
+    assertEquals(0, comments.getNumber());
 
     Comment comment1 = comments.getContent().get(0);
     assertEquals(1L, comment1.getId());
