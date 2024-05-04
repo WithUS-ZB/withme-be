@@ -17,9 +17,11 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Gathering extends BaseEntity {
     @Id
@@ -76,7 +78,7 @@ public class Gathering extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private final Status status = Status.PROGRESS;
+    private Status status = Status.PROGRESS;
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
