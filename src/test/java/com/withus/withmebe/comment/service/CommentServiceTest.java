@@ -71,6 +71,20 @@ class CommentServiceTest {
     assertNotNull(commentResponse.updatedDttm());
   }
 
+  @Test
+  void failToCreateCommentByFailedToReadRequester() {
+    //given
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> commentService.createComment(memberId, gatheringId, new AddCommentRequest("댓글")));
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
 
   private Member getStubbedMember(long memberId) {
     Member member = Member.builder()
