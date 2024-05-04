@@ -85,6 +85,39 @@ class CommentServiceTest {
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
 
+  @Test
+  void successToReadComments() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+    Member writer1 = getStubbedMember(memberId);
+    Member writer2 = getStubbedMember(memberId + 1);
+    Comment comment1 = getStubbedComment(commentId, gatheringId, writer1);
+    Comment comment2 = getStubbedComment(commentId + 1, gatheringId, writer2);
+
+    given(commentRepository.findCommentsByGatheringId(gatheringId, pageable))
+        .willReturn(new PageImpl<Comment>(List.of(comment1, comment2), pageable, 2));
+
+    //when
+    Page<CommentResponse> commentResponses = commentService.readComments(gatheringId, pageable);
+    //then
+    assertEquals(2, commentResponses.getTotalElements());
+    assertEquals(1, commentResponses.getTotalPages());
+    assertEquals(0, commentResponses.getNumber());
+
+    CommentResponse commentResponse1 = commentResponses.getContent().get(0);
+    assertEquals(comment1.getId(), commentResponse1.id());
+    assertEquals(comment1.getMember().getNickName(), commentResponse1.nickName());
+    assertEquals(comment1.getCommentContent(), commentResponse1.commentContent());
+    assertEquals(comment1.getCreatedDttm(), commentResponse1.createdDttm());
+    assertEquals(comment1.getUpdatedDttm(), commentResponse1.updatedDttm());
+
+    CommentResponse commentResponse2 = commentResponses.getContent().get(1);
+    assertEquals(comment2.getId(), commentResponse2.id());
+    assertEquals(comment2.getMember().getNickName(), commentResponse2.nickName());
+    assertEquals(comment2.getCommentContent(), commentResponse2.commentContent());
+    assertEquals(comment2.getCreatedDttm(), commentResponse2.createdDttm());
+    assertEquals(comment2.getUpdatedDttm(), commentResponse2.updatedDttm());
+  }
 
   private Member getStubbedMember(long memberId) {
     Member member = Member.builder()
