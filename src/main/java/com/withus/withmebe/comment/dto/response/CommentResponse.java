@@ -10,18 +10,7 @@ public record CommentResponse(
     String nickName,
     String commentContent,
     LocalDateTime createdDttm,
-    LocalDateTime updatedDttm,
-    LocalDateTime deletedDttm
+    LocalDateTime updatedDttm
 ) {
 
-
-  public static CommentResponse fromEntity(Comment comment) {
-    return CommentResponse.builder()
-        .id(comment.getId())
-        .nickName(comment.getMember().getNickName())
-        .commentContent(comment.getCommentContent())
-        .createdDttm(comment.getCreatedDttm())
-        .updatedDttm(comment.getUpdatedDttm())
-        .build();
-  }
 }
