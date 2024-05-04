@@ -30,7 +30,7 @@ public class CommentService {
 
     Member requester = readRequester(requesterId);
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
-    return CommentResponse.fromEntity(newComment);
+    return newComment.toResponse();
   }
 
   @Transactional(readOnly = true)
@@ -38,7 +38,7 @@ public class CommentService {
 
     Pageable adjustedPageable = adjustPageable(pageable);
     Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, adjustedPageable);
-    return comments.map(CommentResponse::fromEntity);
+    return comments.map(Comment::toResponse);
   }
 
   private Pageable adjustPageable(Pageable pageable) {
@@ -55,7 +55,7 @@ public class CommentService {
 
     comment.setCommentContent(request.commentContent());
     Comment updatedComment = readComment(commentId);
-    return CommentResponse.fromEntity(updatedComment);
+    return updatedComment.toResponse();
   }
 
   public CommentResponse deleteComment(long requesterId, long commentId) {
@@ -63,7 +63,7 @@ public class CommentService {
     Comment comment = readEditableComment(requesterId, commentId);
 
     commentRepository.delete(comment);
-    return CommentResponse.fromEntity(comment);
+    return comment.toResponse();
   }
 
   private Comment readEditableComment(long requesterId, long commentId) {

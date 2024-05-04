@@ -1,5 +1,6 @@
 package com.withus.withmebe.comment.entity;
 
+import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
@@ -42,5 +43,15 @@ public class Comment extends BaseEntity {
     this.gatheringId = gatheringId;
     this.member = member;
     this.commentContent = commentContent;
+  }
+
+  public CommentResponse toResponse() {
+    return CommentResponse.builder()
+        .id(this.id)
+        .nickName(this.member.getNickName())
+        .commentContent(this.commentContent)
+        .createdDttm(this.getCreatedDttm())
+        .updatedDttm(this.getUpdatedDttm())
+        .build();
   }
 }
