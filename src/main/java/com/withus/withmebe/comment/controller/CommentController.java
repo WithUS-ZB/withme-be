@@ -29,7 +29,7 @@ public class CommentController {
 
   private final CommentService commentService;
 
-  @PostMapping({"/add", "add?gatheringid={gatheringid}"})
+  @PostMapping({"/add"})
   public ResponseEntity<CommentResponse> addComment(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestParam(value = "gatheringid") long gatheringId,
