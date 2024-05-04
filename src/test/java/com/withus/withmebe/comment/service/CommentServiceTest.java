@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
+import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
@@ -52,7 +54,7 @@ class CommentServiceTest {
     //given
     AddCommentRequest request = new AddCommentRequest("댓글");
     Member requester = getStubbedMember(memberId);
-    Comment comment = getStubbedComment(commentId, gatheringId, requester, request);
+    Comment comment = getStubbedNewComment(commentId, gatheringId, requester, request);
 
     given(memberRepository.findById(anyLong()))
         .willReturn(Optional.of(new Member()));
@@ -90,8 +92,8 @@ class CommentServiceTest {
     //given
     Pageable pageable = PageRequest.of(0, 10);
     Member writer1 = getStubbedMember(memberId);
-    Member writer2 = getStubbedMember(memberId + 1);
     Comment comment1 = getStubbedComment(commentId, gatheringId, writer1);
+    Member writer2 = getStubbedMember(memberId + 1);
     Comment comment2 = getStubbedComment(commentId + 1, gatheringId, writer2);
 
     given(commentRepository.findCommentsByGatheringId(gatheringId, pageable))
@@ -119,6 +121,29 @@ class CommentServiceTest {
     assertEquals(comment2.getUpdatedDttm(), commentResponse2.updatedDttm());
   }
 
+  @Test
+  void seccessToUpdateComment() {
+    //given
+    SetCommentRequest request = new SetCommentRequest("수정된 댓글");
+    Member requester = getStubbedMember(memberId);
+    Comment comment = getStubbedComment(commentId, gatheringId, requester);
+    comment.setCommentContent(request.commentContent());
+
+    given(commentRepository.findById(anyLong()))
+        .willReturn(Optional.of(comment));
+
+    //when
+    CommentResponse commentResponse = commentService.updateComment(memberId, commentId,
+        request);
+
+    //then
+    assertEquals(commentId, commentResponse.id());
+    assertEquals(requester.getNickName(), commentResponse.nickName());
+    assertEquals(request.commentContent(), commentResponse.commentContent());
+    assertNotNull(commentResponse.createdDttm());
+    assertNotNull(commentResponse.updatedDttm());
+  }
+
   private Member getStubbedMember(long memberId) {
     Member member = Member.builder()
         .nickName("홍길동" + memberId)
@@ -127,7 +152,7 @@ class CommentServiceTest {
     return member;
   }
 
-  private Comment getStubbedComment(long commentId, long gatheringId, Member member,
+  private Comment getStubbedNewComment(long commentId, long gatheringId, Member member,
       AddCommentRequest request) {
     Comment comment = Comment.builder()
         .member(member)
