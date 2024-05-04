@@ -5,6 +5,7 @@ import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.service.CommentService;
 import com.withus.withmebe.security.domain.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class CommentController {
   public ResponseEntity<CommentResponse> addComment(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestParam(value = "gatheringid") long gatheringId,
-      @RequestBody AddCommentRequest request) {
+      @Valid @RequestBody AddCommentRequest request) {
     return ResponseEntity.ok(
         commentService.createComment(customUserDetails.getMemberId(), gatheringId, request));
   }
@@ -46,7 +47,7 @@ public class CommentController {
   @PutMapping("/{commentId}")
   public ResponseEntity<CommentResponse> setComment(
       @AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long commentId,
-      @RequestBody SetCommentRequest request) {
+      @Valid @RequestBody SetCommentRequest request) {
     return ResponseEntity.ok(
         commentService.updateComment(customUserDetails.getMemberId(), commentId, request));
   }
