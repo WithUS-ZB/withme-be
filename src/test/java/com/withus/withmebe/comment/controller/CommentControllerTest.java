@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -91,9 +92,8 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(post(baseUrl + "/add")
+    mockMvc.perform(post(baseUrl + "/add?gatheringid=1")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
@@ -177,5 +177,84 @@ class CommentControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void seccessToSetComment() throws Exception {
+    //given
+    given(commentService.updateComment(anyLong(), anyLong(), any()))
+        .willReturn(commentResponse);
+
+    //when
+    //then
+    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(jsonObject))
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(commentResponse.id()))
+        .andExpect(jsonPath("$.nickName").value(commentResponse.nickName()))
+        .andExpect(jsonPath("$.commentContent").value(commentResponse.commentContent()))
+        .andExpect(jsonPath("$.createdDttm").value(commentResponse.createdDttm().toString()))
+        .andExpect(jsonPath("$.updatedDttm").value(commentResponse.updatedDttm().toString()));
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToSetCommentByBadRequest() throws Exception {
+    //given
+    //when
+    //then
+    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToSetCommentByNotFound() throws Exception {
+    //given
+    given(commentService.updateComment(anyLong(), anyLong(), any()))
+        .willThrow(new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
+
+    //when
+    //then
+    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(jsonObject))
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToSetCommentByAuthenticationIssue() throws Exception {
+    //given
+    given(commentService.updateComment(anyLong(), anyLong(), any()))
+        .willThrow(new CustomException(ExceptionCode.AUTHENTICATION_ISSUE));
+    //when
+    //then
+    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(jsonObject))
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToSetCommentByAuthorizationIssue() throws Exception {
+    //given
+    given(commentService.updateComment(anyLong(), anyLong(), any()))
+        .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
+    //when
+    //then
+    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(jsonObject))
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isForbidden());
   }
 }
