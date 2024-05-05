@@ -50,6 +50,9 @@ public class Gathering extends BaseEntity {
     private LocalDateTime endDttm;
 
     @Column(nullable = false)
+    private String category;
+
+    @Column(nullable = false)
     private LocalDateTime applicationDeadLine;
 
     @Column(nullable = false)
@@ -82,7 +85,7 @@ public class Gathering extends BaseEntity {
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
-                     LocalDateTime startDttm, LocalDateTime endDttm, LocalDateTime applicationDeadLine, String address,
+                     LocalDateTime startDttm, LocalDateTime endDttm, String category, LocalDateTime applicationDeadLine, String address,
                      String detailedAddress, String location, String mainImg, ParticipantsType participantsType,
                      Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
@@ -93,6 +96,7 @@ public class Gathering extends BaseEntity {
         this.maximumParticipant = maximumParticipant;
         this.startDttm = startDttm;
         this.endDttm = endDttm;
+        this.category = category;
         this.applicationDeadLine = applicationDeadLine;
         this.address = address;
         this.detailedAddress = detailedAddress;
