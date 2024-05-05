@@ -3,6 +3,7 @@ package com.withus.withmebe.gathering.controller;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.service.GatheringService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,15 +29,14 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getGatheringList() {
-        System.out.println("호출 테스트");
-        return null;
+    public List<Gathering> getGatheringList() {
+        return gatheringService.readGatheringList();
     }
 
-    @PutMapping("/{gatheringId}")
-    public ResponseEntity<?> setGathering(@PathVariable long gatheringId) {
-
-        return null;
+    @PutMapping("/{memberId}/{gatheringId}")
+    public Gathering setGathering(@PathVariable long memberId, @PathVariable long gatheringId,
+                                  @RequestBody AddGatheringRequest addGatheringRequest) {
+        return gatheringService.updateGathering(memberId, gatheringId, addGatheringRequest);
     }
 
     @GetMapping("/{gatheringId}")
