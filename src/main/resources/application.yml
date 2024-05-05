@@ -15,7 +15,7 @@ spring:
     password: withuspassword
   data:
     redis:
-      host: localhost
+      host: host.docker.internal
       port: 6379
 cool-sms:
   api-key: cool-sms.api-key
@@ -30,3 +30,9 @@ redis:
   key:
     prefix:
       auth-sms: "AuthSms: "
+cloud:
+  aws:
+    s3:
+      bucket: ${ BUCKET_NAME }
+    stack:
+      auto: false

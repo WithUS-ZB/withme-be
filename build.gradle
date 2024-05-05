@@ -57,6 +57,9 @@ dependencies {
 
 	// email 어노테이션
 	implementation'javax.validation:validation-api:2.0.1.Final'
+
+	// aws
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
