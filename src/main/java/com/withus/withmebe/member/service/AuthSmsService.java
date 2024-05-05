@@ -10,7 +10,6 @@ import com.withus.withmebe.member.dto.auth.AuthCodeAndSetPhoneNumberRequestDto;
 import com.withus.withmebe.member.dto.auth.SendAuthSmsRequestDto;
 import com.withus.withmebe.member.dto.auth.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.repository.MemberRepository;
-import com.withus.withmebe.security.util.MySecurityUtil;
 import java.security.SecureRandom;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +69,8 @@ public class AuthSmsService {
   }
 
   @Transactional
-  public Boolean authCodeAndSetPhoneNumber(AuthCodeAndSetPhoneNumberRequestDto request) {
+  public Boolean authCodeAndSetPhoneNumber(
+      AuthCodeAndSetPhoneNumberRequestDto request, Long currentMemberId) {
     String key = authSmsPrefix + request.phoneNumber();
     Object values = redisService.getValues(key);
     if(values == null){
@@ -79,7 +79,7 @@ public class AuthSmsService {
     if(!values.toString().equals(request.authenticationText())){
       throw new CustomException(AUTH_CODE_MISMATCH);
     }
-    memberRepository.findById(MySecurityUtil.getCurrentLoginMemberId())
+    memberRepository.findById(currentMemberId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND))
         .setPhoneNumber(request.phoneNumber());
     return redisService.deleteKey(key);

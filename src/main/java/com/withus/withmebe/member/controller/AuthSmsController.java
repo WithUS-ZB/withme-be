@@ -4,6 +4,7 @@ import com.withus.withmebe.member.dto.auth.AuthCodeAndSetPhoneNumberRequestDto;
 import com.withus.withmebe.member.dto.auth.SendAuthSmsRequestDto;
 import com.withus.withmebe.member.dto.auth.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.service.AuthSmsService;
+import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,8 @@ public class AuthSmsController {
   @PutMapping
   public ResponseEntity<Boolean> authCodeAndSetPhoneNumber(
     @Valid @RequestBody AuthCodeAndSetPhoneNumberRequestDto request
+      , @CurrentMemberId Long currentMemberId
   ){
-    return ResponseEntity.ok(authSmsService.authCodeAndSetPhoneNumber(request));
+    return ResponseEntity.ok(authSmsService.authCodeAndSetPhoneNumber(request, currentMemberId));
   }
 }

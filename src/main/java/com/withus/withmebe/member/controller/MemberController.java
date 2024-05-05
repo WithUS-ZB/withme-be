@@ -5,6 +5,7 @@ import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
 import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.service.MemberService;
+import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,9 @@ public class MemberController {
   }
 
   @GetMapping("/detail")
-  public ResponseEntity<MemberDetailDto> getCurrentLoginMemberDetail() {
-    return ResponseEntity.ok(memberService.readCurretLoginMemberDetail());
+  public ResponseEntity<MemberDetailDto> getCurrentLoginMemberDetail(
+      @CurrentMemberId Long currentMemberId) {
+    return ResponseEntity.ok(memberService.readCurretLoginMemberDetail(currentMemberId));
   }
 
   @GetMapping("/check/email")
@@ -45,13 +47,15 @@ public class MemberController {
 
   @PutMapping("/profile_img")
   public ResponseEntity<UpdateMemberProfileImgDto.Response> setProfileImg(
-      @Valid @RequestBody UpdateMemberProfileImgDto.Request request) {
-    return ResponseEntity.ok(memberService.updateProfileImg(request));
+      @Valid @RequestBody UpdateMemberProfileImgDto.Request request
+      , @CurrentMemberId Long currentMemberId) {
+    return ResponseEntity.ok(memberService.updateProfileImg(request, currentMemberId));
   }
 
   @PutMapping("/nickname")
   public ResponseEntity<UpdateMemberNickNameDto.Response> setNickname(
-      @Valid @RequestBody UpdateMemberNickNameDto.Request request) {
-    return ResponseEntity.ok(memberService.updateNickname(request));
+      @Valid @RequestBody UpdateMemberNickNameDto.Request request
+      , @CurrentMemberId Long currentMemberId) {
+    return ResponseEntity.ok(memberService.updateNickname(request, currentMemberId));
   }
 }
