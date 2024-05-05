@@ -1,5 +1,8 @@
 package com.withus.withmebe.gathering.service;
 
+import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
+
+import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
@@ -17,9 +20,7 @@ public class GatheringService {
     private final MemberRepository memberRepository;
 
     public Gathering createGathering(long memberId, AddGatheringRequest addGatheringRequest) {
-        System.out.println(ExceptionCode.ENTITY_NOT_FOUND);
-        memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException(ExceptionCode.ENTITY_NOT_FOUND.getMessage()));
+        getRequesterMember(memberId);
         return gatheringRepository.save(addGatheringRequest.toEntity(memberId));
     }
 
@@ -28,11 +29,37 @@ public class GatheringService {
     }
 
     public Gathering updateGathering(long memberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
-        Gathering gathering = gatheringRepository.findById(gatheringId)
-                .orElseThrow(() -> new IllegalArgumentException(ExceptionCode.ENTITY_NOT_FOUND.getMessage()));
+        Gathering gathering = getGathering(memberId, gatheringId);
+        updateGatheringFields(addGatheringRequest, gathering);
+        return gatheringRepository.save(gathering);
+    }
+
+    public Gathering readGathering(Long gatheringId) {
+        return getRequesterGathering(gatheringId);
+    }
+
+    public void deleteGathering(long memberId, long gatheringId) {
+        getGathering(memberId, gatheringId);
+        gatheringRepository.deleteById(gatheringId);
+    }
+
+    private Gathering getGathering(long memberId, long gatheringId) {
+        Gathering gathering = getRequesterGathering(gatheringId);
         if (memberId != gathering.getMemberId()) {
-            throw new IllegalArgumentException(ExceptionCode.AUTHORIZATION_ISSUE.getMessage());
+            throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
         }
+        return gathering;
+    }
+
+    private Gathering getRequesterGathering(long gatheringId) {
+        return gatheringRepository.findById(gatheringId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+    }
+
+    private void getRequesterMember(long memberId) {
+        memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+    }
+
+    private void updateGatheringFields(AddGatheringRequest addGatheringRequest, Gathering gathering) {
         gathering.setTitle(addGatheringRequest.getTitle());
         gathering.setContent(addGatheringRequest.getContent());
         gathering.setGatheringType(addGatheringRequest.getGatheringType());
@@ -48,25 +75,5 @@ public class GatheringService {
         gathering.setCategory(addGatheringRequest.getCategory());
         gathering.setFee(addGatheringRequest.getFee());
         gathering.setParticipantSelectionMethod(addGatheringRequest.getParticipantSelectionMethod());
-        return gatheringRepository.save(gathering);
     }
-
-//    private Member readEditableGathering(long memberId) {
-//        Member member = readComment(memberId);
-//        System.out.println("여기");
-//        if (member.getId() != getRequesterId()) {
-//            throw new CustomException(AUTHORIZATION_ISSUE);
-//        }
-//        return member;
-//    }
-//
-//    private Member readComment(long memberId) {
-//        return memberRepository.findById(memberId)
-//                .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-//    }
-//
-//    private long getRequesterId() {
-//        String memberId = MySecurityUtil.getCustomUserDetails().getUsername();
-//        return Long.parseLong(memberId);
-//    }
 }
