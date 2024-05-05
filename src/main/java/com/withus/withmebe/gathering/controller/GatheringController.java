@@ -29,25 +29,24 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public List<Gathering> getGatheringList() {
-        return gatheringService.readGatheringList();
+    public ResponseEntity<List<Gathering>> getGatheringList() {
+        return ResponseEntity.ok(gatheringService.readGatheringList());
     }
 
     @PutMapping("/{memberId}/{gatheringId}")
-    public Gathering setGathering(@PathVariable long memberId, @PathVariable long gatheringId,
-                                  @RequestBody AddGatheringRequest addGatheringRequest) {
-        return gatheringService.updateGathering(memberId, gatheringId, addGatheringRequest);
+    public ResponseEntity<Gathering> setGathering(@PathVariable long memberId, @PathVariable long gatheringId,
+                                                  @RequestBody AddGatheringRequest addGatheringRequest) {
+        return ResponseEntity.ok(gatheringService.updateGathering(memberId, gatheringId, addGatheringRequest));
     }
 
     @GetMapping("/{gatheringId}")
-    public ResponseEntity<?> getGathering(@PathVariable long gatheringId) {
-
-        return null;
+    public ResponseEntity<Gathering> getGathering(@PathVariable long gatheringId) {
+        return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
     }
 
-    @DeleteMapping("/cancel/{gatheringId}")
-    public ResponseEntity<?> removeGathering(@PathVariable long gatheringId) {
-
-        return null;
+    @DeleteMapping("/cancel/{memberId}/{gatheringId}")
+    public ResponseEntity<String> removeGathering(@PathVariable long memberId, @PathVariable long gatheringId) {
+        gatheringService.deleteGathering(memberId, gatheringId);
+        return ResponseEntity.ok("200");
     }
 }
