@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class AddGatheringRequest {
-    private String memberId;
-
     @NotNull
     private String title;
 
@@ -62,9 +60,8 @@ public class AddGatheringRequest {
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
 
-    public Gathering toEntity(long memberId) {
+    public Gathering toEntity() {
         return Gathering.builder()
-                .memberId(memberId)
                 .title(this.title)
                 .content(this.content)
                 .gatheringType(this.gatheringType)
