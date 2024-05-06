@@ -1,4 +1,4 @@
-package com.withus.withmebe.member.dto;
+package com.withus.withmebe.member.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,9 +1,9 @@
 package com.withus.withmebe.member.controller;
 
-import com.withus.withmebe.member.dto.MemberDetailDto;
-import com.withus.withmebe.member.dto.MemberInfoDto;
-import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
-import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
+import com.withus.withmebe.member.dto.member.MemberDetailDto;
+import com.withus.withmebe.member.dto.member.MemberInfoDto;
+import com.withus.withmebe.member.dto.member.UpdateMemberNickNameDto;
+import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.service.MemberService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;

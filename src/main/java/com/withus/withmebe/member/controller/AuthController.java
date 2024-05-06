@@ -1,7 +1,7 @@
 package com.withus.withmebe.member.controller;
 
-import com.withus.withmebe.member.dto.SigninDto;
-import com.withus.withmebe.member.dto.SignupDto;
+import com.withus.withmebe.member.dto.auth.SigninDto;
+import com.withus.withmebe.member.dto.auth.SignupDto;
 import com.withus.withmebe.member.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
