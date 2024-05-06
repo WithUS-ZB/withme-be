@@ -2,6 +2,7 @@ package com.withus.withmebe.search.document;
 
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
+import com.withus.withmebe.gathering.Type.Status;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
@@ -40,7 +41,9 @@ public record GatheringSearch(
     @Field(type = FieldType.Date)
     LocalDateTime createdDttm,
     @Field(type = FieldType.Date)
-    LocalDateTime deletedDttm
+    LocalDateTime deletedDttm,
+    @Field(type = FieldType.Keyword)
+    Status status
 ) {
 
 }
