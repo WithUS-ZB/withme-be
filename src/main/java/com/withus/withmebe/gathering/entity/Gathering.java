@@ -9,23 +9,31 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Where(clause = "deletedDttm is null")
+@SQLDelete(sql = "UPDATE gathering SET deletedDttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
+@EntityListeners(value = AuditingEntityListener.class)
 public class Gathering extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gathering_id")
     private Long id;
 
