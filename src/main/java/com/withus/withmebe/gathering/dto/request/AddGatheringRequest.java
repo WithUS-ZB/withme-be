@@ -4,66 +4,64 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
 @Getter
-@NoArgsConstructor (force = true)
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @ToString
 public class AddGatheringRequest {
     private String memberId;
 
-    @Column(nullable = false)
+    @NotNull
     private String title;
 
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull
     private GatheringType gatheringType;
 
     private Long maximumParticipant;
 
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime startDttm;
 
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime endDttm;
 
-    @Column(nullable = false)
+    @NotNull
+    private String category;
+
+    @NotNull
     private LocalDateTime applicationDeadLine;
 
-    @Column(nullable = false)
+    @NotNull
     private String address;
 
-    @Column(nullable = false)
+    @NotNull
     private String detailedAddress;
 
     private String location;
 
-    @Column(nullable = false)
+    @NotNull
     private String mainImg;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull
     private ParticipantsType participantsType;
 
-    @Column(nullable = false)
+    @NotNull
     private Long fee;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
 
-    @Builder
     public Gathering toEntity(long memberId) {
         return Gathering.builder()
                 .memberId(memberId)
@@ -73,6 +71,7 @@ public class AddGatheringRequest {
                 .maximumParticipant(this.maximumParticipant)
                 .startDttm(this.startDttm)
                 .endDttm(this.endDttm)
+                .category(this.category)
                 .applicationDeadLine(this.applicationDeadLine)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)

@@ -3,6 +3,7 @@ package com.withus.withmebe.gathering.controller;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.service.GatheringService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,26 +29,24 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getGatheringList() {
-        System.out.println("호출 테스트");
-        return null;
+    public ResponseEntity<List<Gathering>> getGatheringList() {
+        return ResponseEntity.ok(gatheringService.readGatheringList());
     }
 
-    @PutMapping("/{gatheringId}")
-    public ResponseEntity<?> setGathering(@PathVariable long gatheringId) {
-
-        return null;
+    @PutMapping("/{memberId}/{gatheringId}")
+    public ResponseEntity<Gathering> setGathering(@PathVariable long memberId, @PathVariable long gatheringId,
+                                                  @RequestBody AddGatheringRequest addGatheringRequest) {
+        return ResponseEntity.ok(gatheringService.updateGathering(memberId, gatheringId, addGatheringRequest));
     }
 
     @GetMapping("/{gatheringId}")
-    public ResponseEntity<?> getGathering(@PathVariable long gatheringId) {
-
-        return null;
+    public ResponseEntity<Gathering> getGathering(@PathVariable long gatheringId) {
+        return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
     }
 
-    @DeleteMapping("/cancel/{gatheringId}")
-    public ResponseEntity<?> removeGathering(@PathVariable long gatheringId) {
-
-        return null;
+    @DeleteMapping("/cancel/{memberId}/{gatheringId}")
+    public ResponseEntity<String> removeGathering(@PathVariable long memberId, @PathVariable long gatheringId) {
+        gatheringService.deleteGathering(memberId, gatheringId);
+        return ResponseEntity.ok("200");
     }
 }
