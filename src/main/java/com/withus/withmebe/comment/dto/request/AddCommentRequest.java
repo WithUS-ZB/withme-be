@@ -9,10 +9,10 @@ public record AddCommentRequest(
     String commentContent
 ) {
 
-  public Comment toEntity(Long gatheringId, Member member) {
+  public Comment toEntity(Long gatheringId, Member requester) {
     return Comment.builder()
         .gatheringId(gatheringId)
-        .member(member)
+        .writer(requester)
         .commentContent(this.commentContent)
         .build();
   }

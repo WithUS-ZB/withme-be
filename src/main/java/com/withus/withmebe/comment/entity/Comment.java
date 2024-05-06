@@ -34,23 +34,23 @@ public class Comment extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "member_id", nullable = false)
-  private Member member;
+  private Member writer;
 
   @Setter
   @Column(nullable = false)
   private String commentContent;
 
   @Builder
-  public Comment(Long gatheringId, Member member, String commentContent) {
+  public Comment(Long gatheringId, Member writer, String commentContent) {
     this.gatheringId = gatheringId;
-    this.member = member;
+    this.writer = writer;
     this.commentContent = commentContent;
   }
 
   public CommentResponse toResponse() {
     return CommentResponse.builder()
         .id(this.id)
-        .nickName(this.member.getNickName())
+        .nickName(this.writer.getNickName())
         .commentContent(this.commentContent)
         .createdDttm(this.getCreatedDttm())
         .updatedDttm(this.getUpdatedDttm())

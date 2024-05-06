@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-  @EntityGraph(attributePaths = "member")
+  @EntityGraph(attributePaths = "writer")
   Page<Comment> findCommentsByGatheringId(long gatheringId, Pageable pageable);
 
 }

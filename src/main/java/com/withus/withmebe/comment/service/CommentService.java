@@ -73,7 +73,7 @@ public class CommentService {
   private Comment readEditableComment(long requesterId, long commentId) {
 
     Comment comment = readComment(commentId);
-    if (comment.getMember().getId() != requesterId) {
+    if (comment.getWriter().getId() != requesterId) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     return comment;
