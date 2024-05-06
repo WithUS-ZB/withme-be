@@ -5,7 +5,7 @@ import static com.withus.withmebe.common.exception.ExceptionCode.NICKNAME_CONFLI
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.member.dto.MemberDetailDto;
-import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
+import com.withus.withmebe.member.dto.MemberInfoDto;
 import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.entity.Member;
@@ -20,8 +20,8 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
   @Transactional(readOnly = true)
-  public MemberSimpleDetailDto read(Long memberId) {
-    return MemberSimpleDetailDto.fromEntity(
+  public MemberInfoDto read(Long memberId) {
+    return MemberInfoDto.fromEntity(
         getMemberById(memberId)
     );
   }

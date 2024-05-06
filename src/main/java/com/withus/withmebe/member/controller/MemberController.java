@@ -1,7 +1,7 @@
 package com.withus.withmebe.member.controller;
 
 import com.withus.withmebe.member.dto.MemberDetailDto;
-import com.withus.withmebe.member.dto.MemberSimpleDetailDto;
+import com.withus.withmebe.member.dto.MemberInfoDto;
 import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.service.MemberService;
@@ -24,8 +24,8 @@ public class MemberController {
 
   private final MemberService memberService;
 
-  @GetMapping("/simple_detail/{userId}")
-  public ResponseEntity<MemberSimpleDetailDto> get(@PathVariable Long userId) {
+  @GetMapping("/info/{userId}")
+  public ResponseEntity<MemberInfoDto> get(@PathVariable Long userId) {
     return ResponseEntity.ok(memberService.read(userId));
   }
 
