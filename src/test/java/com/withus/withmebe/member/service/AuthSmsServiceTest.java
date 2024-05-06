@@ -130,7 +130,7 @@ class AuthSmsServiceTest {
   }
 
   @Test
-  @DisplayName("휴대폰 인증번호 확인 후 저장 - 성공")
+  @DisplayName("휴대폰 인증번호 확인 후 저장 - 실패: (Member)개체를 찾지 못했습니다.")
   void authCodeAndSetPhoneNumber_EntityNotFound() {
     // Given
     String phoneNumber = "010-1234-5678";
