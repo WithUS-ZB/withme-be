@@ -1,5 +1,6 @@
 package com.withus.withmebe.search.service;
 
+import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.search.document.GatheringSearch;
 import com.withus.withmebe.search.repository.GatheringSearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class GatheringSearchService {
   private final GatheringSearchRepository gatheringSearchRepository;
 
   public Page<GatheringSearch> readGatheringSearches(String query, Pageable pageable) {
-    return gatheringSearchRepository.findGatheringSearchesByTitle(query, pageable);
+    return gatheringSearchRepository.findGatheringSearchesByTitleAndStatusAndDeletedDttmIsNotNull(
+        query, Status.PROGRESS, pageable);
   }
 }
