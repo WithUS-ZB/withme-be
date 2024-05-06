@@ -3,6 +3,7 @@ package com.withus.withmebe.gathering.controller;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.service.GatheringService;
+import com.withus.withmebe.security.anotation.CurrentMemberId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,10 @@ public class GatheringController {
 
     private final GatheringService gatheringService;
 
-    @PostMapping("/{memberId}")
-    public ResponseEntity<Gathering> addGathering(@PathVariable long memberId,
+    @PostMapping()
+    public ResponseEntity<Gathering> addGathering(@CurrentMemberId long currentMemberId,
                                                   @RequestBody AddGatheringRequest addGatheringRequest) {
-        return ResponseEntity.ok(gatheringService.createGathering(memberId, addGatheringRequest));
+        return ResponseEntity.ok(gatheringService.createGathering(currentMemberId, addGatheringRequest));
     }
 
     @GetMapping("/list")
@@ -35,10 +36,10 @@ public class GatheringController {
         return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
     }
 
-    @PutMapping("/{memberId}/{gatheringId}")
-    public ResponseEntity<Gathering> setGathering(@PathVariable long memberId, @PathVariable long gatheringId,
+    @PutMapping("/{gatheringId}")
+    public ResponseEntity<Gathering> setGathering(@CurrentMemberId long currentMemberId, @PathVariable long gatheringId,
                                                   @RequestBody AddGatheringRequest addGatheringRequest) {
-        return ResponseEntity.ok(gatheringService.updateGathering(memberId, gatheringId, addGatheringRequest));
+        return ResponseEntity.ok(gatheringService.updateGathering(currentMemberId, gatheringId, addGatheringRequest));
     }
 
     @GetMapping("/{gatheringId}")
@@ -46,9 +47,9 @@ public class GatheringController {
         return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
     }
 
-    @DeleteMapping("/{memberId}/{gatheringId}")
-    public ResponseEntity<String> removeGathering(@PathVariable long memberId, @PathVariable long gatheringId) {
-        gatheringService.deleteGathering(memberId, gatheringId);
+    @DeleteMapping("/{gatheringId}")
+    public ResponseEntity<String> removeGathering(@CurrentMemberId long currentMemberId, @PathVariable long gatheringId) {
+        gatheringService.deleteGathering(currentMemberId, gatheringId);
         return ResponseEntity.ok("200");
     }
 }
