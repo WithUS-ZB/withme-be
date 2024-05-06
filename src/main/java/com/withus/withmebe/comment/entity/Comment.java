@@ -5,6 +5,7 @@ import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +33,7 @@ public class Comment extends BaseEntity {
   @Column(nullable = false)
   private Long gatheringId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
   private Member writer;
 
@@ -57,7 +58,7 @@ public class Comment extends BaseEntity {
         .build();
   }
 
-  public boolean isWriter(long requesterId) {
-    return this.writer.getId() == requesterId;
+  public boolean isWriter(long memberId) {
+    return this.writer.getId() == memberId;
   }
 }
