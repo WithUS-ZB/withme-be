@@ -56,4 +56,8 @@ public class Comment extends BaseEntity {
         .updatedDttm(this.getUpdatedDttm())
         .build();
   }
+
+  public boolean isWriter(long requesterId) {
+    return this.writer.getId() == requesterId;
+  }
 }
