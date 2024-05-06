@@ -66,7 +66,6 @@ class GatheringServiceTest {
 
         // Then
         assertNotNull(updatedGathering);
-        // Add more assertions for updated fields if necessary
     }
 
     @Test
