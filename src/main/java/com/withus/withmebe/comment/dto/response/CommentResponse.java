@@ -1,6 +1,5 @@
 package com.withus.withmebe.comment.dto.response;
 
-import com.withus.withmebe.comment.entity.Comment;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
@@ -10,18 +9,7 @@ public record CommentResponse(
     String nickName,
     String commentContent,
     LocalDateTime createdDttm,
-    LocalDateTime updatedDttm,
-    LocalDateTime deletedDttm
+    LocalDateTime updatedDttm
 ) {
 
-
-  public static CommentResponse fromEntity(Comment comment) {
-    return CommentResponse.builder()
-        .id(comment.getId())
-        .nickName(comment.getMember().getNickName())
-        .commentContent(comment.getCommentContent())
-        .createdDttm(comment.getCreatedDttm())
-        .updatedDttm(comment.getUpdatedDttm())
-        .build();
-  }
 }

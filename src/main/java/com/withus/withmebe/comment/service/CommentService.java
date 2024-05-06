@@ -9,9 +9,9 @@ import com.withus.withmebe.comment.entity.Comment;
 import com.withus.withmebe.comment.repository.CommentRepository;
 import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
-import com.withus.withmebe.security.util.MySecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,13 +25,16 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
   private final MemberRepository memberRepository;
+  private final GatheringRepository gatheringRepository;
 
   @Transactional
-  public CommentResponse createComment(long gatheringId, AddCommentRequest request) {
+  public CommentResponse createComment(long requesterId, long gatheringId, AddCommentRequest request) {
 
-    Member requester = readRequester();
+    Member requester = readRequester(requesterId);
+    checkGatheringExist(gatheringId);
+
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
-    return CommentResponse.fromEntity(newComment);
+    return newComment.toResponse();
   }
 
   @Transactional(readOnly = true)
@@ -39,7 +42,7 @@ public class CommentService {
 
     Pageable adjustedPageable = adjustPageable(pageable);
     Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, adjustedPageable);
-    return comments.map(CommentResponse::fromEntity);
+    return comments.map(Comment::toResponse);
   }
 
   private Pageable adjustPageable(Pageable pageable) {
@@ -50,27 +53,27 @@ public class CommentService {
   }
 
   @Transactional
-  public CommentResponse updateComment(long commentId, SetCommentRequest request) {
+  public CommentResponse updateComment(long requesterId, long commentId, SetCommentRequest request) {
 
-    Comment comment = readEditableComment(commentId);
+    Comment comment = readEditableComment(requesterId, commentId);
 
     comment.setCommentContent(request.commentContent());
     Comment updatedComment = readComment(commentId);
-    return CommentResponse.fromEntity(updatedComment);
+    return updatedComment.toResponse();
   }
 
-  @Transactional
-  public CommentResponse deleteComment(long commentId) {
+  public CommentResponse deleteComment(long requesterId, long commentId) {
 
-    Comment comment = readEditableComment(commentId);
+    Comment comment = readEditableComment(requesterId, commentId);
+
     commentRepository.delete(comment);
-    return CommentResponse.fromEntity(comment);
+    return comment.toResponse();
   }
 
-  private Comment readEditableComment(long commentId) {
-    Comment comment = readComment(commentId);
+  private Comment readEditableComment(long requesterId, long commentId) {
 
-    if (comment.getMember().getId() != getRequesterId()) {
+    Comment comment = readComment(commentId);
+    if (!comment.isWriter(requesterId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     return comment;
@@ -81,13 +84,14 @@ public class CommentService {
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 
-  private Member readRequester() {
-    return memberRepository.findById(getRequesterId())
+  private Member readRequester(long requesterId) {
+    return memberRepository.findById(requesterId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 
-  private long getRequesterId() {
-    String memberId = MySecurityUtil.getCustomUserDetails().getUsername();
-    return Long.parseLong(memberId);
+  private void checkGatheringExist(long gatheringId) {
+    if(!gatheringRepository.existsById(gatheringId)) {
+      throw new CustomException(ENTITY_NOT_FOUND);
+    }
   }
 }
