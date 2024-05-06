@@ -3,8 +3,10 @@ package com.withus.withmebe.gathering.controller;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.service.GatheringService;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +31,8 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Gathering>> getGatheringList() {
-        return ResponseEntity.ok(gatheringService.readGatheringList());
+    public ResponseEntity<Page<Gathering>> getGatheringList(@PageableDefault(size = 10, sort = "createdDttm") Pageable pageable) {
+        return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
     }
 
     @PutMapping("/{memberId}/{gatheringId}")
@@ -44,7 +46,7 @@ public class GatheringController {
         return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
     }
 
-    @DeleteMapping("/cancel/{memberId}/{gatheringId}")
+    @DeleteMapping("/{memberId}/{gatheringId}")
     public ResponseEntity<String> removeGathering(@PathVariable long memberId, @PathVariable long gatheringId) {
         gatheringService.deleteGathering(memberId, gatheringId);
         return ResponseEntity.ok("200");

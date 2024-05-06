@@ -8,8 +8,10 @@ import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.repository.MemberRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +26,9 @@ public class GatheringService {
         return gatheringRepository.save(addGatheringRequest.toEntity(memberId));
     }
 
-    public List<Gathering> readGatheringList() {
-        return gatheringRepository.findAll();
+    public Page<Gathering> readGatheringList(Pageable pageable) {
+        Pageable adjustedPageable = adjustPageable(pageable);
+        return gatheringRepository.findAll(adjustedPageable);
     }
 
     public Gathering updateGathering(long memberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
@@ -41,6 +44,13 @@ public class GatheringService {
     public void deleteGathering(long memberId, long gatheringId) {
         getGathering(memberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
+    }
+
+    private Pageable adjustPageable(Pageable pageable) {
+
+        int size = Math.max(pageable.getPageSize(), 1);
+        int page = Math.max(pageable.getPageNumber(), 0);
+        return PageRequest.of(page, size);
     }
 
     private Gathering getGathering(long memberId, long gatheringId) {
