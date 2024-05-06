@@ -17,6 +17,8 @@ spring:
     redis:
       host: host.docker.internal
       port: 6379
+  elasticsearch:
+    uri: ${ ELASTICSEARCH_URI }
 cloud:
   aws:
     s3:

@@ -1,5 +1,6 @@
 package com.withus.withmebe.search.document;
 
+import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
@@ -12,8 +13,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
 @Builder
-@Document(indexName = "idx-gathering")
-@Setting(settingPath = "/elasticsearch/settings.json")
+@Document(indexName = "gathering")
+@Setting(settingPath = "/settings.json")
 public record GatheringSearch(
 
     @Id
@@ -23,6 +24,8 @@ public record GatheringSearch(
     String nickName,
     String title,
 
+    @Field(type = FieldType.Keyword)
+    GatheringType gatheringType,
     Long maximumParticipant,
     LocalDateTime startDttm,
     LocalDateTime endDttm,
