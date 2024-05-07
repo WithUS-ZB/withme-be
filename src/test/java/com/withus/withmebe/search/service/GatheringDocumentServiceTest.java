@@ -29,7 +29,7 @@ class GatheringDocumentServiceTest {
   private GatheringDocumentService gatheringDocumentService;
 
   @Test
-  void successToSearchGatheringDocumentsByTitle() {
+  void successToSearchGatheringDocumentsByTitleAndStatus() {
     //given
     Pageable pageable = PageRequest.of(0, 10);
     GatheringDocument gatheringDocument1 = getStubbedGatheringDocument(1L);
