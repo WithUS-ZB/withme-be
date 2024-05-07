@@ -15,7 +15,7 @@ public class GatheringDocumentService {
 
   private final GatheringDocumentRepository gatheringDocumentRepository;
 
-  public Page<GatheringDocument> readGatheringSearches(String query,
+  public Page<GatheringDocument> searchGatheringDocumentsByTitleAndStatus(String query,
       String status, Pageable pageable) {
     return gatheringDocumentRepository.searchByTitleAndStatusEqualsAndDeletedDttmIsNull(query,
         status, pageable);

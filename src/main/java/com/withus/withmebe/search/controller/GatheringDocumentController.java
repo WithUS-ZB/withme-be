@@ -20,11 +20,11 @@ public class GatheringDocumentController {
   private final GatheringDocumentService gatheringDocumentService;
 
   @GetMapping("/title")
-  public ResponseEntity<Page<GatheringDocument>> getGatheringSearches(
+  public ResponseEntity<Page<GatheringDocument>> searchGatheringDocumentsByTitle(
       @RequestParam(value = "query") String query,
       @RequestParam(value = "status", defaultValue = "PROGRESS", required = false) String status
       , @PageableDefault Pageable pageable) {
     return ResponseEntity.ok(
-        gatheringDocumentService.readGatheringSearches(query, status, pageable));
+        gatheringDocumentService.searchGatheringDocumentsByTitleAndStatus(query, status, pageable));
   }
 }
