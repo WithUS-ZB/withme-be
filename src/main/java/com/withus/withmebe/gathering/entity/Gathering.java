@@ -9,21 +9,31 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
+@Where(clause = "deletedDttm is null")
+@SQLDelete(sql = "UPDATE gathering SET deletedDttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
+@EntityListeners(value = AuditingEntityListener.class)
 public class Gathering extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gathering_id")
     private Long id;
 
@@ -46,6 +56,9 @@ public class Gathering extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime endDttm;
+
+    @Column(nullable = false)
+    private String category;
 
     @Column(nullable = false)
     private LocalDateTime applicationDeadLine;
@@ -76,11 +89,11 @@ public class Gathering extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private final Status status = Status.PROGRESS;
+    private Status status = Status.PROGRESS;
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
-                     LocalDateTime startDttm, LocalDateTime endDttm, LocalDateTime applicationDeadLine, String address,
+                     LocalDateTime startDttm, LocalDateTime endDttm, String category, LocalDateTime applicationDeadLine, String address,
                      String detailedAddress, String location, String mainImg, ParticipantsType participantsType,
                      Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
@@ -91,6 +104,7 @@ public class Gathering extends BaseEntity {
         this.maximumParticipant = maximumParticipant;
         this.startDttm = startDttm;
         this.endDttm = endDttm;
+        this.category = category;
         this.applicationDeadLine = applicationDeadLine;
         this.address = address;
         this.detailedAddress = detailedAddress;
