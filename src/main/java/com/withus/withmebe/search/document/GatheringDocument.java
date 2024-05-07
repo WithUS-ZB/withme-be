@@ -1,9 +1,6 @@
 package com.withus.withmebe.search.document;
 
-import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
-import com.withus.withmebe.gathering.Type.ParticipantsType;
-import com.withus.withmebe.gathering.Type.Status;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
@@ -15,38 +12,41 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @Builder
 @Document(indexName = "gathering")
 @Setting(settingPath = "/settings.json")
-public record GatheringSearch(
-
+public record GatheringDocument(
     @Id
     @Field(name = "gathering_id")
     Long id,
-
+    @Field(name = "nickname")
     String nickName,
+    @Field(type = FieldType.Text, analyzer = "korean")
     String title,
-
-    @Field(type = FieldType.Keyword)
-    GatheringType gatheringType,
+    @Field(name = "gatheringtype")
+    String gatheringType,
+    @Field(name = "maximumparticipant")
     Long maximumParticipant,
+    @Field(name = "startdttm")
     LocalDateTime startDttm,
+    @Field(name = "enddttm")
     LocalDateTime endDttm,
+    @Field(name = "applicationdeadline")
     LocalDateTime applicationDeadLine,
-
     String address,
+    @Field(name = "detailedaddress")
     String detailedAddress,
+    @Field(name = "mainimg")
     String mainImg,
-
-    @Field(type = FieldType.Keyword)
-    ParticipantsType participantsType,
+    @Field(name = "participantstype")
+    String participantsType,
     Long fee,
-    ParticipantSelectionMethod participantSelectionMethod,
+    @Field(name = "participantselectionmethod")
+    String participantSelectionMethod,
+    @Field(name = "likecount")
     Long likeCount,
-
-    @Field(type = FieldType.Date)
+    @Field(name = "createddttm")
     LocalDateTime createdDttm,
-    @Field(type = FieldType.Date)
+    @Field(name = "deleteddttm")
     LocalDateTime deletedDttm,
-    @Field(type = FieldType.Keyword)
-    Status status
+    String status
 ) {
 
 }
