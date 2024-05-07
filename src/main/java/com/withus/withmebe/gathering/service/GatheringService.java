@@ -9,7 +9,6 @@ import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.repository.MemberRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +23,7 @@ public class GatheringService {
     private final MemberRepository memberRepository;
 
     public Gathering createGathering(long currentMemberId, AddGatheringRequest addGatheringRequest) {
-        getRequesterMember(currentMemberId);
+        findByMemberId(currentMemberId);
         return gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
     }
 
@@ -41,7 +40,7 @@ public class GatheringService {
     }
 
     public Gathering readGathering(Long gatheringId) {
-        return getRequesterGathering(gatheringId);
+        return findByGatheringId(gatheringId);
     }
 
     public void deleteGathering(long currentMemberId, long gatheringId) {
@@ -56,18 +55,18 @@ public class GatheringService {
     }
 
     private Gathering getGathering(long memberId, long gatheringId) {
-        Gathering gathering = getRequesterGathering(gatheringId);
+        Gathering gathering = findByGatheringId(gatheringId);
         if (memberId != gathering.getMemberId()) {
             throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
         }
         return gathering;
     }
 
-    private Gathering getRequesterGathering(long gatheringId) {
+    private Gathering findByGatheringId(long gatheringId) {
         return gatheringRepository.findById(gatheringId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 
-    private void getRequesterMember(long memberId) {
+    private void findByMemberId(long memberId) {
         memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 
