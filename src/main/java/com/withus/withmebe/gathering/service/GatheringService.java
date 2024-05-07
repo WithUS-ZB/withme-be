@@ -21,9 +21,9 @@ public class GatheringService {
     private final GatheringRepository gatheringRepository;
     private final MemberRepository memberRepository;
 
-    public Gathering createGathering(long memberId, AddGatheringRequest addGatheringRequest) {
-        getRequesterMember(memberId);
-        return gatheringRepository.save(addGatheringRequest.toEntity(memberId));
+    public Gathering createGathering(long currentMemberId, AddGatheringRequest addGatheringRequest) {
+        getRequesterMember(currentMemberId);
+        return gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
     }
 
     public Page<Gathering> readGatheringList(Pageable pageable) {
@@ -31,8 +31,8 @@ public class GatheringService {
         return gatheringRepository.findAll(adjustedPageable);
     }
 
-    public Gathering updateGathering(long memberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
-        Gathering gathering = getGathering(memberId, gatheringId);
+    public Gathering updateGathering(long currentMemberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
+        Gathering gathering = getGathering(currentMemberId, gatheringId);
         updateGatheringFields(addGatheringRequest, gathering);
         return gatheringRepository.save(gathering);
     }
@@ -41,8 +41,8 @@ public class GatheringService {
         return getRequesterGathering(gatheringId);
     }
 
-    public void deleteGathering(long memberId, long gatheringId) {
-        getGathering(memberId, gatheringId);
+    public void deleteGathering(long currentMemberId, long gatheringId) {
+        getGathering(currentMemberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
     }
 
