@@ -1,6 +1,5 @@
 package com.withus.withmebe.search.document;
 
-import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
