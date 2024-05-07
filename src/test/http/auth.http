@@ -18,3 +18,22 @@ Content-Type: application/json
   "email": "example@example.com",
   "password": "password123"
 }
+
+### 휴대폰 인증번호 메시지 전송
+POST http://localhost:8080/api/auth/sms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0OTM3NzA0LCJleHAiOjE3MTQ5NDEzMDR9.JzFb8djVLRmNMzfZSMDPe9191I312_1QNgavWjuNe44
+
+{
+  "receiverPhoneNumber": "010-7777-7777"
+}
+
+### 휴대폰 인증번호 확인 후 저장
+PUT http://localhost:8080/api/auth/sms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0OTMyMDQzLCJleHAiOjE3MTQ5MzU2NDN9.nByPMfRw5_gyJ5x12q6lOr4ilKcewQEtZ9a5-nvB6zA
+
+{
+  "phoneNumber": "010-7777-7777",
+  "authenticationText": "4G2G67"
+}

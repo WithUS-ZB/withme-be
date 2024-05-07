@@ -112,14 +112,14 @@ class CommentServiceTest {
 
     CommentResponse commentResponse1 = commentResponses.getContent().get(0);
     assertEquals(comment1.getId(), commentResponse1.id());
-    assertEquals(comment1.getMember().getNickName(), commentResponse1.nickName());
+    assertEquals(comment1.getWriter().getNickName(), commentResponse1.nickName());
     assertEquals(comment1.getCommentContent(), commentResponse1.commentContent());
     assertEquals(comment1.getCreatedDttm(), commentResponse1.createdDttm());
     assertEquals(comment1.getUpdatedDttm(), commentResponse1.updatedDttm());
 
     CommentResponse commentResponse2 = commentResponses.getContent().get(1);
     assertEquals(comment2.getId(), commentResponse2.id());
-    assertEquals(comment2.getMember().getNickName(), commentResponse2.nickName());
+    assertEquals(comment2.getWriter().getNickName(), commentResponse2.nickName());
     assertEquals(comment2.getCommentContent(), commentResponse2.commentContent());
     assertEquals(comment2.getCreatedDttm(), commentResponse2.createdDttm());
     assertEquals(comment2.getUpdatedDttm(), commentResponse2.updatedDttm());
@@ -244,10 +244,10 @@ class CommentServiceTest {
     return member;
   }
 
-  private Comment getStubbedNewComment(long commentId, long gatheringId, Member member,
+  private Comment getStubbedNewComment(long commentId, long gatheringId, Member requester,
       AddCommentRequest request) {
     Comment comment = Comment.builder()
-        .member(member)
+        .writer(requester)
         .commentContent(request.commentContent())
         .gatheringId(gatheringId)
         .build();
@@ -259,7 +259,7 @@ class CommentServiceTest {
 
   private Comment getStubbedComment(long commentId, long gatheringId, Member member) {
     Comment comment = Comment.builder()
-        .member(member)
+        .writer(member)
         .commentContent("댓글" + commentId)
         .gatheringId(gatheringId)
         .build();
