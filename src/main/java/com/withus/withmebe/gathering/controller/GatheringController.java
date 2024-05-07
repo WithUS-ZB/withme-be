@@ -1,6 +1,7 @@
 package com.withus.withmebe.gathering.controller;
 
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
+import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.service.GatheringService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
@@ -33,7 +34,7 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<Gathering>> getGatheringList(
+    public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
             @PageableDefault(size = 10, sort = "createdDttm") Pageable pageable) {
         return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
     }

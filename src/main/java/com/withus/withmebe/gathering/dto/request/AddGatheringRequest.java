@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class AddGatheringRequest {
-    private String memberId;
+    private Long memberId;
 
     @NotNull
     private String title;
