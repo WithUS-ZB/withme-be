@@ -17,9 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
-public class GetGatheringResponse {
-    private Long memberId;
-
+public class DeleteGatheringResponse {
     @NotBlank
     private String title;
 
@@ -64,9 +62,8 @@ public class GetGatheringResponse {
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
 
-    public static GetGatheringResponse toResponse(Gathering gathering) {
+    public static DeleteGatheringResponse toResponse(Gathering gathering) {
         return builder()
-                .memberId(gathering.getMemberId())
                 .title(gathering.getTitle())
                 .content(gathering.getContent())
                 .gatheringType(gathering.getGatheringType())

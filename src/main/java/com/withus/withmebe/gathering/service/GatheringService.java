@@ -5,7 +5,11 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
+import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
+import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
+import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
+import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.repository.MemberRepository;
@@ -14,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,30 +27,34 @@ public class GatheringService {
     private final GatheringRepository gatheringRepository;
     private final MemberRepository memberRepository;
 
-    public Gathering createGathering(long currentMemberId, AddGatheringRequest addGatheringRequest) {
+    @Transactional
+    public AddGatheringResponse createGathering(long currentMemberId, AddGatheringRequest addGatheringRequest) {
         findByMemberId(currentMemberId);
-        return gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
+        Gathering gathering = gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
+        return AddGatheringResponse.toResponse(gathering);
     }
 
     public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
         Pageable adjustedPageable = adjustPageable(pageable);
         Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
-        return gatherings.map(GetGatheringResponse::toEntity);
+        return gatherings.map(GetGatheringResponse::toResponse);
     }
 
-    public Gathering updateGathering(long currentMemberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
+    @Transactional
+    public SetGatheringResponse updateGathering(long currentMemberId, long gatheringId, SetGatheringRequest setGatheringRequest) {
         Gathering gathering = getGathering(currentMemberId, gatheringId);
-        updateGatheringFields(addGatheringRequest, gathering);
-        return gatheringRepository.save(gathering);
+        gathering.updateGatheringFields(setGatheringRequest);
+        return SetGatheringResponse.toResponse(gathering);
     }
 
-    public Gathering readGathering(Long gatheringId) {
-        return findByGatheringId(gatheringId);
+    public GetGatheringResponse readGathering(Long gatheringId) {
+        return GetGatheringResponse.toResponse(findByGatheringId(gatheringId));
     }
 
-    public void deleteGathering(long currentMemberId, long gatheringId) {
-        getGathering(currentMemberId, gatheringId);
+    public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
+        Gathering gathering = getGathering(currentMemberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
+        return DeleteGatheringResponse.toResponse(gathering);
     }
 
     private Pageable adjustPageable(Pageable pageable) {
@@ -68,23 +77,5 @@ public class GatheringService {
 
     private void findByMemberId(long memberId) {
         memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-    }
-
-    private void updateGatheringFields(AddGatheringRequest addGatheringRequest, Gathering gathering) {
-        gathering.setTitle(addGatheringRequest.getTitle());
-        gathering.setContent(addGatheringRequest.getContent());
-        gathering.setGatheringType(addGatheringRequest.getGatheringType());
-        gathering.setMaximumParticipant(addGatheringRequest.getMaximumParticipant());
-        gathering.setStartDttm(addGatheringRequest.getStartDttm());
-        gathering.setEndDttm(addGatheringRequest.getEndDttm());
-        gathering.setApplicationDeadLine(addGatheringRequest.getApplicationDeadLine());
-        gathering.setAddress(addGatheringRequest.getAddress());
-        gathering.setDetailedAddress(addGatheringRequest.getDetailedAddress());
-        gathering.setLocation(addGatheringRequest.getLocation());
-        gathering.setMainImg(addGatheringRequest.getMainImg());
-        gathering.setParticipantsType(addGatheringRequest.getParticipantsType());
-        gathering.setCategory(addGatheringRequest.getCategory());
-        gathering.setFee(addGatheringRequest.getFee());
-        gathering.setParticipantSelectionMethod(addGatheringRequest.getParticipantSelectionMethod());
     }
 }

@@ -1,6 +1,5 @@
 package com.withus.withmebe.gathering.dto.response;
 
-
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
-public class GetGatheringResponse {
+public class AddGatheringResponse {
     private Long memberId;
 
     @NotBlank
@@ -64,7 +63,7 @@ public class GetGatheringResponse {
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
 
-    public static GetGatheringResponse toResponse(Gathering gathering) {
+    public static AddGatheringResponse toResponse(Gathering gathering) {
         return builder()
                 .memberId(gathering.getMemberId())
                 .title(gathering.getTitle())
@@ -76,7 +75,6 @@ public class GetGatheringResponse {
                 .category(gathering.getCategory())
                 .applicationDeadLine(gathering.getApplicationDeadLine())
                 .address(gathering.getAddress())
-                .detailedAddress(gathering.getDetailedAddress())
                 .location(gathering.getLocation())
                 .mainImg(gathering.getMainImg())
                 .participantsType(gathering.getParticipantsType())

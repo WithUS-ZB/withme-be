@@ -4,6 +4,7 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +21,10 @@ import java.time.LocalDateTime;
 public class AddGatheringRequest {
     private Long memberId;
 
-    @NotNull
+    @NotBlank
     private String title;
 
+    @NotBlank
     private String content;
 
     @NotNull
@@ -36,21 +38,22 @@ public class AddGatheringRequest {
     @NotNull
     private LocalDateTime endDttm;
 
-    @NotNull
+    @NotBlank
     private String category;
 
     @NotNull
     private LocalDateTime applicationDeadLine;
 
-    @NotNull
+    @NotBlank
     private String address;
 
-    @NotNull
+    @NotBlank
     private String detailedAddress;
 
+    @NotBlank
     private String location;
 
-    @NotNull
+    @NotBlank
     private String mainImg;
 
     @NotNull

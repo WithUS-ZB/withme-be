@@ -1,12 +1,11 @@
 package com.withus.withmebe.gathering.entity;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
+import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -93,9 +92,9 @@ public class Gathering extends BaseEntity {
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
-                     LocalDateTime startDttm, LocalDateTime endDttm, String category, LocalDateTime applicationDeadLine, String address,
-                     String detailedAddress, String location, String mainImg, ParticipantsType participantsType,
-                     Long fee,
+                     LocalDateTime startDttm, LocalDateTime endDttm, String category, LocalDateTime applicationDeadLine,
+                     String address, String detailedAddress, String location, String mainImg,
+                     ParticipantsType participantsType, Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
         this.memberId = memberId;
         this.title = title;
@@ -114,4 +113,23 @@ public class Gathering extends BaseEntity {
         this.fee = fee;
         this.participantSelectionMethod = participantSelectionMethod;
     }
+
+    public void updateGatheringFields(SetGatheringRequest setGatheringRequest) {
+        title = setGatheringRequest.getTitle();
+        content = setGatheringRequest.getContent();
+        gatheringType = setGatheringRequest.getGatheringType();
+        maximumParticipant = setGatheringRequest.getMaximumParticipant();
+        startDttm = setGatheringRequest.getStartDttm();
+        endDttm = setGatheringRequest.getEndDttm();
+        applicationDeadLine = setGatheringRequest.getApplicationDeadLine();
+        address = setGatheringRequest.getAddress();
+        detailedAddress = setGatheringRequest.getDetailedAddress();
+        location = setGatheringRequest.getLocation();
+        mainImg = setGatheringRequest.getMainImg();
+        participantsType = setGatheringRequest.getParticipantsType();
+        category = setGatheringRequest.getCategory();
+        fee = setGatheringRequest.getFee();
+        participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
+    }
+
 }
