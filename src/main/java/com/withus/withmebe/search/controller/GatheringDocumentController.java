@@ -1,7 +1,7 @@
 package com.withus.withmebe.search.controller;
 
-import com.withus.withmebe.search.document.GatheringSearch;
-import com.withus.withmebe.search.service.GatheringSearchService;
+import com.withus.withmebe.search.document.GatheringDocument;
+import com.withus.withmebe.search.service.GatheringDocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/search/gathering")
-public class GatheringSearchController {
+public class GatheringDocumentController {
 
-  private final GatheringSearchService gatheringSearchService;
+  private final GatheringDocumentService gatheringDocumentService;
 
   @GetMapping("/title")
-  public ResponseEntity<Page<GatheringSearch>> getGatheringSearches(@RequestParam(value = "query") String query,
-      @PageableDefault(size = 10) Pageable pageble) {
-    return ResponseEntity.ok(gatheringSearchService.readGatheringSearches(query, pageble));
+  public ResponseEntity<Page<GatheringDocument>> getGatheringSearches(@RequestParam(value = "query") String query,
+      @PageableDefault Pageable pageble) {
+    return ResponseEntity.ok(gatheringDocumentService.readGatheringSearches(query, pageble));
   }
 }
