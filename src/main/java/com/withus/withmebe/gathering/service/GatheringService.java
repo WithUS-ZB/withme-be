@@ -5,9 +5,11 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
+import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +28,10 @@ public class GatheringService {
         return gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
     }
 
-    public Page<Gathering> readGatheringList(Pageable pageable) {
+    public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
         Pageable adjustedPageable = adjustPageable(pageable);
-        return gatheringRepository.findAll(adjustedPageable);
+        Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
+        return gatherings.map(GetGatheringResponse::toEntity);
     }
 
     public Gathering updateGathering(long currentMemberId, long gatheringId, AddGatheringRequest addGatheringRequest) {
@@ -47,7 +50,6 @@ public class GatheringService {
     }
 
     private Pageable adjustPageable(Pageable pageable) {
-
         int size = Math.max(pageable.getPageSize(), 1);
         int page = Math.max(pageable.getPageNumber(), 0);
         return PageRequest.of(page, size);
