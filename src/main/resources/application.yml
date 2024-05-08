@@ -18,12 +18,14 @@ spring:
       host: host.docker.internal
       port: 6379
   rabbitmq:
-    host: ${ RABBIT_MQ_HOST }
-    port: ${ RABBIT_MQ_PORT }
-    username: withus
-    password: withuspassword
+    username: "withus"
+    password: "withuspassword"
+    stream:
+      host: ${RABBITMQ_HOST}
+      port: ${RABBITMQ_PORT}
   elasticsearch:
-    uri: ${ ELASTICSEARCH_URI }
+    uri: ${ELASTICSEARCH_URI}
+
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key
@@ -37,10 +39,10 @@ redis:
   key:
     prefix:
       auth-sms: "AuthSms: "
+
 cloud:
   aws:
     s3:
-      
-      bucket: ${ BUCKET_NAME }
+      bucket: ${BUCKET_NAME}
     stack:
       auto: false
