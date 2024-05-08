@@ -17,6 +17,11 @@ spring:
     redis:
       host: host.docker.internal
       port: 6379
+  rabbitmq:
+    host: ${ RABBIT_MQ_HOST }
+    port: ${ RABBIT_MQ_PORT }
+    username: withus
+    password: withuspassword
   elasticsearch:
     uri: ${ ELASTICSEARCH_URI }
 cool-sms:
@@ -35,6 +40,7 @@ redis:
 cloud:
   aws:
     s3:
+      
       bucket: ${ BUCKET_NAME }
     stack:
       auto: false

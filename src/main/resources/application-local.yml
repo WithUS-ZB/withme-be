@@ -17,6 +17,11 @@ spring:
     redis:
       host: localhost
       port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   elasticsearch:
     uri : localhost:9200
 cool-sms:
@@ -38,3 +43,4 @@ cloud:
       bucket: ${ BUCKET_NAME }
     stack:
       auto: false
+
