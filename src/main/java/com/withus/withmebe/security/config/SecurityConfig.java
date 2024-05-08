@@ -58,7 +58,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/signup"
                     , "/api/auth/signin"
                     , "/api/member/email"
-                    , "/api/comment/list/*").permitAll()
+                    , "/api/comment/list/*"
+                    , "/api/search/**").permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class)
 

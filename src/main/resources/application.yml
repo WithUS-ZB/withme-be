@@ -22,8 +22,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${ KAKAO_CLIENT_ID }
-            client-secret: ${ KAKAO_CLIENT_SECRET }
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: http://host.docker.internal:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -38,6 +38,15 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  rabbitmq:
+    username: "withus"
+    password: "withuspassword"
+    stream:
+      host: ${RABBITMQ_HOST}
+      port: ${RABBITMQ_PORT}
+  elasticsearch:
+    uri: ${ELASTICSEARCH_URI}
+
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key
@@ -51,9 +60,10 @@ redis:
   key:
     prefix:
       auth-sms: "AuthSms: "
+
 cloud:
   aws:
     s3:
-      bucket: ${ BUCKET_NAME }
+      bucket: ${BUCKET_NAME}
     stack:
       auto: false
