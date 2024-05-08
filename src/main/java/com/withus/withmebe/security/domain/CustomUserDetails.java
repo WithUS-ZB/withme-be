@@ -2,35 +2,42 @@ package com.withus.withmebe.security.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, OAuth2User {
 
-  private final transient UserDetailsDomain details;
+  private final transient UserDetailsDomain detailsDomain;
+
+  @Override
+  public Map<String, Object> getAttributes() {
+    return detailsDomain.attributes().getAttributes();
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     Collection<GrantedAuthority> list = new ArrayList<>();
-    list.add(new SimpleGrantedAuthority(details.role().name()));
+    list.add(new SimpleGrantedAuthority(detailsDomain.role().name()));
     return list;
   }
 
   public Long getMemberId() {
-    return details.id();
+    return detailsDomain.id();
   }
 
   @Override
   public String getPassword() {
-    return details.password();
+    return detailsDomain.password();
   }
 
   @Override
   public String getUsername() {
-    return details.id().toString();
+    return detailsDomain.id().toString();
   }
 
   @Override
@@ -53,4 +60,9 @@ public class CustomUserDetails implements UserDetails {
     return true;
   }
 
+
+  @Override
+  public String getName() {
+    return detailsDomain.id().toString();
+  }
 }
