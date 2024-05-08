@@ -17,6 +17,8 @@ spring:
     redis:
       host: host.docker.internal
       port: 6379
+  elasticsearch:
+    uri: ${ ELASTICSEARCH_URI }
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key

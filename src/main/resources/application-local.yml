@@ -17,6 +17,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+  elasticsearch:
+    uri : localhost:9200
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key
@@ -36,4 +38,3 @@ cloud:
       bucket: ${ BUCKET_NAME }
     stack:
       auto: false
-

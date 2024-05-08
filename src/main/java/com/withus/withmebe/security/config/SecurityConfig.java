@@ -32,7 +32,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http,
+      CorsConfigurationSource corsConfigurationSource) throws Exception {
     http
         .httpBasic(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
@@ -43,7 +44,8 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers("/api/auth/signup"
                     , "/api/auth/signin"
                     , "/api/member/email"
-                    , "/api/comment/list/*").permitAll()
+                    , "/api/comment/list/*"
+                    , "/api/search/**").permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -56,7 +58,7 @@ public class SecurityConfig {
 
     config.setAllowCredentials(true);
     config.setAllowedOriginPatterns(Arrays.asList("*"));
-    config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
+    config.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
     config.setAllowedHeaders(Arrays.asList("*"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
