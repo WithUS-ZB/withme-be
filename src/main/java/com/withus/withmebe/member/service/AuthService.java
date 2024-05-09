@@ -37,7 +37,7 @@ public class AuthService {
 
     return SignupDto.Response.fromEntity(
         memberRepository.save(
-            request.toEntity(passwordEncoder.encode(request.password()), getUniqueNickName())));
+            request.toEntity(passwordEncoder.encode(request.password()))));
   }
 
   @Transactional(readOnly = true)
@@ -51,13 +51,5 @@ public class AuthService {
 
     return new SigninDto.Response(
         tokenProvider.generateToken(member.getId().toString(), List.of(member.getRole().name())));
-  }
-
-  private String getUniqueNickName(){
-    UUID uuid;
-    do{
-      uuid = UUID.randomUUID();
-    }while (memberRepository.existsByNickName(uuid.toString()));
-    return uuid.toString();
   }
 }

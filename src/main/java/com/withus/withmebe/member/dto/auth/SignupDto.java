@@ -27,11 +27,11 @@ public record SignupDto() {
       Gender gender
   ) {
 
-    public Member toEntity(String encodedPassword, String nickName) {
+    public Member toEntity(String encodedPassword) {
       return Member.builder()
           .email(this.email)
           .password(encodedPassword)
-          .nickName(nickName)
+          .nickName(this.email)
           .birthDate(this.birthDate)
           .gender(this.gender)
           .signupDttm(LocalDateTime.now())
