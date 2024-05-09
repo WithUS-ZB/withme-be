@@ -31,30 +31,30 @@ public class GatheringService {
     public AddGatheringResponse createGathering(long currentMemberId, AddGatheringRequest addGatheringRequest) {
         findByMemberId(currentMemberId);
         Gathering gathering = gatheringRepository.save(addGatheringRequest.toEntity(currentMemberId));
-        return AddGatheringResponse.toResponse(gathering);
+        return gathering.toAddGatheringResponse();
     }
 
     public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
         Pageable adjustedPageable = adjustPageable(pageable);
         Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
-        return gatherings.map(GetGatheringResponse::toResponse);
+        return gatherings.map(Gathering::toGetGatheringResponse);
     }
 
     @Transactional
     public SetGatheringResponse updateGathering(long currentMemberId, long gatheringId, SetGatheringRequest setGatheringRequest) {
         Gathering gathering = getGathering(currentMemberId, gatheringId);
         gathering.updateGatheringFields(setGatheringRequest);
-        return SetGatheringResponse.toResponse(gathering);
+        return gathering.toSetGatheringResponse();
     }
 
     public GetGatheringResponse readGathering(Long gatheringId) {
-        return GetGatheringResponse.toResponse(findByGatheringId(gatheringId));
+        return findByGatheringId(gatheringId).toGetGatheringResponse();
     }
 
     public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
         Gathering gathering = getGathering(currentMemberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
-        return DeleteGatheringResponse.toResponse(gathering);
+        return gathering.toDeleteGatheringResponse();
     }
 
     private Pageable adjustPageable(Pageable pageable) {

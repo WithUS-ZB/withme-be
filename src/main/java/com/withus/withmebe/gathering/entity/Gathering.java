@@ -6,6 +6,10 @@ import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
+import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
+import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
+import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
+import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -114,6 +118,64 @@ public class Gathering extends BaseEntity {
         this.participantSelectionMethod = participantSelectionMethod;
     }
 
+    public AddGatheringResponse toAddGatheringResponse() {
+        return AddGatheringResponse.builder()
+                .memberId(this.memberId)
+                .title(this.title)
+                .content(this.content)
+                .gatheringType(this.gatheringType)
+                .maximumParticipant(this.maximumParticipant)
+                .startDttm(this.startDttm)
+                .endDttm(this.endDttm)
+                .category(this.category)
+                .applicationDeadLine(this.applicationDeadLine)
+                .address(this.address)
+                .location(this.location)
+                .mainImg(this.mainImg)
+                .participantsType(this.participantsType)
+                .fee(this.fee)
+                .participantSelectionMethod(this.participantSelectionMethod)
+                .build();
+    }
+
+    public SetGatheringResponse toSetGatheringResponse() {
+        return SetGatheringResponse.builder()
+                .title(this.title)
+                .content(this.content)
+                .gatheringType(this.gatheringType)
+                .maximumParticipant(this.maximumParticipant)
+                .startDttm(this.startDttm)
+                .endDttm(this.endDttm)
+                .category(this.category)
+                .applicationDeadLine(this.applicationDeadLine)
+                .address(this.address)
+                .location(this.location)
+                .mainImg(this.mainImg)
+                .participantsType(this.participantsType)
+                .fee(this.fee)
+                .participantSelectionMethod(this.participantSelectionMethod)
+                .build();
+    }
+
+    public  GetGatheringResponse toGetGatheringResponse() {
+        return GetGatheringResponse.builder()
+                .title(this.title)
+                .content(this.content)
+                .gatheringType(this.gatheringType)
+                .maximumParticipant(this.maximumParticipant)
+                .startDttm(this.startDttm)
+                .endDttm(this.endDttm)
+                .category(this.category)
+                .applicationDeadLine(this.applicationDeadLine)
+                .address(this.address)
+                .location(this.location)
+                .mainImg(this.mainImg)
+                .participantsType(this.participantsType)
+                .fee(this.fee)
+                .participantSelectionMethod(this.participantSelectionMethod)
+                .build();
+    }
+
     public void updateGatheringFields(SetGatheringRequest setGatheringRequest) {
         title = setGatheringRequest.getTitle();
         content = setGatheringRequest.getContent();
@@ -130,6 +192,25 @@ public class Gathering extends BaseEntity {
         category = setGatheringRequest.getCategory();
         fee = setGatheringRequest.getFee();
         participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
+    }
+
+    public DeleteGatheringResponse toDeleteGatheringResponse() {
+        return DeleteGatheringResponse.builder()
+                .title(this.title)
+                .content(this.content)
+                .gatheringType(this.gatheringType)
+                .maximumParticipant(this.maximumParticipant)
+                .startDttm(this.startDttm)
+                .endDttm(this.endDttm)
+                .category(this.category)
+                .applicationDeadLine(this.applicationDeadLine)
+                .address(this.address)
+                .location(this.location)
+                .mainImg(this.mainImg)
+                .participantsType(this.participantsType)
+                .fee(this.fee)
+                .participantSelectionMethod(this.participantSelectionMethod)
+                .build();
     }
 
 }
