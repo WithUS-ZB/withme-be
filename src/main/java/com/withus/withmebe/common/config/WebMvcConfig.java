@@ -9,6 +9,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
+        .allowCredentials(true)
         .exposedHeaders("Authorization"); // 노출할 사용자 지정 응답 헤더 설정
   }
 }
