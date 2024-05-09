@@ -19,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,6 +55,12 @@ public class Gathering extends BaseEntity {
     private GatheringType gatheringType;
 
     private Long maximumParticipant;
+
+    @Column(nullable = false)
+    private LocalDate day;
+
+    @Column(nullable = false)
+    private LocalTime time;
 
     @Column(nullable = false)
     private LocalDate recruitmentStartDt;
@@ -94,6 +101,7 @@ public class Gathering extends BaseEntity {
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
+                     LocalDate day, LocalTime time,
                      LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
                      String address, String detailedAddress, String location, String mainImg,
                      ParticipantsType participantsType, Long fee,
@@ -105,6 +113,8 @@ public class Gathering extends BaseEntity {
         this.maximumParticipant = maximumParticipant;
         this.recruitmentStartDt = recruitmentStartDt;
         this.recruitmentEndDt = recruitmentEndDt;
+        this.day = day;
+        this.time = time;
         this.category = category;
         this.address = address;
         this.detailedAddress = detailedAddress;
@@ -124,8 +134,11 @@ public class Gathering extends BaseEntity {
                 .maximumParticipant(this.maximumParticipant)
                 .recruitmentStartDt(this.recruitmentStartDt)
                 .recruitmentEndDt(this.recruitmentEndDt)
+                .day(this.day)
+                .time(this.time)
                 .category(this.category)
                 .address(this.address)
+                .detailedAddress(this.detailedAddress)
                 .location(this.location)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
@@ -142,8 +155,11 @@ public class Gathering extends BaseEntity {
                 .maximumParticipant(this.maximumParticipant)
                 .recruitmentStartDt(this.recruitmentStartDt)
                 .recruitmentEndDt(this.recruitmentEndDt)
+                .day(this.day)
+                .time(this.time)
                 .category(this.category)
                 .address(this.address)
+                .detailedAddress(this.detailedAddress)
                 .location(this.location)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
@@ -160,8 +176,11 @@ public class Gathering extends BaseEntity {
                 .maximumParticipant(this.maximumParticipant)
                 .recruitmentStartDt(this.recruitmentStartDt)
                 .recruitmentEndDt(this.recruitmentEndDt)
+                .day(this.day)
+                .time(this.time)
                 .category(this.category)
                 .address(this.address)
+                .detailedAddress(this.detailedAddress)
                 .location(this.location)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
@@ -178,8 +197,11 @@ public class Gathering extends BaseEntity {
                 .maximumParticipant(this.maximumParticipant)
                 .recruitmentStartDt(this.recruitmentStartDt)
                 .recruitmentEndDt(this.recruitmentEndDt)
+                .day(this.day)
+                .time(this.time)
                 .category(this.category)
                 .address(this.address)
+                .detailedAddress(this.detailedAddress)
                 .location(this.location)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)

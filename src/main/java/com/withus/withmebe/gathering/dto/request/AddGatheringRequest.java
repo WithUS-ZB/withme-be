@@ -5,6 +5,7 @@ import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,12 @@ public class AddGatheringRequest {
     private GatheringType gatheringType;
 
     private Long maximumParticipant;
+
+    @NotNull
+    private LocalDate day;
+
+    @NotNull
+    private LocalTime time;
 
     @NotNull
     private LocalDate recruitmentStartDt;
@@ -62,6 +69,8 @@ public class AddGatheringRequest {
                 .content(this.content)
                 .gatheringType(this.gatheringType)
                 .maximumParticipant(this.maximumParticipant)
+                .day(this.day)
+                .time(this.time)
                 .recruitmentStartDt(this.recruitmentStartDt)
                 .recruitmentEndDt(this.recruitmentEndDt)
                 .category(this.category)

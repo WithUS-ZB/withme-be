@@ -6,6 +6,7 @@ import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -30,6 +31,12 @@ public class DeleteGatheringResponse {
 
     @NotNull
     private LocalDate recruitmentEndDt;
+
+    @NotNull
+    private LocalDate day;
+
+    @NotNull
+    private LocalTime time;
 
     @NotBlank
     private String category;
