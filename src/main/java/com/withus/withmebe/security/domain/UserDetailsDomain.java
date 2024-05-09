@@ -2,25 +2,28 @@ package com.withus.withmebe.security.domain;
 
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.type.Role;
-import jakarta.validation.constraints.NotBlank;
+import com.withus.withmebe.security.domain.oauth2.OAuth2UserAttributes;
 import jakarta.validation.constraints.NotNull;
 
 public record UserDetailsDomain(
     @NotNull
     Long id,
 
-    @NotBlank
     String password,
 
     @NotNull
-    Role role
+    Role role,
+
+    OAuth2UserAttributes attributes
+
 ) {
 
-  public static UserDetailsDomain fromEntity(Member member) {
+  public static UserDetailsDomain fromEntity(Member member, OAuth2UserAttributes attributes) {
     return new UserDetailsDomain(
         member.getId(),
         member.getPassword(),
-        member.getRole()
+        member.getRole(),
+        attributes
     );
   }
 }

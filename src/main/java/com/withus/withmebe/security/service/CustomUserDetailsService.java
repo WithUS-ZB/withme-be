@@ -25,6 +25,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     return UserDetailsDomain.fromEntity(memberRepository.findById(Long.valueOf(username))
         .orElseThrow(() -> new UsernameNotFoundException(
             ExceptionCode.ENTITY_NOT_FOUND.getMessage()
-        )));
+        )), null);
   }
 }

@@ -1,8 +1,8 @@
 package com.withus.withmebe.member.controller;
 
-import com.withus.withmebe.member.dto.auth.AuthCodeAndSetPhoneNumberRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsResponseDto;
+import com.withus.withmebe.member.dto.auth.request.AuthCodeAndSetPhoneNumberRequestDto;
+import com.withus.withmebe.member.dto.auth.request.SendAuthSmsRequestDto;
+import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.service.AuthSmsService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;

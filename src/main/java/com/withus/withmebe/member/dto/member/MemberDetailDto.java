@@ -1,4 +1,4 @@
-package com.withus.withmebe.member.dto;
+package com.withus.withmebe.member.dto.member;
 
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.type.Gender;
