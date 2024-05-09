@@ -32,8 +32,10 @@ public enum ExceptionCode {
 
   // Conflict: 409
   EMAIL_CONFLICT(CONFLICT, "이메일이 중복됩니다."),
-  NICKNAME_CONFLICT(CONFLICT, "닉네임이 중복됩니다.")
-  ;
+  NICKNAME_CONFLICT(CONFLICT, "닉네임이 중복됩니다."),
+  PARTICIPATION_DUPLICATED(CONFLICT, "이미 참여 신청을 하였습니다."),
+  PARTICIPATION_CONFLICT(CONFLICT, "이미 처리된 참여 신청입니다."),
+  GATHERING_CANCELED(CONFLICT, "취소된 모임입니다.");
 
   private final HttpStatus status;
   private final String message;
