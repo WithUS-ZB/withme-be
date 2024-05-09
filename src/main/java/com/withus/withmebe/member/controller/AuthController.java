@@ -31,7 +31,7 @@ public class AuthController {
   public ResponseEntity<Void> signin(@Valid @RequestBody SigninDto.Request request) {
     MultiValueMap<String, String> header = new HttpHeaders();
     Response response = authService.signin(request);
-    header.add("Withme-Access-Token", response.accessToken());
+    header.add("Authorization", "Bearer "+ response.accessToken());
     return new ResponseEntity<>(header, OK);
   }
 }
