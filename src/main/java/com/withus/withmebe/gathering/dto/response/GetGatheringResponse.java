@@ -1,16 +1,17 @@
-package com.withus.withmebe.gathering.dto.request;
+package com.withus.withmebe.gathering.dto.response;
 
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
-import com.withus.withmebe.gathering.entity.Gathering;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AddGatheringRequest {
+@Builder
+public class GetGatheringResponse {
     private Long memberId;
 
     @NotBlank
@@ -56,25 +57,4 @@ public class AddGatheringRequest {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
-
-    public Gathering toEntity(long memberId) {
-        return Gathering.builder()
-                .memberId(memberId)
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
-                .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
-                .address(this.address)
-                .detailedAddress(this.detailedAddress)
-                .location(this.location)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
 }
