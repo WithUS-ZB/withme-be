@@ -4,7 +4,8 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,16 +25,13 @@ public class SetGatheringResponse {
     private Long maximumParticipant;
 
     @NotNull
-    private LocalDateTime startDttm;
+    private LocalDate recruitmentStartDt;
 
     @NotNull
-    private LocalDateTime endDttm;
+    private LocalDate recruitmentEndDt;
 
     @NotBlank
     private String category;
-
-    @NotNull
-    private LocalDateTime applicationDeadLine;
 
     @NotBlank
     private String address;

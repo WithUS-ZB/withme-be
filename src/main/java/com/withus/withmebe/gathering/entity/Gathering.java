@@ -18,7 +18,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +31,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @NoArgsConstructor
-@Where(clause = "deletedDttm is null")
-@SQLDelete(sql = "UPDATE gathering SET deletedDttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
+@Where(clause = "deleted_dttm is null")
+@SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 @EntityListeners(value = AuditingEntityListener.class)
 public class Gathering extends BaseEntity {
     @Id
@@ -44,6 +44,7 @@ public class Gathering extends BaseEntity {
     private Long memberId;
 
     @Column(nullable = false)
+
     private String title;
 
     private String content;
@@ -55,16 +56,13 @@ public class Gathering extends BaseEntity {
     private Long maximumParticipant;
 
     @Column(nullable = false)
-    private LocalDateTime startDttm;
+    private LocalDate recruitmentStartDt;
 
     @Column(nullable = false)
-    private LocalDateTime endDttm;
+    private LocalDate recruitmentEndDt;
 
     @Column(nullable = false)
     private String category;
-
-    @Column(nullable = false)
-    private LocalDateTime applicationDeadLine;
 
     @Column(nullable = false)
     private String address;
@@ -96,7 +94,7 @@ public class Gathering extends BaseEntity {
 
     @Builder
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
-                     LocalDateTime startDttm, LocalDateTime endDttm, String category, LocalDateTime applicationDeadLine,
+                     LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
                      String address, String detailedAddress, String location, String mainImg,
                      ParticipantsType participantsType, Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
@@ -105,10 +103,9 @@ public class Gathering extends BaseEntity {
         this.content = content;
         this.gatheringType = gatheringType;
         this.maximumParticipant = maximumParticipant;
-        this.startDttm = startDttm;
-        this.endDttm = endDttm;
+        this.recruitmentStartDt = recruitmentStartDt;
+        this.recruitmentEndDt = recruitmentEndDt;
         this.category = category;
-        this.applicationDeadLine = applicationDeadLine;
         this.address = address;
         this.detailedAddress = detailedAddress;
         this.location = location;
@@ -125,10 +122,9 @@ public class Gathering extends BaseEntity {
                 .content(this.content)
                 .gatheringType(this.gatheringType)
                 .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
+                .recruitmentStartDt(this.recruitmentStartDt)
+                .recruitmentEndDt(this.recruitmentEndDt)
                 .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
                 .address(this.address)
                 .location(this.location)
                 .mainImg(this.mainImg)
@@ -144,10 +140,9 @@ public class Gathering extends BaseEntity {
                 .content(this.content)
                 .gatheringType(this.gatheringType)
                 .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
+                .recruitmentStartDt(this.recruitmentStartDt)
+                .recruitmentEndDt(this.recruitmentEndDt)
                 .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
                 .address(this.address)
                 .location(this.location)
                 .mainImg(this.mainImg)
@@ -157,16 +152,33 @@ public class Gathering extends BaseEntity {
                 .build();
     }
 
-    public  GetGatheringResponse toGetGatheringResponse() {
+    public GetGatheringResponse toGetGatheringResponse() {
         return GetGatheringResponse.builder()
                 .title(this.title)
                 .content(this.content)
                 .gatheringType(this.gatheringType)
                 .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
+                .recruitmentStartDt(this.recruitmentStartDt)
+                .recruitmentEndDt(this.recruitmentEndDt)
                 .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
+                .address(this.address)
+                .location(this.location)
+                .mainImg(this.mainImg)
+                .participantsType(this.participantsType)
+                .fee(this.fee)
+                .participantSelectionMethod(this.participantSelectionMethod)
+                .build();
+    }
+
+    public DeleteGatheringResponse toDeleteGatheringResponse() {
+        return DeleteGatheringResponse.builder()
+                .title(this.title)
+                .content(this.content)
+                .gatheringType(this.gatheringType)
+                .maximumParticipant(this.maximumParticipant)
+                .recruitmentStartDt(this.recruitmentStartDt)
+                .recruitmentEndDt(this.recruitmentEndDt)
+                .category(this.category)
                 .address(this.address)
                 .location(this.location)
                 .mainImg(this.mainImg)
@@ -181,9 +193,8 @@ public class Gathering extends BaseEntity {
         content = setGatheringRequest.getContent();
         gatheringType = setGatheringRequest.getGatheringType();
         maximumParticipant = setGatheringRequest.getMaximumParticipant();
-        startDttm = setGatheringRequest.getStartDttm();
-        endDttm = setGatheringRequest.getEndDttm();
-        applicationDeadLine = setGatheringRequest.getApplicationDeadLine();
+        recruitmentStartDt = setGatheringRequest.getRecruitmentStartDt();
+        recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
         address = setGatheringRequest.getAddress();
         detailedAddress = setGatheringRequest.getDetailedAddress();
         location = setGatheringRequest.getLocation();
@@ -193,24 +204,4 @@ public class Gathering extends BaseEntity {
         fee = setGatheringRequest.getFee();
         participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
     }
-
-    public DeleteGatheringResponse toDeleteGatheringResponse() {
-        return DeleteGatheringResponse.builder()
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
-                .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
-                .address(this.address)
-                .location(this.location)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
-
 }

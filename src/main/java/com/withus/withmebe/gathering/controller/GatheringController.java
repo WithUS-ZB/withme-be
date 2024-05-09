@@ -38,7 +38,7 @@ public class GatheringController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
-            @PageableDefault(size = 10, sort = "createdDttm") Pageable pageable) {
+            @PageableDefault(size = 10, sort = "created_dttm") Pageable pageable) {
         return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
     }
 

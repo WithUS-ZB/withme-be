@@ -4,7 +4,8 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -25,16 +26,13 @@ public class AddGatheringRequest {
     private Long maximumParticipant;
 
     @NotNull
-    private LocalDateTime startDttm;
+    private LocalDate recruitmentStartDt;
 
     @NotNull
-    private LocalDateTime endDttm;
+    private LocalDate recruitmentEndDt;
 
     @NotBlank
     private String category;
-
-    @NotNull
-    private LocalDateTime applicationDeadLine;
 
     @NotBlank
     private String address;
@@ -64,10 +62,9 @@ public class AddGatheringRequest {
                 .content(this.content)
                 .gatheringType(this.gatheringType)
                 .maximumParticipant(this.maximumParticipant)
-                .startDttm(this.startDttm)
-                .endDttm(this.endDttm)
+                .recruitmentStartDt(this.recruitmentStartDt)
+                .recruitmentEndDt(this.recruitmentEndDt)
                 .category(this.category)
-                .applicationDeadLine(this.applicationDeadLine)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
                 .location(this.location)
