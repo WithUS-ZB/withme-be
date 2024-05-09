@@ -4,10 +4,10 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 import static com.withus.withmebe.common.exception.ExceptionCode.NICKNAME_CONFLICT;
 
 import com.withus.withmebe.common.exception.CustomException;
-import com.withus.withmebe.member.dto.MemberDetailDto;
-import com.withus.withmebe.member.dto.MemberInfoDto;
-import com.withus.withmebe.member.dto.UpdateMemberNickNameDto;
-import com.withus.withmebe.member.dto.UpdateMemberProfileImgDto;
+import com.withus.withmebe.member.dto.member.MemberDetailDto;
+import com.withus.withmebe.member.dto.member.MemberInfoDto;
+import com.withus.withmebe.member.dto.member.UpdateMemberNickNameDto;
+import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

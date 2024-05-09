@@ -6,8 +6,8 @@ import static com.withus.withmebe.common.exception.ExceptionCode.PASSWORD_CHK_MI
 import static com.withus.withmebe.common.exception.ExceptionCode.PASSWORD_MISMATCH;
 
 import com.withus.withmebe.common.exception.CustomException;
-import com.withus.withmebe.member.dto.SigninDto;
-import com.withus.withmebe.member.dto.SignupDto;
+import com.withus.withmebe.member.dto.auth.SigninDto;
+import com.withus.withmebe.member.dto.auth.SignupDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.security.jwt.provider.TokenProvider;
@@ -37,7 +37,7 @@ public class AuthService {
 
     return SignupDto.Response.fromEntity(
         memberRepository.save(
-            request.toEntity(passwordEncoder.encode(request.password()), getUniqueNickName())));
+            request.toEntity(passwordEncoder.encode(request.password()))));
   }
 
   @Transactional(readOnly = true)
@@ -51,13 +51,5 @@ public class AuthService {
 
     return new SigninDto.Response(
         tokenProvider.generateToken(member.getId().toString(), List.of(member.getRole().name())));
-  }
-
-  private String getUniqueNickName(){
-    UUID uuid;
-    do{
-      uuid = UUID.randomUUID();
-    }while (memberRepository.existsByNickName(uuid.toString()));
-    return uuid.toString();
   }
 }

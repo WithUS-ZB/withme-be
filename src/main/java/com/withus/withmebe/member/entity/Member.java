@@ -27,6 +27,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class Member extends BaseEntity {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   @Column(name = "member_id")
@@ -58,6 +59,7 @@ public class Member extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @Setter
   private SignupPath signupPath = NORMAL;
 
   @Column(nullable = false)
@@ -68,7 +70,8 @@ public class Member extends BaseEntity {
   private Membership membership = FREE;
 
   @Builder
-  public Member(String email, String password, String nickName, LocalDate birthDate, Gender gender, LocalDateTime signupDttm){
+  public Member(String email, String password, String nickName, LocalDate birthDate, Gender gender,
+      LocalDateTime signupDttm) {
     this.email = email;
     this.password = password;
     this.nickName = nickName;

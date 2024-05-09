@@ -1,4 +1,4 @@
-package com.withus.withmebe.member.dto.auth;
+package com.withus.withmebe.member.dto.auth.response;
 
 public record SendAuthSmsResponseDto(
     int expirationSeconds,

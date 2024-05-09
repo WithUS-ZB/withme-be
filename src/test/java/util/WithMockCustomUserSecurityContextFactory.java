@@ -3,9 +3,7 @@ package util;
 import com.withus.withmebe.member.type.Role;
 import com.withus.withmebe.security.domain.CustomUserDetails;
 import com.withus.withmebe.security.domain.UserDetailsDomain;
-import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
@@ -19,7 +17,7 @@ final class WithMockCustomUserSecurityContextFactory implements
   public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
     CustomUserDetails customUserDetails = new CustomUserDetails(
-        new UserDetailsDomain(customUser.name(), "", Role.ROLE_MEMBER));
+        new UserDetailsDomain(customUser.name(), "", Role.ROLE_MEMBER, null));
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
         customUserDetails, "",
         customUserDetails.getAuthorities());

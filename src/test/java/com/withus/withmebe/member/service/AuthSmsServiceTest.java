@@ -12,9 +12,9 @@ import static org.mockito.Mockito.verify;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.service.RedisStringService;
-import com.withus.withmebe.member.dto.auth.AuthCodeAndSetPhoneNumberRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsResponseDto;
+import com.withus.withmebe.member.dto.auth.request.AuthCodeAndSetPhoneNumberRequestDto;
+import com.withus.withmebe.member.dto.auth.request.SendAuthSmsRequestDto;
+import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.util.Optional;

@@ -6,9 +6,9 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.service.RedisStringService;
-import com.withus.withmebe.member.dto.auth.AuthCodeAndSetPhoneNumberRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsRequestDto;
-import com.withus.withmebe.member.dto.auth.SendAuthSmsResponseDto;
+import com.withus.withmebe.member.dto.auth.request.AuthCodeAndSetPhoneNumberRequestDto;
+import com.withus.withmebe.member.dto.auth.request.SendAuthSmsRequestDto;
+import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.security.SecureRandom;
 import java.time.Duration;

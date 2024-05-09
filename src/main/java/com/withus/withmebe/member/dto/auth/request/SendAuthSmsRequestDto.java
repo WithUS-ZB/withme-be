@@ -1,4 +1,4 @@
-package com.withus.withmebe.member.dto.auth;
+package com.withus.withmebe.member.dto.auth.request;
 
 import com.withus.withmebe.member.annotation.ValidPhoneNumber;
 import jakarta.validation.constraints.NotBlank;
