@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +44,11 @@ public class ParticipationController {
       @RequestParam(value = "gatheringid") long gatheringId,
       @PageableDefault Pageable pageble) {
     return ResponseEntity.ok(participationService.readParticipations(currentMemberId, gatheringId, pageble));
+  }
+
+  @PutMapping("/cancel/{participationId}")
+  public ResponseEntity<ParticipationResponse> getParticipations(
+      @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
+    return ResponseEntity.ok(participationService.cancelParticipation(currentMemberId, participationId));
   }
 }

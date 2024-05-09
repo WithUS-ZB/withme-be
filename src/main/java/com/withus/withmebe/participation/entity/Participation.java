@@ -18,6 +18,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 @Entity
 @Getter
@@ -26,30 +28,32 @@ public class Participation extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Field(name = "participation_id")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = false)
+  @JoinColumn(nullable = false, name = "gathering_id")
   private Gathering gathering;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = false)
-  private Member member;
+  @JoinColumn(nullable = false, name = "member_id")
+  private Member participant;
 
+  @Setter
   @Enumerated(EnumType.STRING)
   private Status status;
 
   @Builder
   public Participation(Gathering gathering, Member member, Status status) {
     this.gathering = gathering;
-    this.member = member;
+    this.participant = member;
     this.status = status;
   }
 
   public ParticipationResponse toResponse() {
     return ParticipationResponse.builder()
         .id(this.id)
-        .nickName(this.member.getNickName())
+        .nickName(this.participant.getNickName())
         .title(this.gathering.getTitle())
         .status(this.status)
         .createdDttm(this.getCreatedDttm())
@@ -60,9 +64,17 @@ public class Participation extends BaseEntity {
   public ParticipationSimpleInfo toSimpleInfo() {
     return ParticipationSimpleInfo.builder()
         .id(this.id)
-        .nickName(this.member.getNickName())
+        .nickName(this.participant.getNickName())
         .status(this.status)
         .updatedDttm(this.getUpdatedDttm())
         .build();
+  }
+
+  public boolean isParticipant(long memberId) {
+    return this.participant.getId() == memberId;
+  }
+
+  public boolean checkStatus(Status status) {
+    return this.status == status;
   }
 }
