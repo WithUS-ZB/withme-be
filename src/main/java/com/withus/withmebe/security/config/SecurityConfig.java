@@ -93,7 +93,7 @@ public class SecurityConfig {
 
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-      response.addHeader("Withme-Access-Token", tokenProvider.generateToken(
+      response.addHeader("Authorization", "Bearer "+ tokenProvider.generateToken(
           oAuth2User.getUsername()
           , oAuth2User.getAuthorities().stream()
               .map(GrantedAuthority::getAuthority).toList()));
