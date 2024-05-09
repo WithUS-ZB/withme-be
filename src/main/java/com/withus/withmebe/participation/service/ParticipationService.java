@@ -1,5 +1,6 @@
 package com.withus.withmebe.participation.service;
 
+import static com.withus.withmebe.participation.type.Status.APPROVED;
 import static com.withus.withmebe.participation.type.Status.CANCELED;
 import static com.withus.withmebe.participation.type.Status.CREATED;
 
@@ -40,6 +41,11 @@ public class ParticipationService {
     return newParticipation.toResponse();
   }
 
+  @Transactional(readOnly = true)
+  public Long readApprovedParticipationCount(long gatheringId) {
+    return participationRepository.countByGathering_IdAndStatus(gatheringId, APPROVED);
+  }
+
   private Member readMember(long requesterId) {
     return memberRepository.findById(requesterId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
@@ -61,4 +67,5 @@ public class ParticipationService {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
+
 }

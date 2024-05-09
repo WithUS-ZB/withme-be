@@ -5,6 +5,7 @@ import com.withus.withmebe.participation.service.ParticipationService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,13 @@ public class ParticipationController {
   public ResponseEntity<ParticipationResponse> addParticipation(
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId) {
-    return ResponseEntity.ok(participationService.createParticipation(currentMemberId, gatheringId));
+    return ResponseEntity.ok(
+        participationService.createParticipation(currentMemberId, gatheringId));
+  }
+
+  @GetMapping("/count")
+  public ResponseEntity<Long> getApprovedParticipationCount(
+      @RequestParam(value = "gatheringid") long gatheringId) {
+    return ResponseEntity.ok(participationService.readApprovedParticipationCount(gatheringId));
   }
 }

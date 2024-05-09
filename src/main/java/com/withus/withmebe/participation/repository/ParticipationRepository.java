@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
   boolean existsByMember_IdAndStatusIsNot(Long memberId, Status status);
+
+  long countByGathering_IdAndStatus(Long gatheringId, Status status);
 }
