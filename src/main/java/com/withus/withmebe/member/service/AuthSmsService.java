@@ -56,11 +56,11 @@ public class AuthSmsService {
   public Boolean authCodeAndSetPhoneNumber(
       AuthCodeAndSetPhoneNumberRequestDto request, Long currentMemberId) {
     String key = authSmsPrefix + request.phoneNumber();
-    Object values = redisService.getValues(key);
+    String values = redisService.getValues(key);
     if(values == null){
       throw new CustomException(AUTH_SMS_CODE_NOT_FOUND);
     }
-    if(!values.toString().equals(request.authenticationText())){
+    if(!values.equals(request.authenticationText())){
       throw new CustomException(AUTH_CODE_MISMATCH);
     }
     memberRepository.findById(currentMemberId)
