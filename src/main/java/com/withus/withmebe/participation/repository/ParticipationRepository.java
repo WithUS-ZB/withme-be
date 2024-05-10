@@ -18,4 +18,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
   @EntityGraph(attributePaths = "participant")
   Page<Participation> findByGathering(Gathering gathering, Pageable pageable);
+
+  @EntityGraph(attributePaths = "gathering")
+  Page<Participation> findByParticipant_Id(Long requesterId, Pageable pageable);
 }

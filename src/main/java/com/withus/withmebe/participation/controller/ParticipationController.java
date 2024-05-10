@@ -3,8 +3,9 @@ package com.withus.withmebe.participation.controller;
 import static com.withus.withmebe.participation.type.Status.APPROVED;
 import static com.withus.withmebe.participation.type.Status.REJECTED;
 
+import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
-import com.withus.withmebe.participation.dto.ParticipationSimpleInfo;
+import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.service.ParticipationService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class ParticipationController {
   }
 
   @GetMapping("/list")
-  public ResponseEntity<Page<ParticipationSimpleInfo>> getParticipations(
+  public ResponseEntity<Page<GatheringParticipationSimpleInfo>> getParticipations(
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId,
       @PageableDefault Pageable pageble) {
@@ -73,9 +74,16 @@ public class ParticipationController {
   }
 
   @GetMapping("/{participationId}")
-  public ResponseEntity<ParticipationResponse> getParticipation(
+  public ResponseEntity<ParticipationResponse> getMyParticipation(
       @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
     return ResponseEntity.ok(
         participationService.readMyParticipation(currentMemberId, participationId));
+  }
+
+  @GetMapping("/mylist")
+  public ResponseEntity<Page<MyParticipationSimpleInfo>> getMyParticipations(
+      @CurrentMemberId long currentMemberId, @PageableDefault Pageable pageble) {
+    return ResponseEntity.ok(
+        participationService.readMyParticipations(currentMemberId, pageble));
   }
 }

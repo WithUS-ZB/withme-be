@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record ParticipationSimpleInfo(
+public record MyParticipationSimpleInfo(
     Long id,
-    String nickName,
+    String title,
     Status status,
     LocalDateTime updatedDttm
 

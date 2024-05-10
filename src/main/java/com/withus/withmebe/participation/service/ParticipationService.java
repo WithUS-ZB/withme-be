@@ -9,8 +9,9 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
-import com.withus.withmebe.participation.dto.ParticipationSimpleInfo;
+import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.type.Status;
@@ -49,7 +50,7 @@ public class ParticipationService {
   }
 
   @Transactional(readOnly = true)
-  public Page<ParticipationSimpleInfo> readParticipations(long requesterId, long gatheringId,
+  public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId, long gatheringId,
       Pageable pageble) {
 
     Gathering gathering = readGathering(gatheringId);
@@ -57,7 +58,7 @@ public class ParticipationService {
 
     Page<Participation> participations = participationRepository.findByGathering(gathering,
         pageble);
-    return participations.map(Participation::toSimpleInfo);
+    return participations.map(Participation::toGatheringParticipationSimpleInfo);
   }
 
 
@@ -91,6 +92,12 @@ public class ParticipationService {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     return participation.toResponse();
+  }
+
+  @Transactional(readOnly = true)
+  public Page<MyParticipationSimpleInfo> readMyParticipations(long requesterId, Pageable pageble) {
+    Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId, pageble);
+    return participations.map(Participation::toMyParticipationSimpleInfo);
   }
 
   private void validateUpdateParticipationRequest(long requesterId, Participation participation) {

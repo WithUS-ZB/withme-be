@@ -3,8 +3,9 @@ package com.withus.withmebe.participation.entity;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.member.entity.Member;
+import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
-import com.withus.withmebe.participation.dto.ParticipationSimpleInfo;
+import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.type.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -61,10 +62,19 @@ public class Participation extends BaseEntity {
         .build();
   }
 
-  public ParticipationSimpleInfo toSimpleInfo() {
-    return ParticipationSimpleInfo.builder()
+  public GatheringParticipationSimpleInfo toGatheringParticipationSimpleInfo() {
+    return GatheringParticipationSimpleInfo.builder()
         .id(this.id)
         .nickName(this.participant.getNickName())
+        .status(this.status)
+        .updatedDttm(this.getUpdatedDttm())
+        .build();
+  }
+
+  public MyParticipationSimpleInfo toMyParticipationSimpleInfo() {
+    return MyParticipationSimpleInfo.builder()
+        .id(this.id)
+        .title(this.gathering.getTitle())
         .status(this.status)
         .updatedDttm(this.getUpdatedDttm())
         .build();
