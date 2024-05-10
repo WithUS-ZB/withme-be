@@ -71,4 +71,11 @@ public class ParticipationController {
     return ResponseEntity.ok(
         participationService.updateParticipationStatus(currentMemberId, participationId, REJECTED));
   }
+
+  @GetMapping("/{participationId}")
+  public ResponseEntity<ParticipationResponse> getParticipation(
+      @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
+    return ResponseEntity.ok(
+        participationService.readMyParticipation(currentMemberId, participationId));
+  }
 }

@@ -60,7 +60,7 @@ public class ParticipationService {
     return participations.map(Participation::toSimpleInfo);
   }
 
-  @Transactional
+
   public ParticipationResponse cancelParticipation(long requesterId, long participationId) {
 
     Participation participation = readParticipation(participationId);
@@ -72,13 +72,25 @@ public class ParticipationService {
   }
 
   @Transactional
-  public ParticipationResponse updateParticipationStatus(long currentMemberId, long participationId, Status status) {
+  public ParticipationResponse updateParticipationStatus(long currentMemberId, long participationId,
+      Status status) {
+
     Participation participation = readParticipation(participationId);
     validateUpdateParticipationRequest(currentMemberId, participation);
 
     participation.setStatus(status);
     Participation updatedParticipation = readParticipation(participationId);
     return updatedParticipation.toResponse();
+  }
+
+  @Transactional(readOnly = true)
+  public ParticipationResponse readMyParticipation(long requesterId, long participationId) {
+    Participation participation = readParticipation(participationId);
+
+    if (!participation.isParticipant(requesterId)) {
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
+    return participation.toResponse();
   }
 
   private void validateUpdateParticipationRequest(long requesterId, Participation participation) {
@@ -91,7 +103,7 @@ public class ParticipationService {
     if (!participation.isParticipant(requesterId)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
-    if (participation.checkStatus(Status.CANCELED)) {
+    if (participation.checkStatus(Status.REJECTED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
     }
   }
@@ -103,7 +115,8 @@ public class ParticipationService {
     if (isCanceledGathering(gathering)) {
       throw new CustomException(ExceptionCode.GATHERING_CANCELED);
     }
-    if (participationRepository.existsByParticipant_IdAndStatusIsNot(requesterId, Status.CANCELED)) {
+    if (participationRepository.existsByParticipant_IdAndStatusIsNot(requesterId,
+        Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
@@ -136,6 +149,5 @@ public class ParticipationService {
     return participationRepository.findById(participationId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
-
 
 }
