@@ -12,10 +12,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
         .allowCredentials(true)
         .allowedOriginPatterns("*")
         .exposedHeaders("Authorization"); // 노출할 사용자 지정 응답 헤더 설정
-
-    registry.addMapping("/login/**")
-        .allowCredentials(true)
-        .allowedOriginPatterns("*")
-        .exposedHeaders("Authorization");
   }
 }
