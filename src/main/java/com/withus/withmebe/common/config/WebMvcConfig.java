@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/api/auth/**")
+    registry.addMapping("/**")
         .allowCredentials(true)
         .allowedOriginPatterns("*")
         .exposedHeaders("Authorization"); // 노출할 사용자 지정 응답 헤더 설정
