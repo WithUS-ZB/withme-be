@@ -127,7 +127,6 @@ public class Gathering extends BaseEntity {
 
     public AddGatheringResponse toAddGatheringResponse() {
         return AddGatheringResponse.builder()
-                .memberId(this.memberId)
                 .title(this.title)
                 .content(this.content)
                 .gatheringType(this.gatheringType)

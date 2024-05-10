@@ -6,7 +6,6 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,8 +13,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AddGatheringResponse {
-    private Long memberId;
-
     @NotBlank
     private String title;
 

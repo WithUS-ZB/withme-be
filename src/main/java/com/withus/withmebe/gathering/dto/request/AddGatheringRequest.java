@@ -6,15 +6,12 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class AddGatheringRequest {
-    private Long memberId;
-
     @NotBlank
     private String title;
 
