@@ -20,6 +20,7 @@ configurations {
 repositories {
 	mavenCentral()
 }
+repositories { jcenter() }
 
 dependencies {
 	// spring
@@ -69,6 +70,8 @@ dependencies {
 
 	// test
 	testRuntimeOnly 'com.h2database:h2'
+
+	testImplementation "org.mockito:mockito-core:1.+"
 }
 
 tasks.named('test') {
