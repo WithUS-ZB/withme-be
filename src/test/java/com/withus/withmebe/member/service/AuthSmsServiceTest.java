@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.withus.withmebe.common.exception.CustomException;
@@ -19,6 +20,9 @@ import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.util.Optional;
 import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.MessageType;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +42,8 @@ class AuthSmsServiceTest {
   private MemberRepository memberRepository;
   @InjectMocks
   private AuthSmsService authSmsService;
+  DefaultMessageService messageService = mock(DefaultMessageService.class);
+
 
   @BeforeEach
   void setUp() {
@@ -53,13 +59,23 @@ class AuthSmsServiceTest {
   @DisplayName("휴대폰 인증번호 메시지 전송 - 성공")
   void sendAuthSms() {
     // Given
-    SendAuthSmsRequestDto requestDto = new SendAuthSmsRequestDto("010-7777-7777");
-
+    String groupId = "groupId";
+    String to = "01077777777";
+    String from = "01011111111";
+    MessageType type = MessageType.SMS;
+    String statusMessage = "message";
+    String country = "korea";
+    String messageId = "id";
+    String statusCode = "statusCode";
+    String accountId = "accoutId";
+    SendAuthSmsRequestDto requestDto = new SendAuthSmsRequestDto(to);
+    SendAuthSmsRequestDto dto = new SendAuthSmsRequestDto(to);
+    given(messageService.sendOne(dto.toMessage("인증 :  %s",from,"123456")))
+        .willReturn(new SingleMessageSentResponse(groupId,to, from, type, statusMessage, country, messageId, statusCode, accountId));
     SendAuthSmsResponseDto responseDto = authSmsService.sendAuthSms(requestDto);
     // Then
     assertEquals(60, responseDto.expirationSeconds());
   }
-
   @Test
   @DisplayName("휴대폰 인증번호 확인 후 저장 - 성공")
   void authCodeAndSetPhoneNumber() {
