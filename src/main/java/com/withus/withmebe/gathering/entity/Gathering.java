@@ -77,7 +77,11 @@ public class Gathering extends BaseEntity {
     @Column(nullable = false)
     private String detailedAddress;
 
-    private String location;
+    @Column(nullable = false)
+    private Double lat;
+
+    @Column(nullable = false)
+    private Double lng;
 
     @Column(nullable = false)
     private String mainImg;
@@ -103,7 +107,7 @@ public class Gathering extends BaseEntity {
     public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
                      LocalDate day, LocalTime time,
                      LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
-                     String address, String detailedAddress, String location, String mainImg,
+                     String address, String detailedAddress, Double lat, Double lng, String mainImg,
                      ParticipantsType participantsType, Long fee,
                      ParticipantSelectionMethod participantSelectionMethod) {
         this.memberId = memberId;
@@ -118,7 +122,8 @@ public class Gathering extends BaseEntity {
         this.category = category;
         this.address = address;
         this.detailedAddress = detailedAddress;
-        this.location = location;
+        this.lat = lat;
+        this.lng = lng;
         this.mainImg = mainImg;
         this.participantsType = participantsType;
         this.fee = fee;
@@ -138,7 +143,8 @@ public class Gathering extends BaseEntity {
                 .category(this.category)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
-                .location(this.location)
+                .lat(this.lat)
+                .lng(this.lng)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
                 .fee(this.fee)
@@ -159,7 +165,8 @@ public class Gathering extends BaseEntity {
                 .category(this.category)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
-                .location(this.location)
+                .lat(this.lat)
+                .lng(this.lng)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
                 .fee(this.fee)
@@ -180,7 +187,8 @@ public class Gathering extends BaseEntity {
                 .category(this.category)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
-                .location(this.location)
+                .lat(this.lat)
+                .lng(this.lng)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
                 .fee(this.fee)
@@ -201,7 +209,8 @@ public class Gathering extends BaseEntity {
                 .category(this.category)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
-                .location(this.location)
+                .lat(this.lat)
+                .lng(this.lng)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
                 .fee(this.fee)
@@ -218,7 +227,8 @@ public class Gathering extends BaseEntity {
         recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
         address = setGatheringRequest.getAddress();
         detailedAddress = setGatheringRequest.getDetailedAddress();
-        location = setGatheringRequest.getLocation();
+        lat = setGatheringRequest.getLat();
+        lng = setGatheringRequest.getLng();
         mainImg = setGatheringRequest.getMainImg();
         participantsType = setGatheringRequest.getParticipantsType();
         category = setGatheringRequest.getCategory();
