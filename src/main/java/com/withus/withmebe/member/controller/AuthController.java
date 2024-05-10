@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,4 +35,7 @@ public class AuthController {
     header.add("Authorization", "Bearer "+ response.accessToken());
     return new ResponseEntity<>(header, OK);
   }
+
+  @GetMapping("/signin/oauth2")
+  public void signinOAuth2(){}
 }
