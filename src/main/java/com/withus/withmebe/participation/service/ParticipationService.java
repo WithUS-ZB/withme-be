@@ -1,13 +1,10 @@
 package com.withus.withmebe.participation.service;
 
-import static com.withus.withmebe.participation.type.Status.APPROVED;
-import static com.withus.withmebe.participation.type.Status.CANCELED;
-import static com.withus.withmebe.participation.type.Status.CREATED;
-import static com.withus.withmebe.participation.type.Status.REJECTED;
+
+import static com.withus.withmebe.gathering.Type.Status.CANCELED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
-import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
@@ -16,6 +13,7 @@ import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.dto.ParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
+import com.withus.withmebe.participation.type.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,14 +38,14 @@ public class ParticipationService {
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
         .member(requester)
-        .status(CREATED)
+        .status(Status.CREATED)
         .build());
     return newParticipation.toResponse();
   }
 
   @Transactional(readOnly = true)
   public Long readApprovedParticipationCount(long gatheringId) {
-    return participationRepository.countByGathering_IdAndStatus(gatheringId, APPROVED);
+    return participationRepository.countByGathering_IdAndStatus(gatheringId, Status.APPROVED);
   }
 
   @Transactional(readOnly = true)
@@ -68,16 +66,32 @@ public class ParticipationService {
     Participation participation = readParticipation(participationId);
     validateCancelParticipationRequest(requesterId, participation);
 
-    participation.setStatus(CANCELED);
+    participation.setStatus(Status.CANCELED);
     Participation updatedParticipation = readParticipation(participationId);
     return updatedParticipation.toResponse();
+  }
+
+  @Transactional
+  public ParticipationResponse updateParticipationStatus(long currentMemberId, long participationId, Status status) {
+    Participation participation = readParticipation(participationId);
+    validateUpdateParticipationRequest(currentMemberId, participation);
+
+    participation.setStatus(status);
+    Participation updatedParticipation = readParticipation(participationId);
+    return updatedParticipation.toResponse();
+  }
+
+  private void validateUpdateParticipationRequest(long requesterId, Participation participation) {
+    if (!isHost(requesterId, participation.getGathering())) {
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
   }
 
   private void validateCancelParticipationRequest(long requesterId, Participation participation) {
     if (!participation.isParticipant(requesterId)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
-    if (participation.checkStatus(REJECTED)) {
+    if (participation.checkStatus(Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
     }
   }
@@ -89,7 +103,7 @@ public class ParticipationService {
     if (isCanceledGathering(gathering)) {
       throw new CustomException(ExceptionCode.GATHERING_CANCELED);
     }
-    if (participationRepository.existsByParticipant_IdAndStatusIsNot(requesterId, CANCELED)) {
+    if (participationRepository.existsByParticipant_IdAndStatusIsNot(requesterId, Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
@@ -105,7 +119,7 @@ public class ParticipationService {
   }
 
   private boolean isCanceledGathering(Gathering gathering) {
-    return gathering.getStatus() == Status.CANCELED;
+    return gathering.getStatus() == CANCELED;
   }
 
   private Member readMember(long requesterId) {
@@ -122,4 +136,6 @@ public class ParticipationService {
     return participationRepository.findById(participationId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
+
+
 }

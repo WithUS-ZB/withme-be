@@ -1,5 +1,8 @@
 package com.withus.withmebe.participation.controller;
 
+import static com.withus.withmebe.participation.type.Status.APPROVED;
+import static com.withus.withmebe.participation.type.Status.REJECTED;
+
 import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.dto.ParticipationSimpleInfo;
 import com.withus.withmebe.participation.service.ParticipationService;
@@ -43,12 +46,29 @@ public class ParticipationController {
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId,
       @PageableDefault Pageable pageble) {
-    return ResponseEntity.ok(participationService.readParticipations(currentMemberId, gatheringId, pageble));
+    return ResponseEntity.ok(
+        participationService.readParticipations(currentMemberId, gatheringId, pageble));
   }
 
   @PutMapping("/cancel/{participationId}")
-  public ResponseEntity<ParticipationResponse> getParticipations(
+  public ResponseEntity<ParticipationResponse> cancelParticipation(
       @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
-    return ResponseEntity.ok(participationService.cancelParticipation(currentMemberId, participationId));
+    return ResponseEntity.ok(
+        participationService.cancelParticipation(currentMemberId, participationId));
+  }
+
+  @PutMapping("/approve/{participationId}")
+  public ResponseEntity<ParticipationResponse> approveParticipation(
+      @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
+    return ResponseEntity.ok(
+        participationService.updateParticipationStatus(currentMemberId, participationId,
+            APPROVED));
+  }
+
+  @PutMapping("/reject/{participationId}")
+  public ResponseEntity<ParticipationResponse> rejectParticipation(
+      @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
+    return ResponseEntity.ok(
+        participationService.updateParticipationStatus(currentMemberId, participationId, REJECTED));
   }
 }
