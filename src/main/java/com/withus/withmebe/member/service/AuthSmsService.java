@@ -10,8 +10,8 @@ import com.withus.withmebe.member.dto.auth.request.AuthCodeAndSetPhoneNumberRequ
 import com.withus.withmebe.member.dto.auth.request.SendAuthSmsRequestDto;
 import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.repository.MemberRepository;
-import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,7 @@ public class AuthSmsService {
 
   @Transactional
   public SendAuthSmsResponseDto sendAuthSms(SendAuthSmsRequestDto request) {
-    String authCode = generateAuthCode(authCodeLength);
+    String authCode = generateAuthCode();
     redisService.setValues(authSmsPrefix+request.receiverPhoneNumber(), authCode
         , Duration.ofSeconds(EXPIRATION_SECONDS));
     this.messageService.sendOne(
@@ -46,21 +46,10 @@ public class AuthSmsService {
     return new SendAuthSmsResponseDto(EXPIRATION_SECONDS, authCode);
   }
 
-
-
-  private String generateAuthCode(int len) {
-    final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    SecureRandom random = new SecureRandom();
-    StringBuilder code = new StringBuilder(len);
-
-    for (int i = 0; i < len; i++) {
-      int randomIndex = random.nextInt(CHARACTERS.length());
-      char randomChar = CHARACTERS.charAt(randomIndex);
-      code.append(randomChar);
-    }
-
-    return code.toString();
+  private String generateAuthCode() {
+    Random random = new Random();
+    int randomNumber = random.nextInt(1000000);
+    return String.format("%06d", randomNumber);
   }
 
   @Transactional
