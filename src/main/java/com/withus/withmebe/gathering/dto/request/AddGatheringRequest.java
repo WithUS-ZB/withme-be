@@ -44,8 +44,11 @@ public class AddGatheringRequest {
     @NotBlank
     private String detailedAddress;
 
-    @NotBlank
-    private String location;
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lng;
 
     @NotBlank
     private String mainImg;
@@ -73,7 +76,8 @@ public class AddGatheringRequest {
                 .category(this.category)
                 .address(this.address)
                 .detailedAddress(this.detailedAddress)
-                .location(this.location)
+                .lat(this.lat)
+                .lng(this.lng)
                 .mainImg(this.mainImg)
                 .participantsType(this.participantsType)
                 .fee(this.fee)

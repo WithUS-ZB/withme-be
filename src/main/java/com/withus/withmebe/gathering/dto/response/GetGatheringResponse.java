@@ -45,8 +45,11 @@ public class GetGatheringResponse {
     @NotBlank
     private String detailedAddress;
 
-    @NotBlank
-    private String location;
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lng;
 
     @NotBlank
     private String mainImg;

@@ -6,7 +6,6 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -44,8 +43,11 @@ public class SetGatheringRequest {
     @NotBlank
     private String detailedAddress;
 
-    @NotBlank
-    private String location;
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lng;
 
     @NotBlank
     private String mainImg;
