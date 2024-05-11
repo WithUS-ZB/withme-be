@@ -20,7 +20,7 @@ public class GatheringProvider {
    * 짝수 : GatheringType.EVENT, ParticipantsType.ADULT, ParticipantSelectionMethod.FIRST_COME, Status.CANCELED
    * 홀수 : GatheringType.MEETING, ParticipantsType.MINOR, ParticipantSelectionMethod.UNLIMITED_APPLICATION, Status.PROGRESS
    */
-  public static Gathering getStubbedGathering(Long gatheringId, Long hostId) {
+  public static Gathering getStubbedGathering(long gatheringId, long hostId) {
     Gathering gathering = Gathering.builder()
         .memberId(hostId)
         .title("모임제목" + gatheringId)
