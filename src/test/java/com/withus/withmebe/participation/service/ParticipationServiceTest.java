@@ -127,4 +127,16 @@ class ParticipationServiceTest {
     assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
   }
+
+  @Test
+  void successToReadApprovedParticipationCount() {
+    //given
+    given(participationRepository.countByGathering_IdAndStatus(anyLong(),
+        argThat(status -> status.equals(Status.APPROVED))))
+        .willReturn(2L);
+    //when
+    //then
+    assertEquals(2L, participationService.readApprovedParticipationCount(GATHERING_ID));
+  }
+
 }
