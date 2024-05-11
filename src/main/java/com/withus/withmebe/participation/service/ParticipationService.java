@@ -50,7 +50,8 @@ public class ParticipationService {
   }
 
   @Transactional(readOnly = true)
-  public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId, long gatheringId,
+  public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId,
+      long gatheringId,
       Pageable pageble) {
 
     validateReadParticipationsRequest(requesterId, readGathering(gatheringId));
@@ -95,7 +96,8 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Page<MyParticipationSimpleInfo> readMyParticipations(long requesterId, Pageable pageble) {
-    Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId, pageble);
+    Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId,
+        pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
 
@@ -121,8 +123,8 @@ public class ParticipationService {
     if (isCanceledGathering(gathering)) {
       throw new CustomException(ExceptionCode.GATHERING_CANCELED);
     }
-    if (participationRepository.existsByParticipant_IdAndStatusIsNot(requesterId,
-        Status.CANCELED)) {
+    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requesterId,
+        gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
