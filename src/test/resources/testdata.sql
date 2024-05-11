@@ -20,4 +20,4 @@ INSERT INTO participation (participation_id, gathering_id, member_id, status, cr
 VALUES
     (1L, 1L, 2L, 'APPROVED', NOW(), NOW(), NULL),
     (2L, 1L, 3L, 'APPROVED', NOW(), NOW(), NULL),
-    (3L, 2L, 2L, 'CANCELED', NOW(), NOW(), NULL);
+    (3L, 2L, 3L, 'CANCELED', NOW(), NOW(), NULL);
