@@ -1,6 +1,7 @@
 package com.withus.withmebe.member.entity;
 
 import static com.withus.withmebe.member.type.Membership.FREE;
+import static com.withus.withmebe.member.type.Membership.PREMIUM;
 import static com.withus.withmebe.member.type.Role.ROLE_MEMBER;
 import static com.withus.withmebe.member.type.SignupPath.NORMAL;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -18,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -78,5 +80,21 @@ public class Member extends BaseEntity {
     this.birthDate = birthDate;
     this.gender = gender;
     this.signupDttm = signupDttm;
+  }
+
+  public boolean isPremiumMember() {
+    return membership == PREMIUM;
+  }
+
+  public int getAge() {
+    return Period.between(this.birthDate, LocalDate.now()).getYears();
+  }
+
+  public boolean isMinor() { // 미성년자
+    return getAge() < 19;
+  }
+
+  public boolean isAdult() { // 성인
+    return !isMinor();
   }
 }
