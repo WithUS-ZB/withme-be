@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import util.WithMockCustomUser;
+import util.security.WithMockCustomUser;
 
 @ExtendWith(MockitoExtension.class)
 @WithMockCustomUser
