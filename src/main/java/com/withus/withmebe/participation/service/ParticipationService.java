@@ -53,10 +53,9 @@ public class ParticipationService {
   public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId, long gatheringId,
       Pageable pageble) {
 
-    Gathering gathering = readGathering(gatheringId);
-    validateReadParticipationsRequest(requesterId, gathering);
+    validateReadParticipationsRequest(requesterId, readGathering(gatheringId));
 
-    Page<Participation> participations = participationRepository.findByGathering(gathering,
+    Page<Participation> participations = participationRepository.findByGathering_Id(gatheringId,
         pageble);
     return participations.map(Participation::toGatheringParticipationSimpleInfo);
   }
