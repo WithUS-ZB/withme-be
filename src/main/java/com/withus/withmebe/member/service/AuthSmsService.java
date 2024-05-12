@@ -10,8 +10,8 @@ import com.withus.withmebe.member.dto.auth.request.AuthCodeAndSetPhoneNumberRequ
 import com.withus.withmebe.member.dto.auth.request.SendAuthSmsRequestDto;
 import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.repository.MemberRepository;
-import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,54 +29,38 @@ public class AuthSmsService {
   @Value("${cool-sms.sender-phone-number}")
   private String senderPhoneNumber;
 
-  @Value("${auth-sms-service.text-content-template}")
-  private String textContentTemplate;
+  private static final String TEXT_CONTENT_TEMPLATE = "[with me] 인증 문자는 [%s] 입니다.";
 
-  @Value("${auth-sms-service.expiration-seconds}")
-  private int expirationSeconds;
-
-  @Value("${auth-sms-service.auth-code-length}")
-  private int authCodeLength;
+  private static final int EXPIRATION_SECONDS = 60;
 
   @Value("${redis.key.prefix.auth-sms}")
   private String authSmsPrefix;
 
   @Transactional
   public SendAuthSmsResponseDto sendAuthSms(SendAuthSmsRequestDto request) {
-    String authCode = generateAuthCode(authCodeLength);
+    String authCode = generateAuthCode();
     redisService.setValues(authSmsPrefix+request.receiverPhoneNumber(), authCode
-        , Duration.ofSeconds(expirationSeconds));
+        , Duration.ofSeconds(EXPIRATION_SECONDS));
     this.messageService.sendOne(
-        request.toMessage(textContentTemplate, senderPhoneNumber, authCode));
-    return new SendAuthSmsResponseDto(expirationSeconds, authCode);
+        request.toMessage(TEXT_CONTENT_TEMPLATE, senderPhoneNumber, authCode));
+    return new SendAuthSmsResponseDto(EXPIRATION_SECONDS, authCode);
   }
 
-
-
-  private String generateAuthCode(int len) {
-    final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    SecureRandom random = new SecureRandom();
-    StringBuilder code = new StringBuilder(len);
-
-    for (int i = 0; i < len; i++) {
-      int randomIndex = random.nextInt(CHARACTERS.length());
-      char randomChar = CHARACTERS.charAt(randomIndex);
-      code.append(randomChar);
-    }
-
-    return code.toString();
+  private String generateAuthCode() {
+    Random random = new Random();
+    int randomNumber = random.nextInt(1000000);
+    return String.format("%06d", randomNumber);
   }
 
   @Transactional
   public Boolean authCodeAndSetPhoneNumber(
       AuthCodeAndSetPhoneNumberRequestDto request, Long currentMemberId) {
     String key = authSmsPrefix + request.phoneNumber();
-    Object values = redisService.getValues(key);
+    String values = redisService.getValues(key);
     if(values == null){
       throw new CustomException(AUTH_SMS_CODE_NOT_FOUND);
     }
-    if(!values.toString().equals(request.authenticationText())){
+    if(!values.equals(request.authenticationText())){
       throw new CustomException(AUTH_CODE_MISMATCH);
     }
     memberRepository.findById(currentMemberId)

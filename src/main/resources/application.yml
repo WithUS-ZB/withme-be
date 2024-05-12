@@ -50,10 +50,6 @@ cool-sms:
   api-secret-key: cool-sms.api-secret-key
   domain: https://api.coolsms.co.kr
   sender-phone-number: cool-sms.sender-phone-number
-auth-sms-service:
-  text-content-template: "[with me] 인증 문자는 [%s] 입니다."
-  expiration-seconds: 60
-  auth-code-length: 6
 redis:
   key:
     prefix:

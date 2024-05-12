@@ -1,25 +1,20 @@
 package com.withus.withmebe.security.config;
 
-import com.withus.withmebe.security.domain.CustomUserDetails;
+import com.withus.withmebe.security.handler.OAuth2SuccessHandler;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
-import com.withus.withmebe.security.jwt.provider.TokenProvider;
 import com.withus.withmebe.security.service.OAuth2UserService;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,7 +28,7 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter authenticationFilter;
   private final OAuth2UserService oAuth2UserService;
-  private final TokenProvider tokenProvider;
+  private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -65,7 +60,9 @@ public class SecurityConfig {
 
         .oauth2Login(oauth2Configurer ->
             oauth2Configurer
-                .successHandler(successHandler())
+                .loginPage("/api/auth/signin/oauth2")
+                .defaultSuccessUrl("/")
+                .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint()
                 .userService(oAuth2UserService));
     return http.build();
@@ -84,19 +81,5 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
     return source;
-  }
-
-  @Bean
-  public AuthenticationSuccessHandler successHandler() {
-    return (request, response, authentication) -> {
-      CustomUserDetails oAuth2User = (CustomUserDetails) authentication.getPrincipal();
-
-      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-      response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-      response.addHeader("Authorization", "Bearer "+ tokenProvider.generateToken(
-          oAuth2User.getUsername()
-          , oAuth2User.getAuthorities().stream()
-              .map(GrantedAuthority::getAuthority).toList()));
-    };
   }
 }

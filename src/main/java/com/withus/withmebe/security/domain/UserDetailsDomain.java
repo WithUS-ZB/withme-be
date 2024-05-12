@@ -14,7 +14,9 @@ public record UserDetailsDomain(
     @NotNull
     Role role,
 
-    OAuth2UserAttributes attributes
+    OAuth2UserAttributes attributes,
+
+    boolean isMobileAuthenticatedMember
 
 ) {
 
@@ -23,7 +25,12 @@ public record UserDetailsDomain(
         member.getId(),
         member.getPassword(),
         member.getRole(),
-        attributes
+        attributes,
+        isMobileAuthenticatedMember(member)
     );
+  }
+
+  private static boolean isMobileAuthenticatedMember(Member member) {
+    return member.getPhoneNumber() != null;
   }
 }

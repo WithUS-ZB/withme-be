@@ -1,6 +1,7 @@
 package com.withus.withmebe.member.entity;
 
 import static com.withus.withmebe.member.type.Membership.FREE;
+import static com.withus.withmebe.member.type.Membership.PREMIUM;
 import static com.withus.withmebe.member.type.Role.ROLE_MEMBER;
 import static com.withus.withmebe.member.type.SignupPath.NORMAL;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -16,8 +17,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class Member extends BaseEntity {
+  @Transient
+  private static final int MINOR_AGE_LIMIT = 19;
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
@@ -69,6 +74,7 @@ public class Member extends BaseEntity {
   @Column(nullable = false)
   private Membership membership = FREE;
 
+
   @Builder
   public Member(String email, String password, String nickName, LocalDate birthDate, Gender gender,
       LocalDateTime signupDttm) {
@@ -78,5 +84,21 @@ public class Member extends BaseEntity {
     this.birthDate = birthDate;
     this.gender = gender;
     this.signupDttm = signupDttm;
+  }
+
+  public boolean isPremiumMember() {
+    return membership == PREMIUM;
+  }
+
+  public int getAge() {
+    return Period.between(this.birthDate, LocalDate.now()).getYears();
+  }
+
+  public boolean isMinor() { // 미성년자
+    return getAge() < MINOR_AGE_LIMIT;
+  }
+
+  public boolean isAdult() { // 성인
+    return !isMinor();
   }
 }
