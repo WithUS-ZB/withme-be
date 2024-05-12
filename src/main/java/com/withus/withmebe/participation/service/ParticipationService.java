@@ -112,9 +112,6 @@ public class ParticipationService {
     if (participation.checkStatus(Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
     }
-    if (isParticipationPeriod(gathering)) {
-      throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
-    }
     if (isReachedAtMaximumParticipant(gathering)) {
       throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
