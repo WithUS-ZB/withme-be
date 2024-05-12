@@ -17,6 +17,7 @@ import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.type.Status;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -111,6 +112,9 @@ public class ParticipationService {
     if (participation.checkStatus(Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
     }
+    if (isParticipationPeriod(gathering)) {
+      throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
+    }
     if (isReachedAtMaximumParticipant(gathering)) {
       throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
@@ -139,6 +143,9 @@ public class ParticipationService {
         requester.getId(),
         gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
+    }
+    if (isParticipationPeriod(gathering)) {
+      throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
     }
     if (isReachedAtMaximumParticipant(gathering)) {
       throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
@@ -171,6 +178,10 @@ public class ParticipationService {
   private boolean isReachedAtMaximumParticipant(Gathering gathering) {
     return participationRepository.countByGatheringAndStatus(gathering, Status.APPROVED)
         >= gathering.getMaximumParticipant();
+  }
+
+  private boolean isParticipationPeriod(Gathering gathering) {
+    return LocalDate.now().isAfter(gathering.getRecruitmentStartDt()) && LocalDate.now().isBefore(gathering.getRecruitmentEndDt());
   }
 
   private Member readMember(long requesterId) {
