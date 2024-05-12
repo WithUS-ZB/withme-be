@@ -105,6 +105,9 @@ public class ParticipationService {
     if (!isHost(requesterId, participation.getGathering())) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
+    if (participation.checkStatus(Status.CANCELED)) {
+      throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
+    }
   }
 
   private void validateCancelParticipationRequest(long requesterId, Participation participation) {
