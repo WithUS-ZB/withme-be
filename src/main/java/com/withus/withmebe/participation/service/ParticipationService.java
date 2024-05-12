@@ -5,6 +5,7 @@ import static com.withus.withmebe.gathering.Type.Status.CANCELED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
@@ -40,7 +41,8 @@ public class ParticipationService {
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
         .member(requester)
-        .status(Status.CREATED)
+        .status((gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME) ?
+            Status.APPROVED : Status.CREATED))
         .build());
     return newParticipation.toResponse();
   }
@@ -102,11 +104,15 @@ public class ParticipationService {
   }
 
   private void validateUpdateParticipationRequest(long requesterId, Participation participation) {
-    if (!isHost(requesterId, participation.getGathering())) {
+    Gathering gathering = participation.getGathering();
+    if (!isHost(requesterId, gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     if (participation.checkStatus(Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
+    }
+    if (isReachedAtMaximumParticipant(gathering)) {
+      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
   }
 
@@ -129,9 +135,13 @@ public class ParticipationService {
     if (isCanceledGathering(gathering)) {
       throw new CustomException(ExceptionCode.GATHERING_CANCELED);
     }
-    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requester.getId(),
+    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
+        requester.getId(),
         gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
+    }
+    if (isReachedAtMaximumParticipant(gathering)) {
+      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
   }
 
@@ -150,12 +160,17 @@ public class ParticipationService {
   }
 
   private boolean isMeetAtParticipantsType(Member requester, Gathering gathering) {
-     if (gathering.getParticipantsType().equals(ParticipantsType.ADULT)) {
+    if (gathering.getParticipantsType().equals(ParticipantsType.ADULT)) {
       return requester.isAdult();
     } else if (gathering.getParticipantsType().equals(ParticipantsType.MINOR)) {
-       return !requester.isAdult();
-     }
+      return !requester.isAdult();
+    }
     return true;
+  }
+
+  private boolean isReachedAtMaximumParticipant(Gathering gathering) {
+    return participationRepository.countByGatheringAndStatus(gathering, Status.APPROVED)
+        >= gathering.getMaximumParticipant();
   }
 
   private Member readMember(long requesterId) {
