@@ -54,7 +54,9 @@ public class SecurityConfig {
                     , "/api/auth/signin"
                     , "/api/member/check/email"
                     , "/api/comment/list/*"
-                    , "/api/search/**").permitAll()
+                    , "/api/search/**"
+                    , "/api/participation/count"
+                ).permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class)
 

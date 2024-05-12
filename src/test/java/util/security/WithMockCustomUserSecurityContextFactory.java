@@ -1,4 +1,4 @@
-package util;
+package util.security;
 
 import com.withus.withmebe.member.type.Role;
 import com.withus.withmebe.security.domain.CustomUserDetails;

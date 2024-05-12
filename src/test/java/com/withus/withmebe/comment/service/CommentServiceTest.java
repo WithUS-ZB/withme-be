@@ -47,18 +47,18 @@ class CommentServiceTest {
   @InjectMocks
   private CommentService commentService;
 
-  private final long memberId = 1L;
-  private final long gatheringId = 2L;
-  private final long commentId = 3L;
+  private final long MEMBER_ID = 1L;
+  private final long GATHERING_ID = 2L;
+  private final long COMMENT_ID = 3L;
 
   @Test
-  void seccessToCreateComment() {
+  void successToCreateComment() {
     //given
     AddCommentRequest request = new AddCommentRequest("댓글");
-    Member requester = getStubbedMember(memberId);
-    Comment comment = getStubbedNewComment(commentId, gatheringId, requester, request);
+    Member requester = getStubbedMember(MEMBER_ID);
+    Comment comment = getStubbedNewComment(COMMENT_ID, GATHERING_ID, requester, request);
 
-    given(gatheringRepository.existsById(gatheringId))
+    given(gatheringRepository.existsById(GATHERING_ID))
         .willReturn(true);
     given(memberRepository.findById(anyLong()))
         .willReturn(Optional.of(new Member()));
@@ -66,11 +66,11 @@ class CommentServiceTest {
         .willReturn(comment);
 
     //when
-    CommentResponse commentResponse = commentService.createComment(memberId, gatheringId,
+    CommentResponse commentResponse = commentService.createComment(MEMBER_ID, GATHERING_ID,
         request);
 
     //then
-    assertEquals(commentId, commentResponse.id());
+    assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(requester.getNickName(), commentResponse.nickName());
     assertEquals(request.commentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
@@ -85,7 +85,7 @@ class CommentServiceTest {
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> commentService.createComment(memberId, gatheringId, new AddCommentRequest("댓글")));
+        () -> commentService.createComment(MEMBER_ID, GATHERING_ID, new AddCommentRequest("댓글")));
     //then
     assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
@@ -95,16 +95,16 @@ class CommentServiceTest {
   void successToReadComments() {
     //given
     Pageable pageable = PageRequest.of(0, 10);
-    Member writer1 = getStubbedMember(memberId);
-    Comment comment1 = getStubbedComment(commentId, gatheringId, writer1);
-    Member writer2 = getStubbedMember(memberId + 1);
-    Comment comment2 = getStubbedComment(commentId + 1, gatheringId, writer2);
+    Member writer1 = getStubbedMember(MEMBER_ID);
+    Comment comment1 = getStubbedComment(COMMENT_ID, GATHERING_ID, writer1);
+    Member writer2 = getStubbedMember(MEMBER_ID + 1);
+    Comment comment2 = getStubbedComment(COMMENT_ID + 1, GATHERING_ID, writer2);
 
-    given(commentRepository.findCommentsByGatheringId(gatheringId, pageable))
+    given(commentRepository.findCommentsByGatheringId(GATHERING_ID, pageable))
         .willReturn(new PageImpl<Comment>(List.of(comment1, comment2), pageable, 2));
 
     //when
-    Page<CommentResponse> commentResponses = commentService.readComments(gatheringId, pageable);
+    Page<CommentResponse> commentResponses = commentService.readComments(GATHERING_ID, pageable);
     //then
     assertEquals(2, commentResponses.getTotalElements());
     assertEquals(1, commentResponses.getTotalPages());
@@ -126,22 +126,22 @@ class CommentServiceTest {
   }
 
   @Test
-  void seccessToUpdateComment() {
+  void successToUpdateComment() {
     //given
     SetCommentRequest request = new SetCommentRequest("수정된 댓글");
-    Member writer = getStubbedMember(memberId);
-    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+    Member writer = getStubbedMember(MEMBER_ID);
+    Comment comment = getStubbedComment(COMMENT_ID, GATHERING_ID, writer);
     comment.setCommentContent(request.commentContent());
 
     given(commentRepository.findById(anyLong()))
         .willReturn(Optional.of(comment));
 
     //when
-    CommentResponse commentResponse = commentService.updateComment(memberId, commentId,
+    CommentResponse commentResponse = commentService.updateComment(MEMBER_ID, COMMENT_ID,
         request);
 
     //then
-    assertEquals(commentId, commentResponse.id());
+    assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(writer.getNickName(), commentResponse.nickName());
     assertEquals(request.commentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
@@ -156,7 +156,7 @@ class CommentServiceTest {
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> commentService.updateComment(memberId, commentId, new SetCommentRequest("수정")));
+        () -> commentService.updateComment(MEMBER_ID, COMMENT_ID, new SetCommentRequest("수정")));
 
     //then
     assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
@@ -167,8 +167,8 @@ class CommentServiceTest {
   void failToUpdateCommentByRequesterIsNotWriter() {
     //given
     SetCommentRequest request = new SetCommentRequest("수정된 댓글");
-    Member writer = getStubbedMember(memberId);
-    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+    Member writer = getStubbedMember(MEMBER_ID);
+    Comment comment = getStubbedComment(COMMENT_ID, GATHERING_ID, writer);
     comment.setCommentContent(request.commentContent());
 
     given(commentRepository.findById(anyLong()))
@@ -176,7 +176,7 @@ class CommentServiceTest {
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> commentService.updateComment(memberId + 1, commentId, request));
+        () -> commentService.updateComment(MEMBER_ID + 1, COMMENT_ID, request));
 
     //then
     assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
@@ -186,17 +186,17 @@ class CommentServiceTest {
   @Test
   void seccessToDeleteComment() {
     //given
-    Member writer = getStubbedMember(memberId);
-    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+    Member writer = getStubbedMember(MEMBER_ID);
+    Comment comment = getStubbedComment(COMMENT_ID, GATHERING_ID, writer);
 
     given(commentRepository.findById(anyLong()))
         .willReturn(Optional.of(comment));
 
     //when
-    CommentResponse commentResponse = commentService.deleteComment(memberId, commentId);
+    CommentResponse commentResponse = commentService.deleteComment(MEMBER_ID, COMMENT_ID);
 
     //then
-    assertEquals(commentId, commentResponse.id());
+    assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(writer.getNickName(), commentResponse.nickName());
     assertEquals(comment.getCommentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
@@ -211,7 +211,7 @@ class CommentServiceTest {
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> commentService.deleteComment(memberId, commentId));
+        () -> commentService.deleteComment(MEMBER_ID, COMMENT_ID));
 
     //then
     assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
@@ -221,15 +221,15 @@ class CommentServiceTest {
   @Test
   void failToDeleteCommentByRequesterIsNotWriter() {
     //given
-    Member writer = getStubbedMember(memberId);
-    Comment comment = getStubbedComment(commentId, gatheringId, writer);
+    Member writer = getStubbedMember(MEMBER_ID);
+    Comment comment = getStubbedComment(COMMENT_ID, GATHERING_ID, writer);
 
     given(commentRepository.findById(anyLong()))
         .willReturn(Optional.of(comment));
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> commentService.deleteComment(memberId + 1, commentId));
+        () -> commentService.deleteComment(MEMBER_ID + 1, COMMENT_ID));
 
     //then
     assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());

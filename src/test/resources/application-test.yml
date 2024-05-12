@@ -6,11 +6,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MySQL
+    url: jdbc:h2:mem:test;MODE=MySQL;NON_KEYWORDS=DAY,TIME
     username: withus
   h2:
     console:

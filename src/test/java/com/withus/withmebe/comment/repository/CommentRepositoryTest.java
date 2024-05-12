@@ -17,7 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:comment/testdata.sql")
+@Sql(scripts = "classpath:testdata.sql")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class CommentRepositoryTest {
 
