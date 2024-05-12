@@ -38,8 +38,9 @@ public class GatheringController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
-            @PageableDefault(size = 10, sort = "created_dttm") Pageable pageable) {
-        return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
+            @PageableDefault(size = 10, sort = "created_dttm") Pageable pageable,
+            @CurrentMemberId long currentMemberId) {
+        return ResponseEntity.ok(gatheringService.readGatheringList(pageable, currentMemberId));
     }
 
     @PutMapping("/{gatheringId}")
@@ -50,8 +51,9 @@ public class GatheringController {
     }
 
     @GetMapping("/{gatheringId}")
-    public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
-        return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
+    public ResponseEntity<GetGatheringResponse> getGathering(@CurrentMemberId long currentMemberId,
+                                                             @PathVariable long gatheringId) {
+        return ResponseEntity.ok(gatheringService.readGathering(currentMemberId, gatheringId));
     }
 
     @DeleteMapping("/{gatheringId}")

@@ -10,6 +10,7 @@ import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
+import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -97,7 +98,7 @@ public class Gathering extends BaseEntity {
     @Column(nullable = false)
     private ParticipantSelectionMethod participantSelectionMethod;
 
-    private Long likeCount;
+    private Long likeCount = 0L;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -174,8 +175,14 @@ public class Gathering extends BaseEntity {
                 .build();
     }
 
-    public GetGatheringResponse toGetGatheringResponse() {
+    public GetGatheringResponse toGetGatheringResponse(Member member) {
         return GetGatheringResponse.builder()
+                .memberId(member.getId())
+                .gatheringId(this.id)
+                .likeCount(this.likeCount)
+                .status(this.status)
+                .profileImg(member.getProfileImg())
+                .nickName(member.getNickName())
                 .title(this.title)
                 .content(this.content)
                 .gatheringType(this.gatheringType)
@@ -195,6 +202,7 @@ public class Gathering extends BaseEntity {
                 .participantSelectionMethod(this.participantSelectionMethod)
                 .build();
     }
+
 
     public DeleteGatheringResponse toDeleteGatheringResponse() {
         return DeleteGatheringResponse.builder()
