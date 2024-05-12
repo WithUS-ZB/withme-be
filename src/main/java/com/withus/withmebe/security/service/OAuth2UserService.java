@@ -29,7 +29,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     );
 
     return new CustomUserDetails(
-        new UserDetailsDomain(member.getId(), member.getPassword(), member.getRole(), attributes));
+        UserDetailsDomain.fromEntity(member, attributes));
   }
 
   private static String getRegistrationId(OAuth2UserRequest userRequest) {
