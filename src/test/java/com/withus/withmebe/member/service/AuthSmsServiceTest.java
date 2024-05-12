@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.service.RedisStringService;
@@ -40,18 +41,14 @@ class AuthSmsServiceTest {
   private RedisStringService redisService;
   @Mock
   private MemberRepository memberRepository;
+  DefaultMessageService messageService = mock(DefaultMessageService.class);
   @InjectMocks
   private AuthSmsService authSmsService;
-  DefaultMessageService messageService = mock(DefaultMessageService.class);
 
 
   @BeforeEach
   void setUp() {
-    initializeMessageService();
     setSenderPhoneNumber();
-    setTextContentTemplate();
-    setExpirationSeconds();
-    setAuthCodeLength();
     setAuthSmsPrefix();
   }
 
@@ -79,6 +76,7 @@ class AuthSmsServiceTest {
   @Test
   @DisplayName("휴대폰 인증번호 확인 후 저장 - 성공")
   void authCodeAndSetPhoneNumber() {
+
     // Given
     String phoneNumber = "010-1234-5678";
     String authenticationText = "ZRC8U2";
@@ -169,31 +167,8 @@ class AuthSmsServiceTest {
     assertEquals(ENTITY_NOT_FOUND.getMessage(), customException.getMessage());
   }
 
-
-
-  private void initializeMessageService() {
-    String apiKey = "NCSXQ8ZDMCPA3OE5";
-    String apiSecretKey = "OHHDZBMNXNBS07WZ70UYNFWYSEGCURMI";
-    String domain = "https://api.coolsms.co.kr";
-    ReflectionTestUtils.setField(authSmsService, "messageService",
-        NurigoApp.INSTANCE.initialize(apiKey, apiSecretKey, domain));
-  }
-
   private void setSenderPhoneNumber() {
-    ReflectionTestUtils.setField(authSmsService, "senderPhoneNumber", "01097799391");
-  }
-
-  private void setTextContentTemplate() {
-    ReflectionTestUtils.setField(authSmsService, "textContentTemplate",
-        "[with me] 인증 문자는 [%s] 입니다.");
-  }
-
-  private void setExpirationSeconds() {
-    ReflectionTestUtils.setField(authSmsService, "expirationSeconds", 60);
-  }
-
-  private void setAuthCodeLength() {
-    ReflectionTestUtils.setField(authSmsService, "authCodeLength", 6);
+    ReflectionTestUtils.setField(authSmsService, "senderPhoneNumber", "010-9999-9999");
   }
 
   private void setAuthSmsPrefix() {
