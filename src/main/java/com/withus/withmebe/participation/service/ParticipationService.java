@@ -51,8 +51,7 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId,
-      long gatheringId,
-      Pageable pageble) {
+      long gatheringId, Pageable pageble) {
 
     validateReadParticipationsRequest(requesterId, readGathering(gatheringId));
 
