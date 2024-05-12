@@ -11,7 +11,7 @@ import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.service.ParticipationService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import com.withus.withmebe.security.anotation.CurrentUserDetailsDomain;
-import com.withus.withmebe.security.domain.CustomUserDetails;
+import com.withus.withmebe.security.domain.UserDetailsDomain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ public class ParticipationController {
 
   @PostMapping
   public ResponseEntity<ParticipationResponse> addParticipation(
-      @CurrentUserDetailsDomain CustomUserDetails currentUserDetails,
+      @CurrentUserDetailsDomain UserDetailsDomain currentUserDetails,
       @RequestParam(value = "gatheringid") long gatheringId) {
 
     if (!currentUserDetails.isMobileAuthenticatedMember()) {
@@ -42,7 +42,7 @@ public class ParticipationController {
     }
 
     return ResponseEntity.ok(
-        participationService.createParticipation(currentUserDetails.getMemberId(), gatheringId));
+        participationService.createParticipation(currentUserDetails.id(), gatheringId));
   }
 
   @GetMapping("/count")
