@@ -36,7 +36,8 @@ public enum ExceptionCode {
   PARTICIPATION_DUPLICATED(CONFLICT, "이미 참여 신청을 하였습니다."),
   PARTICIPATION_CONFLICT(CONFLICT, "참여 상태 변경이 불가능합니다."),
   GATHERING_CANCELED(CONFLICT, "취소된 모임입니다."),
-  PARTICIPANTSTYPE_CONFLICT(CONFLICT, "참여 조건에 맞지 않습니다."),;
+  PARTICIPANTSTYPE_CONFLICT(CONFLICT, "참여 조건에 맞지 않습니다."),
+  REACHED_AT_MAXIMUM_PARTICIPANT(CONFLICT, "최대 참여 인원에 도달했습니다."),;
 
   private final HttpStatus status;
   private final String message;
