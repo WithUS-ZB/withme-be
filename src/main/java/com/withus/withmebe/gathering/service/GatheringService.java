@@ -12,6 +12,7 @@ import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
+import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,10 +35,11 @@ public class GatheringService {
         return gathering.toAddGatheringResponse();
     }
 
-    public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
+    public Page<GetGatheringResponse> readGatheringList(Pageable pageable, long currentMemberId) {
         Pageable adjustedPageable = adjustPageable(pageable);
+        Member member = findByMemberId(currentMemberId);
         Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
-        return gatherings.map(Gathering::toGetGatheringResponse);
+        return gatherings.map(gathering -> gathering.toGetGatheringResponse(member));
     }
 
     @Transactional
@@ -47,8 +49,9 @@ public class GatheringService {
         return gathering.toSetGatheringResponse();
     }
 
-    public GetGatheringResponse readGathering(Long gatheringId) {
-        return findByGatheringId(gatheringId).toGetGatheringResponse();
+    public GetGatheringResponse readGathering(long memberId, Long gatheringId) {
+        Member member = findByMemberId(memberId);
+        return findByGatheringId(gatheringId).toGetGatheringResponse(member);
     }
 
     public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
@@ -75,7 +78,7 @@ public class GatheringService {
         return gatheringRepository.findById(gatheringId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 
-    private void findByMemberId(long memberId) {
-        memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+    private Member findByMemberId(long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 }

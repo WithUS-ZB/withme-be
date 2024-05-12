@@ -3,6 +3,7 @@ package com.withus.withmebe.gathering.dto.response;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
+import com.withus.withmebe.gathering.Type.Status;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,6 +14,23 @@ import lombok.Getter;
 @Getter
 @Builder
 public class GetGatheringResponse {
+    @NotNull
+    private Long memberId;
+
+    @NotNull
+    private Long gatheringId;
+
+    private Long likeCount;
+
+    @NotNull
+    private Status status;
+
+    @NotNull
+    private String profileImg;
+
+    @NotNull
+    private String nickName;
+
     @NotBlank
     private String title;
 
