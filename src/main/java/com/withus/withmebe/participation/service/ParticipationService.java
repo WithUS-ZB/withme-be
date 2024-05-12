@@ -34,11 +34,10 @@ public class ParticipationService {
   private final MemberRepository memberRepository;
 
   @Transactional
-  public ParticipationResponse createParticipation(CustomUserDetails currentUserDetails, long gatheringId) {
-    validateIsMobileAuthenticatedMember(currentUserDetails);
+  public ParticipationResponse createParticipation(long requesterId, long gatheringId) {
 
     Gathering gathering = readGathering(gatheringId);
-    Member requester = readMember(currentUserDetails.getMemberId());
+    Member requester = readMember(requesterId);
     validateCreateParticipationRequest(requester, gathering);
 
     Participation newParticipation = participationRepository.save(Participation.builder()
@@ -154,12 +153,6 @@ public class ParticipationService {
   private void validateReadParticipationsRequest(long requesterId, Gathering gathering) {
     if (!isHost(requesterId, gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
-  }
-
-  private void validateIsMobileAuthenticatedMember(CustomUserDetails currentUserDetails) {
-    if (!currentUserDetails.isMobileAuthenticatedMember()) {
-      throw new CustomException(ExceptionCode.AUTHENTICATION_ISSUE);
     }
   }
 
