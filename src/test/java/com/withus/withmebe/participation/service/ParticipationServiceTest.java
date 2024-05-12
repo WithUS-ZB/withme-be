@@ -18,6 +18,7 @@ import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.type.Status;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,7 @@ class ParticipationServiceTest {
   private static final Gathering STUBBED_GATHERING = GatheringProvider.getStubbedGathering(
       GATHERING_ID, HOST_ID);
   private static final Member STUBBED_PARTICIPANT = MemberProvider.getStubbedMember(PARTICIPANT_ID);
+  private static final Member STUBBED_HOST = MemberProvider.getStubbedMember(HOST_ID);
 
   @Test
   void successToCreateParticipation() {
@@ -102,6 +104,8 @@ class ParticipationServiceTest {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPANT));
     given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
         anyLong(), any()))
         .willReturn(true);
@@ -120,9 +124,6 @@ class ParticipationServiceTest {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_GATHERING));
-    given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
-        anyLong(), any()))
-        .willReturn(false);
     given(memberRepository.findById(anyLong()))
         .willReturn(Optional.empty());
 
@@ -140,6 +141,8 @@ class ParticipationServiceTest {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_HOST));
 
     //when
     CustomException exception = assertThrows(CustomException.class,
@@ -148,6 +151,23 @@ class ParticipationServiceTest {
     //then
     assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToCreateParticipationByParticipantsType() {
+    //given
+    given(gatheringRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(MemberProvider.getStubbedMemberWithBirthDate(PARTICIPANT_ID, LocalDate.now())));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
+
+    //then
+    assertEquals(ExceptionCode.PARTICIPANTSTYPE_CONFLICT.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
   }
 
   @Test
