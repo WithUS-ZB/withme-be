@@ -9,7 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Target({PARAMETER})
 @Retention(RUNTIME)
-@AuthenticationPrincipal(expression = "detailsDomain")
-public @interface CurrentUserDetailsDomain {
+@AuthenticationPrincipal(expression = "isMobileAuthenticatedMember")
+public @interface CurrentUserIsMobileAuthenticatedMember {
 
 }
