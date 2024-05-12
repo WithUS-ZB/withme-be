@@ -3,6 +3,8 @@ package com.withus.withmebe.participation.controller;
 import static com.withus.withmebe.participation.type.Status.APPROVED;
 import static com.withus.withmebe.participation.type.Status.REJECTED;
 
+import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
@@ -34,8 +36,13 @@ public class ParticipationController {
   public ResponseEntity<ParticipationResponse> addParticipation(
       @CurrentUserDetailsDomain CustomUserDetails currentUserDetails,
       @RequestParam(value = "gatheringid") long gatheringId) {
+
+    if (!currentUserDetails.isMobileAuthenticatedMember()) {
+      throw new CustomException(ExceptionCode.AUTHENTICATION_ISSUE);
+    }
+
     return ResponseEntity.ok(
-        participationService.createParticipation(currentUserDetails, gatheringId));
+        participationService.createParticipation(currentUserDetails.getMemberId(), gatheringId));
   }
 
   @GetMapping("/count")
