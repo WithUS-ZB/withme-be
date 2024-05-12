@@ -5,6 +5,7 @@ import static com.withus.withmebe.gathering.Type.Status.CANCELED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
@@ -33,9 +34,9 @@ public class ParticipationService {
   public ParticipationResponse createParticipation(long requesterId, long gatheringId) {
 
     Gathering gathering = readGathering(gatheringId);
-    validateCreateParticipationRequest(requesterId, gathering);
-
     Member requester = readMember(requesterId);
+    validateCreateParticipationRequest(requester, gathering);
+
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
         .member(requester)
@@ -115,14 +116,17 @@ public class ParticipationService {
     }
   }
 
-  private void validateCreateParticipationRequest(long requesterId, Gathering gathering) {
-    if (isHost(requesterId, gathering)) {
+  private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
+    if (isMeetAtParticipantsType(requester, gathering)) {
+      throw new CustomException(ExceptionCode.PARTICIPANTSTYPE_CONFLICT);
+    }
+    if (isHost(requester.getId(), gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     if (isCanceledGathering(gathering)) {
       throw new CustomException(ExceptionCode.GATHERING_CANCELED);
     }
-    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requesterId,
+    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requester.getId(),
         gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
@@ -140,6 +144,15 @@ public class ParticipationService {
 
   private boolean isCanceledGathering(Gathering gathering) {
     return gathering.getStatus() == CANCELED;
+  }
+
+  private boolean isMeetAtParticipantsType(Member requester, Gathering gathering) {
+     if (gathering.getParticipantsType().equals(ParticipantsType.ADULT)) {
+      return requester.isAdult();
+    } else if (gathering.getParticipantsType().equals(ParticipantsType.MINOR)) {
+       return !requester.isAdult();
+     }
+    return true;
   }
 
   private Member readMember(long requesterId) {
