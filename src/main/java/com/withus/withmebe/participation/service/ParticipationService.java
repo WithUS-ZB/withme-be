@@ -17,6 +17,7 @@ import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.type.Status;
+import com.withus.withmebe.security.domain.CustomUserDetails;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,10 +34,11 @@ public class ParticipationService {
   private final MemberRepository memberRepository;
 
   @Transactional
-  public ParticipationResponse createParticipation(long requesterId, long gatheringId) {
+  public ParticipationResponse createParticipation(CustomUserDetails currentUserDetails, long gatheringId) {
+    validateIsMobileAuthenticatedMember(currentUserDetails);
 
     Gathering gathering = readGathering(gatheringId);
-    Member requester = readMember(requesterId);
+    Member requester = readMember(currentUserDetails.getMemberId());
     validateCreateParticipationRequest(requester, gathering);
 
     Participation newParticipation = participationRepository.save(Participation.builder()
@@ -152,6 +154,12 @@ public class ParticipationService {
   private void validateReadParticipationsRequest(long requesterId, Gathering gathering) {
     if (!isHost(requesterId, gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
+  }
+
+  private void validateIsMobileAuthenticatedMember(CustomUserDetails currentUserDetails) {
+    if (!currentUserDetails.isMobileAuthenticatedMember()) {
+      throw new CustomException(ExceptionCode.AUTHENTICATION_ISSUE);
     }
   }
 
