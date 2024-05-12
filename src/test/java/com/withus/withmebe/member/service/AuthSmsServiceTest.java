@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.withSettings;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.service.RedisStringService;
@@ -20,7 +19,6 @@ import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.util.Optional;
-import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.MessageType;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
