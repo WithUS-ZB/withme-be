@@ -15,7 +15,6 @@ import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
 import com.withus.withmebe.payment.entity.Payment;
 import com.withus.withmebe.payment.repository.PaymentRepository;
 import com.withus.withmebe.payment.type.Status;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,14 +85,6 @@ public class PaymentService {
     if (isRequesterMemberShipNotFree(readMember(requesterId))) {
       throw new CustomException(MEMBERSHIP_CONFLICT);
     }
-  }
-
-  private boolean isRequestPayerNotValid(ApprovePaymentRequest request, Payment payment) {
-    return !Objects.equals(request.payerId(), payment.getMemberId());
-  }
-
-  private boolean isRequestAmountNotValid(ApprovePaymentRequest request, Payment payment) {
-    return !Objects.equals(request.amount(), payment.getGoodPrice());
   }
 
   private boolean isNotPayer(long requesterId, Payment payment) {
