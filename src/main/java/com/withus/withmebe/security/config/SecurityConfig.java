@@ -52,6 +52,7 @@ public class SecurityConfig {
             authorizeRequests
                 .requestMatchers("/api/auth/signup"
                     , "/api/auth/signin"
+                    , "/api/auth/signin/**"
                     , "/api/member/check/email"
                     , "/api/comment/list/*"
                     , "/api/search/**"
