@@ -8,7 +8,8 @@ public record AddPaymentResponse(
     Long id,
     String goodName,
     Long goodPrice,
-    Long payerId
+    Long payerId,
+    String certInfo
 ) {
 
 }
