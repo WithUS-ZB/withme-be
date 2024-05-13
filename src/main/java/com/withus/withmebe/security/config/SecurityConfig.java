@@ -64,7 +64,6 @@ public class SecurityConfig {
         .oauth2Login(oauth2Configurer ->
             oauth2Configurer
                 .loginPage("/api/auth/signin/oauth2")
-                .defaultSuccessUrl("/")
                 .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint()
                 .userService(oAuth2UserService));
