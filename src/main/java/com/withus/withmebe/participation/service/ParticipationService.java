@@ -127,7 +127,7 @@ public class ParticipationService {
   }
 
   private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
-    if (isMeetAtParticipantsType(requester, gathering)) {
+    if (!isMeetAtParticipantsType(requester, gathering)) {
       throw new CustomException(ExceptionCode.PARTICIPANTSTYPE_CONFLICT);
     }
     if (isHost(requester.getId(), gathering)) {
