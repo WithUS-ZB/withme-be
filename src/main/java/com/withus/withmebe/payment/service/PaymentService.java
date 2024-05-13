@@ -63,7 +63,11 @@ public class PaymentService {
     Payment payment = readPayment(request.id());
     validateApprovePaymentRequest(requesterId, request, payment);
 
+
     payment.approve(request);
+
+    Member requester = readMember(requesterId);
+    requester.setMembership(Membership.PREMIUM);
     Payment approvedPayment = readPayment(request.id());
     return approvedPayment.toApprovePaymentResponse();
   }
