@@ -3,11 +3,16 @@ package com.withus.withmebe.payment.controller;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
+import com.withus.withmebe.payment.dto.response.PaymentInfo;
 import com.withus.withmebe.payment.service.PaymentService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,5 +37,12 @@ public class PaymentController {
       @RequestBody @Valid ApprovePaymentRequest request
   ) {
     return ResponseEntity.ok(paymentService.approvePayment(currentMemberId, request));
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<Page<PaymentInfo>> getPayments(
+      @CurrentMemberId long currentMemberId,
+      @PageableDefault Pageable pageable) {
+    return ResponseEntity.ok(paymentService.readPayments(currentMemberId, pageable));
   }
 }

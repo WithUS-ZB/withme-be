@@ -12,10 +12,13 @@ import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
+import com.withus.withmebe.payment.dto.response.PaymentInfo;
 import com.withus.withmebe.payment.entity.Payment;
 import com.withus.withmebe.payment.repository.PaymentRepository;
 import com.withus.withmebe.payment.type.Status;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,13 +66,20 @@ public class PaymentService {
     Payment payment = readPayment(request.id());
     validateApprovePaymentRequest(requesterId, request, payment);
 
-
     payment.approve(request);
 
     Member requester = readMember(requesterId);
     requester.setMembership(Membership.PREMIUM);
     Payment approvedPayment = readPayment(request.id());
     return approvedPayment.toApprovePaymentResponse();
+  }
+
+  @Transactional(readOnly = true)
+  public Page<PaymentInfo> readPayments(long requesterId, Pageable pageable) {
+    Page<Payment> payments = paymentRepository.findByMemberIdAndStatusIsNot(requesterId,
+        Status.CREATED, pageable);
+
+    return payments.map(Payment::toPaymentInfo);
   }
 
   private void validateApprovePaymentRequest(long requesterId, ApprovePaymentRequest request,
@@ -86,7 +96,7 @@ public class PaymentService {
   }
 
   private void validateRequesterMembershipIsFree(long requesterId) {
-    if (isRequesterMemberShipNotFree(readMember(requesterId))) {
+    if (readMember(requesterId).isPremiumMember()) {
       throw new CustomException(MEMBERSHIP_CONFLICT);
     }
   }
@@ -112,4 +122,5 @@ public class PaymentService {
     return paymentRepository.findById(paymentId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
+
 }

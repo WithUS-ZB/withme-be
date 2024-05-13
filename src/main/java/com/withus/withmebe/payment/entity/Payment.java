@@ -4,10 +4,13 @@ import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
+import com.withus.withmebe.payment.dto.response.PaymentInfo;
 import com.withus.withmebe.payment.type.PayMethod;
 import com.withus.withmebe.payment.type.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +43,7 @@ public class Payment extends BaseEntity {
   @Column(nullable = false)
   private Status status = Status.CREATED;
 
+  @Enumerated(EnumType.STRING)
   private PayMethod payMethod;
 
   @Builder
@@ -60,6 +64,27 @@ public class Payment extends BaseEntity {
         .build();
   }
 
+  public ApprovePaymentResponse toApprovePaymentResponse() {
+    return ApprovePaymentResponse.builder()
+        .id(this.id)
+        .goodName(this.goodName)
+        .goodPrice(this.goodPrice)
+        .updatedDttm(this.getUpdatedDttm())
+        .build();
+  }
+
+  public PaymentInfo toPaymentInfo() {
+    return PaymentInfo.builder()
+        .id(this.id)
+        .goodName(this.goodName)
+        .goodPrice(this.goodPrice)
+        .status(this.status)
+        .payMethod(this.payMethod)
+        .tradeNo(this.tradeNo)
+        .updatedDttm(this.getUpdatedDttm())
+        .build();
+  }
+
   public void approve(ApprovePaymentRequest request) {
     this.tradeNo = request.tradeNo();
     this.payMethod = request.payMethod();
@@ -71,14 +96,5 @@ public class Payment extends BaseEntity {
       return false;
     }
     return Objects.equals(this.memberId, request.payerId());
-  }
-
-  public ApprovePaymentResponse toApprovePaymentResponse() {
-    return ApprovePaymentResponse.builder()
-        .id(this.id)
-        .goodName(this.goodName)
-        .goodPrice(this.goodPrice)
-        .updatedDttm(this.getUpdatedDttm())
-        .build();
   }
 }
