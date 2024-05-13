@@ -1,4 +1,4 @@
-package util.StubbedObjectProvider;
+package util.stubbedobjectprovider;
 
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
@@ -17,8 +17,8 @@ public class GatheringProvider {
   /**
    * 입력된 gatheringId와 hostId를 이용해 모든 필드의 내용이 채워진 gathering객체를 만들어 반환합니다.
    * Enum 타입은 gatheringId의 홀짝에 따라 값이 바뀝니다.
-   * 짝수 : GatheringType.EVENT, ParticipantsType.ADULT, ParticipantSelectionMethod.FIRST_COME, Status.CANCELED
-   * 홀수 : GatheringType.MEETING, ParticipantsType.MINOR, ParticipantSelectionMethod.UNLIMITED_APPLICATION, Status.PROGRESS
+   * 짝수 : GatheringType.EVENT, ParticipantsType.MINOR, ParticipantSelectionMethod.FIRST_COME, Status.CANCELED
+   * 홀수 : GatheringType.MEETING, ParticipantsType.ADULT, ParticipantSelectionMethod.UNLIMITED_APPLICATION, Status.PROGRESS
    */
   public static Gathering getStubbedGathering(long gatheringId, long hostId) {
     Gathering gathering = Gathering.builder()
@@ -38,7 +38,7 @@ public class GatheringProvider {
         .lng(gatheringId * 5 + gatheringId + (double) gatheringId / 5)
         .mainImg("메인 이미지" + gatheringId)
         .fee(100 + gatheringId)
-        .participantsType((gatheringId % 2 == 0) ? ParticipantsType.ADULT : ParticipantsType.MINOR)
+        .participantsType((gatheringId % 2 == 0) ? ParticipantsType.MINOR : ParticipantsType.ADULT)
         .participantSelectionMethod((gatheringId % 2 == 0) ? ParticipantSelectionMethod.FIRST_COME
             : ParticipantSelectionMethod.UNLIMITED_APPLICATION)
         .build();
