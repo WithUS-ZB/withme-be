@@ -7,7 +7,8 @@ public record AddPaymentResponse(
     String siteCd,
     Long id,
     String goodName,
-    Long goodPrice
+    Long goodPrice,
+    Long payerId
 ) {
 
 }

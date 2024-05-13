@@ -53,6 +53,7 @@ public class Payment {
         .id(this.id)
         .goodName(this.goodName)
         .goodPrice(this.goodPrice)
+        .payerId(this.payer.getId())
         .build();
   }
 }
