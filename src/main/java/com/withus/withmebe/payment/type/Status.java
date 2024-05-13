@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Status {
-  CREATED("인증대기"),
-  APPROVED("승인");
+  CREATED("결제대기"),
+  APPROVED("결제승인"),
+  CANCELED("결제취소"),
+  ;
 
   private final String value;
 }

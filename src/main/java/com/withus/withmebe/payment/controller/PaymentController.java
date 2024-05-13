@@ -2,8 +2,7 @@ package com.withus.withmebe.payment.controller;
 
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
-import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
-import com.withus.withmebe.payment.dto.response.PaymentInfo;
+import com.withus.withmebe.payment.dto.response.PaymentResponse;
 import com.withus.withmebe.payment.service.PaymentService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
@@ -13,10 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,15 +33,21 @@ public class PaymentController {
   }
 
   @PutMapping("/approve")
-  public ResponseEntity<ApprovePaymentResponse> approvePayment(
+  public ResponseEntity<PaymentResponse> approvePayment(
       @CurrentMemberId long currentMemberId,
       @RequestBody @Valid ApprovePaymentRequest request
   ) {
     return ResponseEntity.ok(paymentService.approvePayment(currentMemberId, request));
   }
 
+  @PutMapping("/cancel/{paymentId}")
+  public ResponseEntity<PaymentResponse> cancelPayment(
+      @CurrentMemberId long currentMemberId, @PathVariable long paymentId) {
+    return ResponseEntity.ok(paymentService.cancelPayment(currentMemberId, paymentId));
+  }
+
   @GetMapping("/list")
-  public ResponseEntity<Page<PaymentInfo>> getPayments(
+  public ResponseEntity<Page<PaymentResponse>> getPayments(
       @CurrentMemberId long currentMemberId,
       @PageableDefault Pageable pageable) {
     return ResponseEntity.ok(paymentService.readPayments(currentMemberId, pageable));

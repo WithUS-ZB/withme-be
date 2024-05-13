@@ -3,8 +3,7 @@ package com.withus.withmebe.payment.entity;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
-import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
-import com.withus.withmebe.payment.dto.response.PaymentInfo;
+import com.withus.withmebe.payment.dto.response.PaymentResponse;
 import com.withus.withmebe.payment.type.PayMethod;
 import com.withus.withmebe.payment.type.Status;
 import jakarta.persistence.Column;
@@ -40,6 +39,7 @@ public class Payment extends BaseEntity {
 
   private String tradeNo;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Status status = Status.CREATED;
 
@@ -64,17 +64,8 @@ public class Payment extends BaseEntity {
         .build();
   }
 
-  public ApprovePaymentResponse toApprovePaymentResponse() {
-    return ApprovePaymentResponse.builder()
-        .id(this.id)
-        .goodName(this.goodName)
-        .goodPrice(this.goodPrice)
-        .updatedDttm(this.getUpdatedDttm())
-        .build();
-  }
-
-  public PaymentInfo toPaymentInfo() {
-    return PaymentInfo.builder()
+  public PaymentResponse toPaymentResponse() {
+    return PaymentResponse.builder()
         .id(this.id)
         .goodName(this.goodName)
         .goodPrice(this.goodPrice)
@@ -91,10 +82,22 @@ public class Payment extends BaseEntity {
     this.status = Status.APPROVED;
   }
 
+  public void cancel() {
+    this.status = Status.CANCELED;
+  }
+
   public boolean isValidApproveRequest(ApprovePaymentRequest request) {
     if (!Objects.equals(request.amount(), this.goodPrice)) {
       return false;
     }
     return Objects.equals(this.memberId, request.payerId());
+  }
+
+  public boolean isStatus(Status status) {
+    return this.status.equals(status);
+  }
+
+  public boolean isPayer(long memberId) {
+    return this.memberId == memberId;
   }
 }

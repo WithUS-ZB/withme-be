@@ -11,8 +11,7 @@ import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
-import com.withus.withmebe.payment.dto.response.ApprovePaymentResponse;
-import com.withus.withmebe.payment.dto.response.PaymentInfo;
+import com.withus.withmebe.payment.dto.response.PaymentResponse;
 import com.withus.withmebe.payment.entity.Payment;
 import com.withus.withmebe.payment.repository.PaymentRepository;
 import com.withus.withmebe.payment.type.Status;
@@ -51,7 +50,7 @@ public class PaymentService {
 
   @Transactional
   public AddPaymentResponse createPayment(long requesterId) {
-    validateRequesterMembershipIsFree(requesterId);
+    validateCreatePaymentRequest(requesterId);
 
     Payment newPayment = paymentRepository.save(Payment.builder()
         .payerId(requesterId)
@@ -62,7 +61,7 @@ public class PaymentService {
   }
 
   @Transactional
-  public ApprovePaymentResponse approvePayment(long requesterId, ApprovePaymentRequest request) {
+  public PaymentResponse approvePayment(long requesterId, ApprovePaymentRequest request) {
     Payment payment = readPayment(request.id());
     validateApprovePaymentRequest(requesterId, request, payment);
 
@@ -70,24 +69,37 @@ public class PaymentService {
 
     Member requester = readMember(requesterId);
     requester.setMembership(Membership.PREMIUM);
+
     Payment approvedPayment = readPayment(request.id());
-    return approvedPayment.toApprovePaymentResponse();
+    return approvedPayment.toPaymentResponse();
+  }
+
+  @Transactional
+  public PaymentResponse cancelPayment(long requesterId, long paymentId) {
+    Payment payment = readPayment(paymentId);
+    validateCancelPaymentRequest(requesterId, payment);
+
+    payment.cancel();
+    Member requester = readMember(requesterId);
+    requester.setMembership(Membership.FREE);
+    Payment canceledPayment = readPayment(paymentId);
+    return canceledPayment.toPaymentResponse();
   }
 
   @Transactional(readOnly = true)
-  public Page<PaymentInfo> readPayments(long requesterId, Pageable pageable) {
+  public Page<PaymentResponse> readPayments(long requesterId, Pageable pageable) {
     Page<Payment> payments = paymentRepository.findByMemberIdAndStatusIsNot(requesterId,
         Status.CREATED, pageable);
 
-    return payments.map(Payment::toPaymentInfo);
+    return payments.map(Payment::toPaymentResponse);
   }
 
   private void validateApprovePaymentRequest(long requesterId, ApprovePaymentRequest request,
       Payment payment) {
-    if (isPaymentStatusNotCreated(payment)) {
+    if (!payment.isStatus(Status.CREATED)) {
       throw new CustomException(PAYMENT_CONFLICT);
     }
-    if (isNotPayer(requesterId, payment)) {
+    if (!payment.isPayer(requesterId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     if (!payment.isValidApproveRequest(request)) {
@@ -95,22 +107,19 @@ public class PaymentService {
     }
   }
 
-  private void validateRequesterMembershipIsFree(long requesterId) {
+  private void validateCreatePaymentRequest(long requesterId) {
     if (readMember(requesterId).isPremiumMember()) {
       throw new CustomException(MEMBERSHIP_CONFLICT);
     }
   }
 
-  private boolean isNotPayer(long requesterId, Payment payment) {
-    return requesterId != payment.getMemberId();
-  }
-
-  private boolean isPaymentStatusNotCreated(Payment payment) {
-    return payment.getStatus() != Status.CREATED;
-  }
-
-  private boolean isRequesterMemberShipNotFree(Member requester) {
-    return requester.getMembership() != Membership.FREE;
+  private void validateCancelPaymentRequest(long requesterId, Payment payment) {
+    if (!payment.isStatus(Status.APPROVED)) {
+      throw new CustomException(PAYMENT_CONFLICT);
+    }
+    if (!payment.isPayer(requesterId)) {
+      throw new CustomException(AUTHORIZATION_ISSUE);
+    }
   }
 
   private Member readMember(long requesterId) {
