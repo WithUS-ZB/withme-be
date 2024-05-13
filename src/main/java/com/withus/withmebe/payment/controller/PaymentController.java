@@ -26,7 +26,7 @@ public class PaymentController {
     return ResponseEntity.ok(paymentService.createPayment(currentMemberId));
   }
 
-  @PutMapping()
+  @PutMapping("/approve")
   public ResponseEntity<ApprovePaymentResponse> approvePayment(
       @CurrentMemberId long currentMemberId,
       @RequestBody @Valid ApprovePaymentRequest request
