@@ -17,7 +17,7 @@ public class FestivalService {
 
   @Transactional(readOnly = true)
   public List<FestivalSimpleInfo> readFestivals() {
-    List<Festival> festivals = festivalRepository.findFestivalByStartDttmBeforeAndEndDttmAfter(LocalDateTime.now());
+    List<Festival> festivals = festivalRepository.findFestivalByStartDttmBeforeAndEndDttmAfter(LocalDateTime.now(), LocalDateTime.now()) ;
     return festivals.stream().map(Festival::toFestivalSimpleInfo).collect(Collectors.toList());
   }
 }
