@@ -1,4 +1,4 @@
-package util.stubbedobjectprovider;
+package util.objectprovider;
 
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
@@ -29,8 +29,8 @@ public class GatheringProvider {
         .maximumParticipant(10 + gatheringId)
         .day(LocalDate.now())
         .time(LocalTime.now())
-        .recruitmentStartDt(LocalDate.now())
-        .recruitmentEndDt(LocalDate.now())
+        .recruitmentStartDt(LocalDate.now().minusWeeks(1))
+        .recruitmentEndDt(LocalDate.now().plusWeeks(1))
         .category("모임카테고리" + gatheringId)
         .address("주소" + gatheringId)
         .detailedAddress("상세주소" + gatheringId)

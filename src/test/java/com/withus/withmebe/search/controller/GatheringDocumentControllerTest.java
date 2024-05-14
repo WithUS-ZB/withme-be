@@ -1,6 +1,6 @@
 package com.withus.withmebe.search.controller;
 
-import static util.stubbedobjectprovider.GatheringDocumentProvider.getStubbedGatheringDocument;
+import static util.objectprovider.GatheringDocumentProvider.getStubbedGatheringDocument;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;

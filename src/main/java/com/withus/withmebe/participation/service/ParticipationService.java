@@ -141,7 +141,7 @@ public class ParticipationService {
         gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
-    if (isParticipationPeriod(gathering)) {
+    if (!isParticipationPeriod(gathering)) {
       throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
     }
     if (isReachedAtMaximumParticipant(gathering)) {
