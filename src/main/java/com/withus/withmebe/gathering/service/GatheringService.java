@@ -16,7 +16,6 @@ import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +34,9 @@ public class GatheringService {
         return gathering.toAddGatheringResponse();
     }
 
-    public Page<GetGatheringResponse> readGatheringList(Pageable pageable, long currentMemberId) {
-        Pageable adjustedPageable = adjustPageable(pageable);
-        Member member = findByMemberId(currentMemberId);
-        Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
-        return gatherings.map(gathering -> gathering.toGetGatheringResponse(member));
+    public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
+        Page<Gathering> gatherings = gatheringRepository.findAll(pageable);
+        return gatherings.map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())));
     }
 
     @Transactional
@@ -49,21 +46,15 @@ public class GatheringService {
         return gathering.toSetGatheringResponse();
     }
 
-    public GetGatheringResponse readGathering(long memberId, Long gatheringId) {
-        Member member = findByMemberId(memberId);
-        return findByGatheringId(gatheringId).toGetGatheringResponse(member);
+    public GetGatheringResponse readGathering(long gatheringId) {
+        Gathering gathering = findByGatheringId(gatheringId);
+        return gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId()));
     }
 
     public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
         Gathering gathering = getGathering(currentMemberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
         return gathering.toDeleteGatheringResponse();
-    }
-
-    private Pageable adjustPageable(Pageable pageable) {
-        int size = Math.max(pageable.getPageSize(), 1);
-        int page = Math.max(pageable.getPageNumber(), 0);
-        return PageRequest.of(page, size);
     }
 
     private Gathering getGathering(long memberId, long gatheringId) {
