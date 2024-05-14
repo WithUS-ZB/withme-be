@@ -34,6 +34,7 @@ public class GatheringService {
         return gathering.toAddGatheringResponse();
     }
 
+    @Transactional(readOnly = true)
     public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
         Page<Gathering> gatherings = gatheringRepository.findAll(pageable);
         return gatherings.map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())));
