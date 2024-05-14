@@ -14,9 +14,9 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +35,10 @@ public class GatheringService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
-        Page<Gathering> gatherings = gatheringRepository.findAll(pageable);
-        return gatherings.map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())));
+    public List<GetGatheringResponse> readGatheringList() {
+        List<Gathering> gatherings = gatheringRepository.findAllByOrderByCreatedDttmDesc();
+        return gatherings.stream().map(gathering -> gathering.toGetGatheringResponse(findByMemberId(
+            gathering.getMemberId()))).collect(Collectors.toList());
     }
 
     @Transactional
