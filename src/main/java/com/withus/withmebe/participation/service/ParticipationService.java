@@ -178,7 +178,7 @@ public class ParticipationService {
   }
 
   private boolean isParticipationPeriod(Gathering gathering) {
-    return LocalDate.now().isAfter(gathering.getRecruitmentStartDt()) && LocalDate.now().isBefore(gathering.getRecruitmentEndDt());
+    return (LocalDate.now().isAfter(gathering.getRecruitmentStartDt().minusDays(1)) && LocalDate.now().isBefore(gathering.getRecruitmentEndDt().plusDays(1)));
   }
 
   private Member readMember(long requesterId) {
