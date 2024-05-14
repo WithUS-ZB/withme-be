@@ -37,210 +37,213 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 @EntityListeners(value = AuditingEntityListener.class)
 public class Gathering extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gathering_id")
-    private Long id;
 
-    @Column(nullable = false)
-    private Long memberId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "gathering_id")
+  private Long id;
 
-    @Column(nullable = false)
+  @Column(nullable = false)
+  private Long memberId;
 
-    private String title;
+  @Column(nullable = false)
 
-    private String content;
+  private String title;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private GatheringType gatheringType;
+  private String content;
 
-    private Long maximumParticipant;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private GatheringType gatheringType;
 
-    @Column(nullable = false)
-    private LocalDate day;
+  private Long maximumParticipant;
 
-    @Column(nullable = false)
-    private LocalTime time;
+  @Column(nullable = false)
+  private LocalDate day;
 
-    @Column(nullable = false)
-    private LocalDate recruitmentStartDt;
+  @Column(nullable = false)
+  private LocalTime time;
 
-    @Column(nullable = false)
-    private LocalDate recruitmentEndDt;
+  @Column(nullable = false)
+  private LocalDate recruitmentStartDt;
 
-    @Column(nullable = false)
-    private String category;
+  @Column(nullable = false)
+  private LocalDate recruitmentEndDt;
 
-    @Column(nullable = false)
-    private String address;
+  @Column(nullable = false)
+  private String category;
 
-    @Column(nullable = false)
-    private String detailedAddress;
+  @Column(nullable = false)
+  private String address;
 
-    @Column(nullable = false)
-    private Double lat;
+  @Column(nullable = false)
+  private String detailedAddress;
 
-    @Column(nullable = false)
-    private Double lng;
+  @Column(nullable = false)
+  private Double lat;
 
-    @Column(nullable = false)
-    private String mainImg;
+  @Column(nullable = false)
+  private Double lng;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ParticipantsType participantsType;
+  @Column(nullable = false)
+  private String mainImg;
 
-    @Column(nullable = false)
-    private Long fee;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ParticipantsType participantsType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ParticipantSelectionMethod participantSelectionMethod;
+  @Column(nullable = false)
+  private Long fee;
 
-    private Long likeCount = 0L;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ParticipantSelectionMethod participantSelectionMethod;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status = Status.PROGRESS;
+  private Long likeCount = 0L;
 
-    @Builder
-    public Gathering(Long memberId, String title, String content, GatheringType gatheringType, Long maximumParticipant,
-                     LocalDate day, LocalTime time,
-                     LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
-                     String address, String detailedAddress, Double lat, Double lng, String mainImg,
-                     ParticipantsType participantsType, Long fee,
-                     ParticipantSelectionMethod participantSelectionMethod) {
-        this.memberId = memberId;
-        this.title = title;
-        this.content = content;
-        this.gatheringType = gatheringType;
-        this.maximumParticipant = maximumParticipant;
-        this.recruitmentStartDt = recruitmentStartDt;
-        this.recruitmentEndDt = recruitmentEndDt;
-        this.day = day;
-        this.time = time;
-        this.category = category;
-        this.address = address;
-        this.detailedAddress = detailedAddress;
-        this.lat = lat;
-        this.lng = lng;
-        this.mainImg = mainImg;
-        this.participantsType = participantsType;
-        this.fee = fee;
-        this.participantSelectionMethod = participantSelectionMethod;
-    }
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Status status = Status.PROGRESS;
 
-    public AddGatheringResponse toAddGatheringResponse() {
-        return AddGatheringResponse.builder()
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .recruitmentStartDt(this.recruitmentStartDt)
-                .recruitmentEndDt(this.recruitmentEndDt)
-                .day(this.day)
-                .time(this.time)
-                .category(this.category)
-                .address(this.address)
-                .detailedAddress(this.detailedAddress)
-                .lat(this.lat)
-                .lng(this.lng)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
+  @Builder
+  public Gathering(Long memberId, String title, String content, GatheringType gatheringType,
+      Long maximumParticipant,
+      LocalDate day, LocalTime time,
+      LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
+      String address, String detailedAddress, Double lat, Double lng, String mainImg,
+      ParticipantsType participantsType, Long fee,
+      ParticipantSelectionMethod participantSelectionMethod) {
+    this.memberId = memberId;
+    this.title = title;
+    this.content = content;
+    this.gatheringType = gatheringType;
+    this.maximumParticipant = maximumParticipant;
+    this.recruitmentStartDt = recruitmentStartDt;
+    this.recruitmentEndDt = recruitmentEndDt;
+    this.day = day;
+    this.time = time;
+    this.category = category;
+    this.address = address;
+    this.detailedAddress = detailedAddress;
+    this.lat = lat;
+    this.lng = lng;
+    this.mainImg = mainImg;
+    this.participantsType = participantsType;
+    this.fee = fee;
+    this.participantSelectionMethod = participantSelectionMethod;
+  }
 
-    public SetGatheringResponse toSetGatheringResponse() {
-        return SetGatheringResponse.builder()
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .recruitmentStartDt(this.recruitmentStartDt)
-                .recruitmentEndDt(this.recruitmentEndDt)
-                .day(this.day)
-                .time(this.time)
-                .category(this.category)
-                .address(this.address)
-                .detailedAddress(this.detailedAddress)
-                .lat(this.lat)
-                .lng(this.lng)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
+  public AddGatheringResponse toAddGatheringResponse() {
+    return AddGatheringResponse.builder()
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .day(this.day)
+        .time(this.time)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .mainImg(this.mainImg)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .build();
+  }
 
-    public GetGatheringResponse toGetGatheringResponse(Member member) {
-        return GetGatheringResponse.builder()
-                .memberId(member.getId())
-                .gatheringId(this.id)
-                .likeCount(this.likeCount)
-                .status(this.status)
-                .profileImg(member.getProfileImg())
-                .nickName(member.getNickName())
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .recruitmentStartDt(this.recruitmentStartDt)
-                .recruitmentEndDt(this.recruitmentEndDt)
-                .day(this.day)
-                .time(this.time)
-                .category(this.category)
-                .address(this.address)
-                .detailedAddress(this.detailedAddress)
-                .lat(this.lat)
-                .lng(this.lng)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
+  public SetGatheringResponse toSetGatheringResponse() {
+    return SetGatheringResponse.builder()
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .day(this.day)
+        .time(this.time)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .mainImg(this.mainImg)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .build();
+  }
+
+  public GetGatheringResponse toGetGatheringResponse(Member member) {
+    return GetGatheringResponse.builder()
+        .memberId(member.getId())
+        .gatheringId(this.id)
+        .likeCount(this.likeCount)
+        .status(this.status)
+        .profileImg(member.getProfileImg())
+        .nickName(member.getNickName())
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .day(this.day)
+        .time(this.time)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .mainImg(this.mainImg)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .createdDttm(this.getCreatedDttm())
+        .build();
+  }
 
 
-    public DeleteGatheringResponse toDeleteGatheringResponse() {
-        return DeleteGatheringResponse.builder()
-                .title(this.title)
-                .content(this.content)
-                .gatheringType(this.gatheringType)
-                .maximumParticipant(this.maximumParticipant)
-                .recruitmentStartDt(this.recruitmentStartDt)
-                .recruitmentEndDt(this.recruitmentEndDt)
-                .day(this.day)
-                .time(this.time)
-                .category(this.category)
-                .address(this.address)
-                .detailedAddress(this.detailedAddress)
-                .lat(this.lat)
-                .lng(this.lng)
-                .mainImg(this.mainImg)
-                .participantsType(this.participantsType)
-                .fee(this.fee)
-                .participantSelectionMethod(this.participantSelectionMethod)
-                .build();
-    }
+  public DeleteGatheringResponse toDeleteGatheringResponse() {
+    return DeleteGatheringResponse.builder()
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .day(this.day)
+        .time(this.time)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .mainImg(this.mainImg)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .build();
+  }
 
-    public void updateGatheringFields(SetGatheringRequest setGatheringRequest) {
-        title = setGatheringRequest.getTitle();
-        content = setGatheringRequest.getContent();
-        gatheringType = setGatheringRequest.getGatheringType();
-        maximumParticipant = setGatheringRequest.getMaximumParticipant();
-        recruitmentStartDt = setGatheringRequest.getRecruitmentStartDt();
-        recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
-        address = setGatheringRequest.getAddress();
-        detailedAddress = setGatheringRequest.getDetailedAddress();
-        lat = setGatheringRequest.getLat();
-        lng = setGatheringRequest.getLng();
-        mainImg = setGatheringRequest.getMainImg();
-        participantsType = setGatheringRequest.getParticipantsType();
-        category = setGatheringRequest.getCategory();
-        fee = setGatheringRequest.getFee();
-        participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
-    }
+  public void updateGatheringFields(SetGatheringRequest setGatheringRequest) {
+    title = setGatheringRequest.getTitle();
+    content = setGatheringRequest.getContent();
+    gatheringType = setGatheringRequest.getGatheringType();
+    maximumParticipant = setGatheringRequest.getMaximumParticipant();
+    recruitmentStartDt = setGatheringRequest.getRecruitmentStartDt();
+    recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
+    address = setGatheringRequest.getAddress();
+    detailedAddress = setGatheringRequest.getDetailedAddress();
+    lat = setGatheringRequest.getLat();
+    lng = setGatheringRequest.getLng();
+    mainImg = setGatheringRequest.getMainImg();
+    participantsType = setGatheringRequest.getParticipantsType();
+    category = setGatheringRequest.getCategory();
+    fee = setGatheringRequest.getFee();
+    participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
+  }
 }
