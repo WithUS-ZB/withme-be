@@ -38,6 +38,9 @@ public enum ExceptionCode {
   GATHERING_CANCELED(CONFLICT, "취소된 모임입니다."),
   MEMBERSHIP_CONFLICT(CONFLICT, "이미 프리미엄 회원입니다."),
   PAYMENT_CONFLICT(CONFLICT, "결제 상태 변경이 불가능합니다."),
+  PARTICIPANTSTYPE_CONFLICT(CONFLICT, "참여 조건에 맞지 않습니다."),
+  REACHED_AT_MAXIMUM_PARTICIPANT(CONFLICT, "최대 참여 인원에 도달했습니다."),
+  NOT_PARTICIPATION_PERIOD(CONFLICT, "참여 신청 기간이 아닙니다."),
   ;
 
   private final HttpStatus status;
