@@ -1,5 +1,6 @@
 package com.withus.withmebe.search.document;
 
+import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
@@ -51,5 +52,29 @@ public record GatheringDocument(
     LocalDateTime deletedDttm,
     String status
 ) {
-
+    public GatheringSearchResponse toGatheringSearchResponse() {
+        return GatheringSearchResponse.builder()
+            .id(this.id)
+            .memberId(this.memberId)
+            .nickName(this.nickName)
+            .profileImg(this.profileImg)
+            .title(this.title)
+            .content(this.content)
+            .gatheringType(this.gatheringType)
+            .maximumParticipant(this.maximumParticipant)
+            .day(this.day.toLocalDate())
+            .time(this.time.toLocalTime())
+            .recruitmentStartDt(this.recruitmentStartDt)
+            .recruitmentEndDt(this.recruitmentEndDt)
+            .category(this.category)
+            .address(this.address)
+            .mainImg(this.mainImg)
+            .participantsType(this.participantsType)
+            .fee(this.fee)
+            .participantSelectionMethod(this.participantSelectionMethod)
+            .likeCount(this.likeCount)
+            .createdDttm(this.createdDttm)
+            .status(this.status)
+            .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.withus.withmebe.search.service;
 
 import com.withus.withmebe.search.document.GatheringDocument;
+import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import com.withus.withmebe.search.repository.GatheringDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,11 @@ public class GatheringDocumentService {
 
   private final GatheringDocumentRepository gatheringDocumentRepository;
 
-  public Page<GatheringDocument> searchGatheringDocumentsByTitleAndStatus(String query,
+  public Page<GatheringSearchResponse> searchGatheringDocumentsByTitleAndStatus(String query,
       String status, Pageable pageable) {
-    return gatheringDocumentRepository.searchByTitleAndStatusEqualsAndDeletedDttmIsNull(query,
+    Page<GatheringDocument> gatheringDocuments = gatheringDocumentRepository.searchByTitleAndStatusEqualsAndDeletedDttmIsNull(
+        query,
         status, pageable);
+    return gatheringDocuments.map(GatheringDocument::toGatheringSearchResponse);
   }
 }
