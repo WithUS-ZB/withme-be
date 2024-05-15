@@ -4,6 +4,7 @@ package com.withus.withmebe.common.exception;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -41,6 +42,10 @@ public enum ExceptionCode {
   PARTICIPANTSTYPE_CONFLICT(CONFLICT, "참여 조건에 맞지 않습니다."),
   REACHED_AT_MAXIMUM_PARTICIPANT(CONFLICT, "최대 참여 인원에 도달했습니다."),
   NOT_PARTICIPATION_PERIOD(CONFLICT, "참여 신청 기간이 아닙니다."),
+
+  // Internal Server Error
+  FAIL_TO_REQUEST_OPEN_API(INTERNAL_SERVER_ERROR, "오픈 API 정보 요청에 실패했습니다.")
+
   ;
 
   private final HttpStatus status;

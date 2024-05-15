@@ -58,6 +58,7 @@ public class SecurityConfig {
                     , "/api/comment/list/*"
                     , "/api/search/**"
                     , "/api/participation/count"
+                    , "/api/festival"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/gathering/**")
                 .permitAll()
