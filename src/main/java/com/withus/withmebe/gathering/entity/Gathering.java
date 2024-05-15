@@ -48,6 +48,7 @@ public class Gathering extends BaseEntity {
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Enumerated(EnumType.STRING)
