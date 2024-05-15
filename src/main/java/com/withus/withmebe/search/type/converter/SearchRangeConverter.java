@@ -1,6 +1,5 @@
 package com.withus.withmebe.search.type.converter;
 
-import com.withus.withmebe.search.type.SearchOption;
 import com.withus.withmebe.search.type.SearchRange;
 import org.springframework.core.convert.converter.Converter;
 
