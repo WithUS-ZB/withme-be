@@ -1,6 +1,6 @@
 package com.withus.withmebe.search.service;
 
-import static com.withus.withmebe.search.util.GatheringDocumentProvider.getStubbedGatheringDocument;
+import static util.objectprovider.GatheringDocumentProvider.getStubbedGatheringDocument;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

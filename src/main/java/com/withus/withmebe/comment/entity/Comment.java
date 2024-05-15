@@ -21,8 +21,8 @@ import org.hibernate.annotations.Where;
 @Entity
 @NoArgsConstructor
 @Getter
-@Where(clause = "deletedDttm is null")
-@SQLDelete(sql = "UPDATE Comment SET deletedDttm = NOW() WHERE comment_id = ?")
+@Where(clause = "deleted_dttm is null")
+@SQLDelete(sql = "UPDATE comment SET deleted_dttm = NOW() WHERE comment_id = ?")
 public class Comment extends BaseEntity {
 
   @Id

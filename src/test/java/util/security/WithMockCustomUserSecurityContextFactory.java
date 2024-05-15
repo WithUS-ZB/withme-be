@@ -1,4 +1,4 @@
-package util;
+package util.security;
 
 import com.withus.withmebe.member.type.Role;
 import com.withus.withmebe.security.domain.CustomUserDetails;
@@ -17,7 +17,7 @@ final class WithMockCustomUserSecurityContextFactory implements
   public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
     CustomUserDetails customUserDetails = new CustomUserDetails(
-        new UserDetailsDomain(customUser.name(), "", Role.ROLE_MEMBER, null));
+        new UserDetailsDomain(customUser.name(), "", Role.ROLE_MEMBER, null, customUser.isAdult()));
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
         customUserDetails, "",
         customUserDetails.getAuthorities());

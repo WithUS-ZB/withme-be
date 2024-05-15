@@ -1,4 +1,4 @@
-package util;
+package util.security;
 
 import com.withus.withmebe.member.type.Role;
 import java.lang.annotation.Retention;
@@ -11,5 +11,6 @@ public @interface WithMockCustomUser {
 
   long name() default 99L;
   Role role() default Role.ROLE_MEMBER;
+  boolean isAdult() default true;
 
 }

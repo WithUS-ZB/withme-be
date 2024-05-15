@@ -12,11 +12,11 @@ import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
+import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +34,11 @@ public class GatheringService {
         return gathering.toAddGatheringResponse();
     }
 
-    public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
-        Pageable adjustedPageable = adjustPageable(pageable);
-        Page<Gathering> gatherings = gatheringRepository.findAll(adjustedPageable);
-        return gatherings.map(Gathering::toGetGatheringResponse);
+    @Transactional(readOnly = true)
+    public List<GetGatheringResponse> readGatheringList() {
+        List<Gathering> gatherings = gatheringRepository.findAllByOrderByCreatedDttmDesc();
+        return gatherings.stream().map(gathering -> gathering.toGetGatheringResponse(findByMemberId(
+            gathering.getMemberId()))).collect(Collectors.toList());
     }
 
     @Transactional
@@ -47,20 +48,15 @@ public class GatheringService {
         return gathering.toSetGatheringResponse();
     }
 
-    public GetGatheringResponse readGathering(Long gatheringId) {
-        return findByGatheringId(gatheringId).toGetGatheringResponse();
+    public GetGatheringResponse readGathering(long gatheringId) {
+        Gathering gathering = findByGatheringId(gatheringId);
+        return gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId()));
     }
 
     public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
         Gathering gathering = getGathering(currentMemberId, gatheringId);
         gatheringRepository.deleteById(gatheringId);
         return gathering.toDeleteGatheringResponse();
-    }
-
-    private Pageable adjustPageable(Pageable pageable) {
-        int size = Math.max(pageable.getPageSize(), 1);
-        int page = Math.max(pageable.getPageNumber(), 0);
-        return PageRequest.of(page, size);
     }
 
     private Gathering getGathering(long memberId, long gatheringId) {
@@ -75,7 +71,7 @@ public class GatheringService {
         return gatheringRepository.findById(gatheringId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 
-    private void findByMemberId(long memberId) {
-        memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+    private Member findByMemberId(long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.withus.withmebe.common.exception.CustomException;
@@ -18,7 +19,9 @@ import com.withus.withmebe.member.dto.auth.response.SendAuthSmsResponseDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.util.Optional;
-import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.MessageType;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import util.WithMockCustomUser;
+import util.security.WithMockCustomUser;
 
 @ExtendWith(MockitoExtension.class)
 @WithMockCustomUser
@@ -36,16 +39,14 @@ class AuthSmsServiceTest {
   private RedisStringService redisService;
   @Mock
   private MemberRepository memberRepository;
+  DefaultMessageService messageService = mock(DefaultMessageService.class);
   @InjectMocks
   private AuthSmsService authSmsService;
 
+
   @BeforeEach
   void setUp() {
-    initializeMessageService();
     setSenderPhoneNumber();
-    setTextContentTemplate();
-    setExpirationSeconds();
-    setAuthCodeLength();
     setAuthSmsPrefix();
   }
 
@@ -53,16 +54,27 @@ class AuthSmsServiceTest {
   @DisplayName("휴대폰 인증번호 메시지 전송 - 성공")
   void sendAuthSms() {
     // Given
-    SendAuthSmsRequestDto requestDto = new SendAuthSmsRequestDto("010-7777-7777");
-
+    String groupId = "groupId";
+    String to = "01077777777";
+    String from = "01011111111";
+    MessageType type = MessageType.SMS;
+    String statusMessage = "message";
+    String country = "korea";
+    String messageId = "id";
+    String statusCode = "statusCode";
+    String accountId = "accoutId";
+    SendAuthSmsRequestDto requestDto = new SendAuthSmsRequestDto(to);
+    SendAuthSmsRequestDto dto = new SendAuthSmsRequestDto(to);
+    given(messageService.sendOne(dto.toMessage("인증 :  %s",from,"123456")))
+        .willReturn(new SingleMessageSentResponse(groupId,to, from, type, statusMessage, country, messageId, statusCode, accountId));
     SendAuthSmsResponseDto responseDto = authSmsService.sendAuthSms(requestDto);
     // Then
     assertEquals(60, responseDto.expirationSeconds());
   }
-
   @Test
   @DisplayName("휴대폰 인증번호 확인 후 저장 - 성공")
   void authCodeAndSetPhoneNumber() {
+
     // Given
     String phoneNumber = "010-1234-5678";
     String authenticationText = "ZRC8U2";
@@ -153,31 +165,8 @@ class AuthSmsServiceTest {
     assertEquals(ENTITY_NOT_FOUND.getMessage(), customException.getMessage());
   }
 
-
-
-  private void initializeMessageService() {
-    String apiKey = "NCSXQ8ZDMCPA3OE5";
-    String apiSecretKey = "OHHDZBMNXNBS07WZ70UYNFWYSEGCURMI";
-    String domain = "https://api.coolsms.co.kr";
-    ReflectionTestUtils.setField(authSmsService, "messageService",
-        NurigoApp.INSTANCE.initialize(apiKey, apiSecretKey, domain));
-  }
-
   private void setSenderPhoneNumber() {
-    ReflectionTestUtils.setField(authSmsService, "senderPhoneNumber", "01097799391");
-  }
-
-  private void setTextContentTemplate() {
-    ReflectionTestUtils.setField(authSmsService, "textContentTemplate",
-        "[with me] 인증 문자는 [%s] 입니다.");
-  }
-
-  private void setExpirationSeconds() {
-    ReflectionTestUtils.setField(authSmsService, "expirationSeconds", 60);
-  }
-
-  private void setAuthCodeLength() {
-    ReflectionTestUtils.setField(authSmsService, "authCodeLength", 6);
+    ReflectionTestUtils.setField(authSmsService, "senderPhoneNumber", "010-9999-9999");
   }
 
   private void setAuthSmsPrefix() {
