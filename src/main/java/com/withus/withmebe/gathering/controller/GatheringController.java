@@ -9,10 +9,8 @@ import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.service.GatheringService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,10 +35,8 @@ public class GatheringController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
-            @PageableDefault(size = 10, sort = "created_dttm") Pageable pageable,
-            @CurrentMemberId long currentMemberId) {
-        return ResponseEntity.ok(gatheringService.readGatheringList(pageable, currentMemberId));
+    public ResponseEntity<List<GetGatheringResponse>> getGatheringList() {
+        return ResponseEntity.ok(gatheringService.readGatheringList());
     }
 
     @PutMapping("/{gatheringId}")
@@ -51,9 +47,8 @@ public class GatheringController {
     }
 
     @GetMapping("/{gatheringId}")
-    public ResponseEntity<GetGatheringResponse> getGathering(@CurrentMemberId long currentMemberId,
-                                                             @PathVariable long gatheringId) {
-        return ResponseEntity.ok(gatheringService.readGathering(currentMemberId, gatheringId));
+    public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
+        return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
     }
 
     @DeleteMapping("/{gatheringId}")

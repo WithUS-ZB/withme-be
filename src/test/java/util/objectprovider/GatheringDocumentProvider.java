@@ -1,4 +1,4 @@
-package com.withus.withmebe.search.util;
+package util.objectprovider;
 
 import com.withus.withmebe.search.document.GatheringDocument;
 import java.time.LocalDateTime;

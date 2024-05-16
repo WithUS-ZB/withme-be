@@ -6,6 +6,7 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -80,4 +81,7 @@ public class GetGatheringResponse {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
+
+    @NotNull
+    private LocalDateTime createdDttm;
 }
