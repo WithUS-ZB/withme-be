@@ -52,6 +52,7 @@ public class Comment extends BaseEntity {
     return CommentResponse.builder()
         .id(this.id)
         .nickName(this.writer.getNickName())
+        .profileImg(this.writer.getProfileImg())
         .commentContent(this.commentContent)
         .createdDttm(this.getCreatedDttm())
         .updatedDttm(this.getUpdatedDttm())
