@@ -15,6 +15,7 @@ public class MemberProvider {
         .birthDate(birthDate)
         .build();
     ReflectionTestUtils.setField(member, "id", memberId);
+    ReflectionTestUtils.setField(member, "profileImg", "프로필 이미지" + memberId);
     return member;
   }
 }

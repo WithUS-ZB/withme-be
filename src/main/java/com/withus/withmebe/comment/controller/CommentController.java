@@ -41,7 +41,7 @@ public class CommentController {
 
   @GetMapping("/list/{gatheringId}")
   public ResponseEntity<Page<CommentResponse>> getComments(@PathVariable long gatheringId,
-      @PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageble) {
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageble) {
     return ResponseEntity.ok(commentService.readComments(gatheringId, pageble));
   }
 

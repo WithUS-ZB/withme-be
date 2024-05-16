@@ -1,0 +1,26 @@
+### 댓글추가
+POST http://localhost:8080/api/comment/add?gatheringid=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1ODQ4ODU0LCJleHAiOjE3MTU4NTI0NTR9.d95DEqccTFKnDCZ5xY1SpU5lkprOdSKdLbePPOP6EnQ
+
+{
+  "commentContent": "댓글내용"
+}
+
+### 댓글보기
+GET http://localhost:8080/api/comment/list/1?sort=id,asc
+Content-Type: application/json
+
+### 댓글수정
+PUT http://localhost:8080/api/comment/8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1ODQ4ODU0LCJleHAiOjE3MTU4NTI0NTR9.d95DEqccTFKnDCZ5xY1SpU5lkprOdSKdLbePPOP6EnQ
+
+{
+  "commentContent": "수정내용"
+}
+
+### 댓글삭제
+DELETE http://localhost:8080/api/comment/8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1ODQ4ODU0LCJleHAiOjE3MTU4NTI0NTR9.d95DEqccTFKnDCZ5xY1SpU5lkprOdSKdLbePPOP6EnQ

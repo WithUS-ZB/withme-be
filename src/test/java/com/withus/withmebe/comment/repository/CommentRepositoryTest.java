@@ -17,14 +17,14 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:testdata.sql")
+@Sql(scripts = "classpath:/sql/comment/data.sql")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class CommentRepositoryTest {
 
   @Autowired
   private CommentRepository commentRepository;
 
-  private final long gatheringId = 1L;
+  private static final long GATHERING_ID = 1L;
 
   @Test
   void testToReadCommentsByGatheringId() {
@@ -32,7 +32,7 @@ class CommentRepositoryTest {
 
     Pageable pageable = PageRequest.of(0,10);
     //when
-    Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, pageable);
+    Page<Comment> comments = commentRepository.findCommentsByGatheringId(GATHERING_ID, pageable);
 
     //then
 
@@ -42,7 +42,7 @@ class CommentRepositoryTest {
 
     Comment comment1 = comments.getContent().get(0);
     assertEquals(1L, comment1.getId());
-    assertEquals(gatheringId, comment1.getGatheringId());
+    assertEquals(GATHERING_ID, comment1.getGatheringId());
     assertEquals(1L, comment1.getWriter().getId());
     assertEquals("comment1", comment1.getCommentContent());
     assertNotNull(comment1.getCreatedDttm());
@@ -51,7 +51,7 @@ class CommentRepositoryTest {
 
     Comment comment2 = comments.getContent().get(1);
     assertEquals(2L, comment2.getId());
-    assertEquals(gatheringId, comment2.getGatheringId());
+    assertEquals(GATHERING_ID, comment2.getGatheringId());
     assertEquals(2L, comment2.getWriter().getId());
     assertEquals("comment2", comment2.getCommentContent());
     assertNotNull(comment2.getCreatedDttm());

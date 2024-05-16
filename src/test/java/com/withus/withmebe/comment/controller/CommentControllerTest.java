@@ -9,15 +9,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static util.objectprovider.CommentProvider.getStubbedComment;
+import static util.objectprovider.MemberProvider.getStubbedMember;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.withus.withmebe.comment.dto.request.AddCommentRequest;
+import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.service.CommentService;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,7 +31,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
@@ -48,43 +51,43 @@ class CommentControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-  private final String baseUrl = "/api/comment";
-  private final long gatheringId = 1L;
-  private final Gson gson = new Gson();
-  private static final JsonObject jsonObject = new JsonObject();
+  private static final String BASE_URL = "/api/comment";
+  private static final long GATHERING_ID = 1L;
+  private static final long COMMENT_ID = 2L;
+  private static final Gson GSON = new Gson();
+  private static final JsonObject JSON_OBJECT = new JsonObject();
+  private static final Pageable PAGEABLE = Pageable.ofSize(10);
 
-  private final CommentResponse commentResponse = CommentResponse.builder()
-      .id(1L)
-      .nickName("홍길동")
-      .commentContent("내용")
-      .createdDttm(LocalDateTime.of(2021, 2, 3, 4, 5, 6))
-      .updatedDttm(LocalDateTime.of(2022, 3, 4, 5, 6, 7))
-      .build();
+  private final CommentResponse COMMENT_RESPONSE =
+      getStubbedComment(COMMENT_ID, GATHERING_ID, getStubbedMember(3L)).toResponse();
 
   @BeforeAll
   static void setUp() {
-    jsonObject.addProperty("commentContent", "아무내용");
+    JSON_OBJECT.addProperty("commentContent", "아무내용");
   }
 
   @Test
   @WithMockCustomUser
   void seccessToAddComment() throws Exception {
     //given
-    given(commentService.createComment(anyLong(), anyLong(), any()))
-        .willReturn(commentResponse);
+    given(commentService.createComment(anyLong(), anyLong(), any(AddCommentRequest.class)))
+        .willReturn(COMMENT_RESPONSE);
 
     //when
     //then
-    mockMvc.perform(post(baseUrl + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(commentResponse.id()))
-        .andExpect(jsonPath("$.nickName").value(commentResponse.nickName()))
-        .andExpect(jsonPath("$.commentContent").value(commentResponse.commentContent()))
-        .andExpect(jsonPath("$.createdDttm").value(commentResponse.createdDttm().toString()))
-        .andExpect(jsonPath("$.updatedDttm").value(commentResponse.updatedDttm().toString()));
+        .andExpect(jsonPath("$.id").value(COMMENT_RESPONSE.id()))
+        .andExpect(jsonPath("$.nickName").value(COMMENT_RESPONSE.nickName()))
+        .andExpect(jsonPath("$.profileImg").value(COMMENT_RESPONSE.profileImg()))
+        .andExpect(jsonPath("$.commentContent").value(COMMENT_RESPONSE.commentContent()))
+        .andExpect(jsonPath("$.createdDttm")
+            .value(COMMENT_RESPONSE.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(jsonPath("$.updatedDttm")
+            .value(COMMENT_RESPONSE.updatedDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
   }
 
   @Test
@@ -93,7 +96,7 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(post(baseUrl + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
@@ -108,9 +111,9 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(post(baseUrl + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
   }
@@ -119,13 +122,14 @@ class CommentControllerTest {
   @WithMockCustomUser
   void failToAddCommentByAuthenticationIssue() throws Exception {
     //given
-    given(commentService.createComment(anyLong(), anyLong(), any()))
+    given(commentService.createComment(anyLong(), anyLong(), any(AddCommentRequest.class)))
         .willThrow(new CustomException(ExceptionCode.AUTHENTICATION_ISSUE));
+
     //when
     //then
-    mockMvc.perform(post(baseUrl + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isUnauthorized());
   }
@@ -134,37 +138,38 @@ class CommentControllerTest {
   @WithMockUser
   void seccessToGetComments() throws Exception {
     //given
-    CommentResponse commentResponse2 = CommentResponse.builder()
-        .id(2L)
-        .nickName("홍길동2")
-        .commentContent("내용2")
-        .createdDttm(LocalDateTime.of(2023, 4, 5, 6, 7, 8))
-        .updatedDttm(LocalDateTime.of(2024, 5, 6, 7, 8, 9))
-        .build();
-    Pageable pageable = PageRequest.of(0, 10);
+    CommentResponse commentResponse2 =
+        getStubbedComment(3L, GATHERING_ID, getStubbedMember(4L)).toResponse();
 
     given(commentService.readComments(anyLong(), any()))
         .willReturn(
-            new PageImpl<CommentResponse>(List.of(commentResponse, commentResponse2), pageable, 2));
+            new PageImpl<CommentResponse>(List.of(COMMENT_RESPONSE, commentResponse2), PAGEABLE,
+                2));
 
     //when
     //then
-    mockMvc.perform(get(baseUrl + "/list/" + gatheringId)
+    mockMvc.perform(get(BASE_URL + "/list/" + GATHERING_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.totalElements").value(2))
         .andExpect(jsonPath("$.totalPages").value(1))
         .andExpect(jsonPath("$.pageable.pageNumber").value(0))
-        .andExpect(jsonPath("$.content[0].id").value(commentResponse.id()))
-        .andExpect(jsonPath("$.content[0].nickName").value(commentResponse.nickName()))
-        .andExpect(jsonPath("$.content[0].commentContent").value(commentResponse.commentContent()))
-        .andExpect(jsonPath("$.content[0].createdDttm").value(commentResponse.createdDttm().toString()))
-        .andExpect(jsonPath("$.content[0].updatedDttm").value(commentResponse.updatedDttm().toString()))
+        .andExpect(jsonPath("$.content[0].id").value(COMMENT_RESPONSE.id()))
+        .andExpect(jsonPath("$.content[0].nickName").value(COMMENT_RESPONSE.nickName()))
+        .andExpect(jsonPath("$.content[0].profileImg").value(COMMENT_RESPONSE.profileImg()))
+        .andExpect(jsonPath("$.content[0].commentContent").value(COMMENT_RESPONSE.commentContent()))
+        .andExpect(jsonPath("$.content[0].createdDttm")
+            .value(COMMENT_RESPONSE.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(jsonPath("$.content[0].updatedDttm")
+            .value(COMMENT_RESPONSE.updatedDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
         .andExpect(jsonPath("$.content[1].id").value(commentResponse2.id()))
         .andExpect(jsonPath("$.content[1].nickName").value(commentResponse2.nickName()))
+        .andExpect(jsonPath("$.content[1].profileImg").value(commentResponse2.profileImg()))
         .andExpect(jsonPath("$.content[1].commentContent").value(commentResponse2.commentContent()))
-        .andExpect(jsonPath("$.content[1].createdDttm").value(commentResponse2.createdDttm().toString()))
-        .andExpect(jsonPath("$.content[1].updatedDttm").value(commentResponse2.updatedDttm().toString()));
+        .andExpect(jsonPath("$.content[1].createdDttm")
+            .value(commentResponse2.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(jsonPath("$.content[1].updatedDttm")
+            .value(commentResponse2.updatedDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
   }
 
   @Test
@@ -173,30 +178,33 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(get(baseUrl + "/list")
+    mockMvc.perform(get(BASE_URL + "/list")
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
 
   @Test
   @WithMockCustomUser
-  void seccessToSetComment() throws Exception {
+  void successToSetComment() throws Exception {
     //given
-    given(commentService.updateComment(anyLong(), anyLong(), any()))
-        .willReturn(commentResponse);
+    given(commentService.updateComment(anyLong(), anyLong(), any(SetCommentRequest.class)))
+        .willReturn(COMMENT_RESPONSE);
 
     //when
     //then
-    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(put(BASE_URL + "/" + COMMENT_ID)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(commentResponse.id()))
-        .andExpect(jsonPath("$.nickName").value(commentResponse.nickName()))
-        .andExpect(jsonPath("$.commentContent").value(commentResponse.commentContent()))
-        .andExpect(jsonPath("$.createdDttm").value(commentResponse.createdDttm().toString()))
-        .andExpect(jsonPath("$.updatedDttm").value(commentResponse.updatedDttm().toString()));
+        .andExpect(jsonPath("$.id").value(COMMENT_RESPONSE.id()))
+        .andExpect(jsonPath("$.nickName").value(COMMENT_RESPONSE.nickName()))
+        .andExpect(jsonPath("$.profileImg").value(COMMENT_RESPONSE.profileImg()))
+        .andExpect(jsonPath("$.commentContent").value(COMMENT_RESPONSE.commentContent()))
+        .andExpect(jsonPath("$.createdDttm")
+            .value(COMMENT_RESPONSE.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(jsonPath("$.updatedDttm")
+            .value(COMMENT_RESPONSE.updatedDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
   }
 
   @Test
@@ -205,7 +213,7 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(put(BASE_URL + "/" + COMMENT_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
@@ -219,9 +227,9 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(put(BASE_URL + "/" + COMMENT_ID)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
   }
@@ -234,9 +242,9 @@ class CommentControllerTest {
         .willThrow(new CustomException(ExceptionCode.AUTHENTICATION_ISSUE));
     //when
     //then
-    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(put(BASE_URL + "/" + COMMENT_ID)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isUnauthorized());
   }
@@ -249,9 +257,9 @@ class CommentControllerTest {
         .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
     //when
     //then
-    mockMvc.perform(put(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(put(BASE_URL + "/" + COMMENT_ID)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(jsonObject))
+            .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isForbidden());
   }
@@ -261,18 +269,21 @@ class CommentControllerTest {
   void seccessToDeleteComment() throws Exception {
     //given
     given(commentService.deleteComment(anyLong(), anyLong()))
-        .willReturn(commentResponse);
+        .willReturn(COMMENT_RESPONSE);
 
     //when
     //then
-    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(delete(BASE_URL + "/" + COMMENT_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(commentResponse.id()))
-        .andExpect(jsonPath("$.nickName").value(commentResponse.nickName()))
-        .andExpect(jsonPath("$.commentContent").value(commentResponse.commentContent()))
-        .andExpect(jsonPath("$.createdDttm").value(commentResponse.createdDttm().toString()))
-        .andExpect(jsonPath("$.updatedDttm").value(commentResponse.updatedDttm().toString()));
+        .andExpect(jsonPath("$.id").value(COMMENT_RESPONSE.id()))
+        .andExpect(jsonPath("$.nickName").value(COMMENT_RESPONSE.nickName()))
+        .andExpect(jsonPath("$.profileImg").value(COMMENT_RESPONSE.profileImg()))
+        .andExpect(jsonPath("$.commentContent").value(COMMENT_RESPONSE.commentContent()))
+        .andExpect(jsonPath("$.createdDttm")
+            .value(COMMENT_RESPONSE.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(jsonPath("$.updatedDttm")
+            .value(COMMENT_RESPONSE.updatedDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
   }
 
   @Test
@@ -281,7 +292,7 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(delete(baseUrl + "/adfad")
+    mockMvc.perform(delete(BASE_URL + "/size=1")
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
@@ -295,7 +306,7 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(delete(BASE_URL + "/" + COMMENT_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
   }
@@ -308,10 +319,11 @@ class CommentControllerTest {
         .willThrow(new CustomException(ExceptionCode.AUTHENTICATION_ISSUE));
     //when
     //then
-    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(delete(BASE_URL + "/" + COMMENT_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isUnauthorized());
   }
+
   @Test
   @WithMockCustomUser
   void failToDeleteCommentByAuthorizationIssue() throws Exception {
@@ -320,7 +332,7 @@ class CommentControllerTest {
         .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
     //when
     //then
-    mockMvc.perform(delete(baseUrl + "/" + commentResponse.id())
+    mockMvc.perform(delete(BASE_URL + "/" + COMMENT_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isForbidden());
   }
