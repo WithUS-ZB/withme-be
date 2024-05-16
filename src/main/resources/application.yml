@@ -61,3 +61,6 @@ cloud:
       bucket: ${BUCKET_NAME}
     stack:
       auto: false
+
+front:
+  url: http://localhost:5173
