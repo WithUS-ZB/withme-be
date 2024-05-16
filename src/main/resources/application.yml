@@ -8,7 +8,7 @@ spring:
       ddl-auto: update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://host.docker.internal:3306/withme?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://host.docker.internal:3306/withme?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&
     username: withus
     password: withuspassword
   data:
@@ -61,3 +61,7 @@ cloud:
       bucket: ${BUCKET_NAME}
     stack:
       auto: false
+
+festival:
+  api:
+    url: "http://openapi.seoul.go.kr:8088/${FESTIVAL_API_KEY}/json/culturalEventInfo"

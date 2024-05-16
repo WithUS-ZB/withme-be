@@ -14,7 +14,6 @@ import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,16 +39,8 @@ public class CommentService {
   @Transactional(readOnly = true)
   public Page<CommentResponse> readComments(long gatheringId, Pageable pageable) {
 
-    Pageable adjustedPageable = adjustPageable(pageable);
-    Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, adjustedPageable);
+    Page<Comment> comments = commentRepository.findCommentsByGatheringId(gatheringId, pageable);
     return comments.map(Comment::toResponse);
-  }
-
-  private Pageable adjustPageable(Pageable pageable) {
-
-    int size = Math.max(pageable.getPageSize(), 1);
-    int page = Math.max(pageable.getPageNumber(), 0);
-    return PageRequest.of(page, size);
   }
 
   @Transactional

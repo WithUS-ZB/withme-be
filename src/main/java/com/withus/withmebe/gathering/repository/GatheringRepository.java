@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GatheringRepository extends JpaRepository<Gathering, Long> {
 
-    List<Gathering> findAll();
+    List<Gathering> findAllByOrderByCreatedDttmDesc();
     Optional<Gathering> findById(Long aLong);
 
 }

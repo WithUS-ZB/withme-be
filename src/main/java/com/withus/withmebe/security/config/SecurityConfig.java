@@ -7,6 +7,7 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,18 +53,21 @@ public class SecurityConfig {
             authorizeRequests
                 .requestMatchers("/api/auth/signup"
                     , "/api/auth/signin"
+                    , "/api/auth/signin/**"
                     , "/api/member/check/email"
                     , "/api/comment/list/*"
                     , "/api/search/**"
                     , "/api/participation/count"
+                    , "/api/festival"
                 ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/gathering/**")
+                .permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
         .oauth2Login(oauth2Configurer ->
             oauth2Configurer
                 .loginPage("/api/auth/signin/oauth2")
-                .defaultSuccessUrl("/")
                 .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint()
                 .userService(oAuth2UserService));

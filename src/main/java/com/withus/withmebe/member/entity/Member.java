@@ -72,6 +72,7 @@ public class Member extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @Setter
   private Membership membership = FREE;
 
 

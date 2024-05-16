@@ -30,9 +30,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import util.stubbedobjectprovider.GatheringProvider;
-import util.stubbedobjectprovider.MemberProvider;
-import util.stubbedobjectprovider.ParticipationProvider;
+import util.objectprovider.GatheringProvider;
+import util.objectprovider.MemberProvider;
+import util.objectprovider.ParticipationProvider;
 
 @ExtendWith(MockitoExtension.class)
 class ParticipationServiceTest {

@@ -1,4 +1,4 @@
-package util.stubbedobjectprovider;
+package util.objectprovider;
 
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.member.entity.Member;
