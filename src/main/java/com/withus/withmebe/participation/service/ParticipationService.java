@@ -108,7 +108,7 @@ public class ParticipationService {
     validateParticipantsType(requester, gathering);
     validateRequesterIsNotHost(requester, gathering);
     validateGatheringStatus(gathering);
-    validateParticipationNotExists(requester, gathering);
+    validateParticipationIsNotDuplicated(requester, gathering);
     validateParticipationPeriod(gathering);
     validateCurrentParticipantCount(gathering);
   }
@@ -150,7 +150,7 @@ public class ParticipationService {
     }
   }
 
-  private void validateParticipationNotExists(Member requester, Gathering gathering) {
+  private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
     if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
         requester.getId(),
         gathering.getId(), Status.CANCELED)) {
