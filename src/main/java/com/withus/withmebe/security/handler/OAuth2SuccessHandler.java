@@ -26,12 +26,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException {
     CustomUserDetails oAuth2User = (CustomUserDetails) authentication.getPrincipal();
-    // TODO: 정리 필요
-    String targetUrl = UriComponentsBuilder.fromUriString(frontUrl + "/auth/success?Authorization")
+
+    String targetUrl = UriComponentsBuilder.fromUriString(frontUrl + "/auth/success?")
         .queryParam("Authorization", "Bearer "+ getToken(oAuth2User))
+        .queryParam("isAdditionalInfoRequired", oAuth2User.getIsAdditionalInfoRequired())
         .build().toUriString();
 
-    response.addHeader("Authorization", "Bearer "+ getToken(oAuth2User));
     response.sendRedirect(targetUrl);
   }
 
