@@ -28,7 +28,7 @@ public class MemberService {
   }
 
   @Transactional(readOnly = true)
-  public MemberDetailDto readCurretLoginMemberDetail(Long currentMemberId) {
+  public MemberDetailDto readCurrentLoginMemberDetail(Long currentMemberId) {
     return getMemberById(currentMemberId).toMemberDetailDto();
   }
 

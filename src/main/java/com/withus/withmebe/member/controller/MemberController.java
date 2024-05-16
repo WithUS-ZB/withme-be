@@ -33,7 +33,7 @@ public class MemberController {
   @GetMapping("/detail")
   public ResponseEntity<MemberDetailDto> getCurrentLoginMemberDetail(
       @CurrentMemberId Long currentMemberId) {
-    return ResponseEntity.ok(memberService.readCurretLoginMemberDetail(currentMemberId));
+    return ResponseEntity.ok(memberService.readCurrentLoginMemberDetail(currentMemberId));
   }
 
   @GetMapping("/check/email")
