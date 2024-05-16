@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,14 +19,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
   private final TokenProvider tokenProvider;
+  @Value("${front.url}")
+  private String frontUrl;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException {
     CustomUserDetails oAuth2User = (CustomUserDetails) authentication.getPrincipal();
     // TODO: 정리 필요
-    String targetUrl = UriComponentsBuilder.fromUriString("/")
-//        .queryParam("Authorization", "Bearer "+ getToken(oAuth2User))
+    String targetUrl = UriComponentsBuilder.fromUriString(frontUrl + "/auth/success?Authorization")
+        .queryParam("Authorization", "Bearer "+ getToken(oAuth2User))
         .build().toUriString();
 
     response.addHeader("Authorization", "Bearer "+ getToken(oAuth2User));
