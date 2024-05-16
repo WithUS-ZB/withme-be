@@ -149,7 +149,7 @@ class CommentServiceTest {
   }
 
   @Test
-  void failToUpdateCommentByCommentNotFound() {
+  void failToUpdateCommentByFailedToReadComment() {
     //given
     given(commentRepository.findById(anyLong()))
         .willReturn(Optional.empty());

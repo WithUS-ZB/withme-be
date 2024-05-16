@@ -6,6 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static util.objectprovider.GatheringProvider.getStubbedGathering;
+import static util.objectprovider.GatheringProvider.getStubbedGatheringPeriodAlwaysFalse;
+import static util.objectprovider.MemberProvider.getStubbedMember;
+import static util.objectprovider.MemberProvider.getStubbedMinorMember;
+import static util.objectprovider.ParticipationProvider.getStubbedParticipation;
+import static util.objectprovider.ParticipationProvider.getStubbedParticipationWithStatus;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -18,7 +24,6 @@ import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.type.Status;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -30,9 +35,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import util.objectprovider.GatheringProvider;
-import util.objectprovider.MemberProvider;
-import util.objectprovider.ParticipationProvider;
 
 @ExtendWith(MockitoExtension.class)
 class ParticipationServiceTest {
@@ -50,42 +52,45 @@ class ParticipationServiceTest {
   private static final long GATHERING_ID = 1L;
   private static final long HOST_ID = 1L;
   private static final long PARTICIPANT_ID = 2L;
-  private static final Gathering STUBBED_GATHERING = GatheringProvider.getStubbedGathering(
+  private static final long PARTICIPATION_ID = 3L;
+  private static final Gathering STUBBED_GATHERING = getStubbedGathering(
       GATHERING_ID, HOST_ID);
-  private static final Member STUBBED_PARTICIPANT = MemberProvider.getStubbedMember(PARTICIPANT_ID);
-  private static final Member STUBBED_HOST = MemberProvider.getStubbedMember(HOST_ID);
+  private static final Member STUBBED_PARTICIPANT = getStubbedMember(PARTICIPANT_ID);
+  private static final Member STUBBED_MINOR_PARTICIPANT = getStubbedMinorMember(PARTICIPANT_ID + 1);
+  private static final Pageable PAGEABLE = Pageable.ofSize(10);
+  private static final Participation STUBBED_PARTICIPATION = getStubbedParticipation(
+      PARTICIPATION_ID, STUBBED_PARTICIPANT,
+      STUBBED_GATHERING);
 
   @Test
   void successToCreateParticipation() {
     //given
     given(gatheringRepository.findById(anyLong()))
-        .willAnswer(invocationOnMock -> {
-          long gatheringId = invocationOnMock.getArgument(0);
-          return Optional.of(GatheringProvider.getStubbedGathering(gatheringId, HOST_ID));
-        });
+        .willReturn(Optional.of(STUBBED_GATHERING));
     given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
         anyLong(), argThat(status -> status.equals(Status.CANCELED))))
         .willReturn(false);
     given(memberRepository.findById(anyLong()))
-        .willAnswer(invocationOnMock -> {
-          long participantId = invocationOnMock.getArgument(0);
-          return Optional.of(MemberProvider.getStubbedMember(participantId));
-        });
+        .willReturn(Optional.of(STUBBED_PARTICIPANT));
     given(participationRepository.save(any(Participation.class)))
-        .willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        .willReturn(STUBBED_PARTICIPATION);
 
     //when
     ParticipationResponse participationResponse = participationService.createParticipation(
         PARTICIPANT_ID, GATHERING_ID);
 
     //then
-    assertEquals(STUBBED_PARTICIPANT.getNickName(), participationResponse.nickName());
-    assertEquals(STUBBED_GATHERING.getTitle(), participationResponse.title());
-    assertEquals(Status.CREATED, participationResponse.status());
+    assertEquals(STUBBED_PARTICIPATION.getId(), participationResponse.id());
+    assertEquals(STUBBED_PARTICIPATION.getParticipant().getNickName(),
+        participationResponse.nickName());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), participationResponse.title());
+    assertEquals(STUBBED_PARTICIPATION.getStatus(), participationResponse.status());
+    assertEquals(STUBBED_PARTICIPATION.getCreatedDttm(), participationResponse.createdDttm());
+    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), participationResponse.updatedDttm());
   }
 
   @Test
-  void failToCreateParticipationByFailedToFindGathering() {
+  void failToCreateParticipationByFailedToReadGathering() {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.empty());
@@ -100,6 +105,74 @@ class ParticipationServiceTest {
   }
 
   @Test
+  void failToCreateParticipationByFailedToReadRequester() {
+    //given
+    given(gatheringRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.createParticipation(PARTICIPANT_ID, GATHERING_ID));
+
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToCreateParticipationByParticipantsType() {
+    //given
+    given(gatheringRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_MINOR_PARTICIPANT));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
+
+    //then
+    assertEquals(ExceptionCode.PARTICIPANTSTYPE_CONFLICT.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToCreateParticipationByRequesterIsHost() {
+    //given
+    given(gatheringRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_GATHERING));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(getStubbedMember(HOST_ID)));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
+
+    //then
+    assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToCreateParticipationByGatheringStatus() {
+    //given
+    given(gatheringRepository.findById(anyLong()))
+        .willReturn(Optional.of(getStubbedGathering(GATHERING_ID + 1, HOST_ID)));
+    given(memberRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_MINOR_PARTICIPANT));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
+
+    //then
+    assertEquals(ExceptionCode.GATHERING_STATUS_CONFLICT.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
+  }
+
+  @Test
   void failToCreateParticipationByDuplicatedRequest() {
     //given
     given(gatheringRepository.findById(anyLong()))
@@ -107,7 +180,7 @@ class ParticipationServiceTest {
     given(memberRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_PARTICIPANT));
     given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
-        anyLong(), any()))
+        anyLong(), any(Status.class)))
         .willReturn(true);
 
     //when
@@ -120,53 +193,45 @@ class ParticipationServiceTest {
   }
 
   @Test
-  void failToCreateParticipationByFailedToFindRequester() {
+  void failToCreateParticipationByPeriod() {
     //given
     given(gatheringRepository.findById(anyLong()))
-        .willReturn(Optional.of(STUBBED_GATHERING));
+        .willReturn(Optional.of(getStubbedGatheringPeriodAlwaysFalse(GATHERING_ID, HOST_ID)));
     given(memberRepository.findById(anyLong()))
-        .willReturn(Optional.empty());
+        .willReturn(Optional.of(STUBBED_PARTICIPANT));
+    given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
+        anyLong(), argThat(status -> status.equals(Status.CANCELED))))
+        .willReturn(false);
 
     //when
     CustomException exception = assertThrows(CustomException.class,
         () -> participationService.createParticipation(PARTICIPANT_ID, GATHERING_ID));
 
     //then
-    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
-    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(ExceptionCode.NOT_PARTICIPATION_PERIOD.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
   }
 
   @Test
-  void failToCreateParticipationByRequesterIsHost() {
+  void failToCreateParticipationByParticipantCount() {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_GATHERING));
     given(memberRepository.findById(anyLong()))
-        .willReturn(Optional.of(STUBBED_HOST));
+        .willReturn(Optional.of(STUBBED_PARTICIPANT));
+    given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
+        anyLong(), argThat(status -> status.equals(Status.CANCELED))))
+        .willReturn(false);
+    given(participationRepository.countByGatheringAndStatus(any(Gathering.class),
+        argThat(status -> status.equals(Status.APPROVED))))
+        .willReturn(STUBBED_GATHERING.getMaximumParticipant());
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
+        () -> participationService.createParticipation(PARTICIPANT_ID, GATHERING_ID));
 
     //then
-    assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
-    assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
-  }
-
-  @Test
-  void failToCreateParticipationByParticipantsType() {
-    //given
-    given(gatheringRepository.findById(anyLong()))
-        .willReturn(Optional.of(STUBBED_GATHERING));
-    given(memberRepository.findById(anyLong()))
-        .willReturn(Optional.of(MemberProvider.getStubbedMemberWithBirthDate(PARTICIPANT_ID, LocalDate.now())));
-
-    //when
-    CustomException exception = assertThrows(CustomException.class,
-        () -> participationService.createParticipation(HOST_ID, GATHERING_ID));
-
-    //then
-    assertEquals(ExceptionCode.PARTICIPANTSTYPE_CONFLICT.getMessage(), exception.getMessage());
+    assertEquals(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
   }
 
@@ -185,27 +250,26 @@ class ParticipationServiceTest {
   @Test
   void successToReadParticipations() {
     //given
-    Participation stubbedParticipation1 = ParticipationProvider.getStubbedParticipation(1L,
+    Participation stubbedParticipation1 = getStubbedParticipationWithStatus(PARTICIPATION_ID,
         STUBBED_PARTICIPANT, STUBBED_GATHERING, Status.APPROVED);
-    Member stubbedParticipant2 = MemberProvider.getStubbedMember(PARTICIPANT_ID + 1);
-    Participation stubbedParticipation2 = ParticipationProvider.getStubbedParticipation(2L,
+    Member stubbedParticipant2 = getStubbedMember(PARTICIPANT_ID + 1);
+    Participation stubbedParticipation2 = getStubbedParticipationWithStatus(PARTICIPATION_ID + 1,
         stubbedParticipant2, STUBBED_GATHERING, Status.CREATED);
 
     given(gatheringRepository.findById(anyLong()))
-        .willAnswer(invocationOnMock -> {
-          long gatheringId = invocationOnMock.getArgument(0);
-          return Optional.of(GatheringProvider.getStubbedGathering(gatheringId, HOST_ID));
-        });
-
+        .willReturn(Optional.of(STUBBED_GATHERING));
     given(participationRepository.findByGathering_Id(anyLong(), any(Pageable.class)))
-        .willAnswer(invocationOnMock -> {
-          Pageable pageable = invocationOnMock.getArgument(1);
-          return new PageImpl<Participation>(List.of(stubbedParticipation1, stubbedParticipation2), pageable, 2);
-        });
+        .willAnswer(
+            invocationOnMock -> {
+              Pageable pageable = invocationOnMock.getArgument(1);
+              return new PageImpl<Participation>(
+                  List.of(stubbedParticipation1, stubbedParticipation2),
+                  pageable, 2);
+            });
 
     //when
     Page<GatheringParticipationSimpleInfo> gatheringParticipationSimpleInfos = participationService.readParticipations(
-        HOST_ID, GATHERING_ID, Pageable.ofSize(10));
+        HOST_ID, GATHERING_ID, PAGEABLE);
 
     //then
     assertEquals(2, gatheringParticipationSimpleInfos.getTotalElements());
@@ -215,20 +279,24 @@ class ParticipationServiceTest {
     GatheringParticipationSimpleInfo gatheringParticipationSimpleInfo1 = gatheringParticipationSimpleInfos.getContent()
         .get(0);
     assertEquals(stubbedParticipation1.getId(), gatheringParticipationSimpleInfo1.id());
-    assertEquals(stubbedParticipation1.getParticipant().getNickName(), gatheringParticipationSimpleInfo1.nickName());
+    assertEquals(stubbedParticipation1.getParticipant().getNickName(),
+        gatheringParticipationSimpleInfo1.nickName());
     assertEquals(stubbedParticipation1.getStatus(), gatheringParticipationSimpleInfo1.status());
-    assertEquals(stubbedParticipation1.getUpdatedDttm(), gatheringParticipationSimpleInfo1.updatedDttm());
+    assertEquals(stubbedParticipation1.getUpdatedDttm(),
+        gatheringParticipationSimpleInfo1.updatedDttm());
 
     GatheringParticipationSimpleInfo gatheringParticipationSimpleInfo2 = gatheringParticipationSimpleInfos.getContent()
         .get(1);
     assertEquals(stubbedParticipation2.getId(), gatheringParticipationSimpleInfo2.id());
-    assertEquals(stubbedParticipation2.getParticipant().getNickName(), gatheringParticipationSimpleInfo2.nickName());
+    assertEquals(stubbedParticipation2.getParticipant().getNickName(),
+        gatheringParticipationSimpleInfo2.nickName());
     assertEquals(stubbedParticipation2.getStatus(), gatheringParticipationSimpleInfo2.status());
-    assertEquals(stubbedParticipation2.getUpdatedDttm(), gatheringParticipationSimpleInfo2.updatedDttm());
+    assertEquals(stubbedParticipation2.getUpdatedDttm(),
+        gatheringParticipationSimpleInfo2.updatedDttm());
   }
 
   @Test
-  void failToReadParticipationsByFailedToFindGathering() {
+  void failToReadParticipationsByFailedToReadGathering() {
     //given
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.empty());
@@ -250,10 +318,150 @@ class ParticipationServiceTest {
 
     //when
     CustomException exception = assertThrows(CustomException.class,
-        () -> participationService.readParticipations(PARTICIPANT_ID, GATHERING_ID, Pageable.ofSize(10)));
+        () -> participationService.readParticipations(PARTICIPANT_ID, GATHERING_ID,
+            Pageable.ofSize(10)));
 
     //then
     assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
+  @Test
+  void successToCancelParticipation() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+
+    //when
+    ParticipationResponse participationResponse = participationService.cancelParticipation(
+        PARTICIPANT_ID, PARTICIPATION_ID);
+
+    //then
+    assertEquals(STUBBED_PARTICIPATION.getId(), participationResponse.id());
+    assertEquals(STUBBED_PARTICIPATION.getParticipant().getNickName(),
+        participationResponse.nickName());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), participationResponse.title());
+    assertEquals(Status.CANCELED, participationResponse.status());
+    assertEquals(STUBBED_PARTICIPATION.getCreatedDttm(), participationResponse.createdDttm());
+    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), participationResponse.updatedDttm());
+  }
+
+  @Test
+  void failToCancelParticipationByFailedToReadParticipation() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.cancelParticipation(PARTICIPANT_ID, PARTICIPATION_ID));
+
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToCancelParticipationRequesterIsNotParticipant() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.cancelParticipation(PARTICIPANT_ID + 1, PARTICIPATION_ID));
+
+    //then
+    assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
+  @Test
+  void successToUpdateParticipationToApprove() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+
+    //when
+    ParticipationResponse participationResponse = participationService.updateParticipationStatus(
+        HOST_ID, PARTICIPATION_ID, Status.APPROVED);
+
+    //then
+    assertEquals(STUBBED_PARTICIPATION.getId(), participationResponse.id());
+    assertEquals(STUBBED_PARTICIPATION.getParticipant().getNickName(),
+        participationResponse.nickName());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), participationResponse.title());
+    assertEquals(Status.APPROVED, participationResponse.status());
+    assertEquals(STUBBED_PARTICIPATION.getCreatedDttm(), participationResponse.createdDttm());
+    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), participationResponse.updatedDttm());
+  }
+
+  @Test
+  void failToUpdateParticipationByFailedReadParticipation() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.updateParticipationStatus(HOST_ID, PARTICIPATION_ID,
+            Status.APPROVED));
+
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToUpdateParticipationRequesterIsNotHost() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.updateParticipationStatus(HOST_ID + 1, PARTICIPATION_ID,
+            Status.APPROVED));
+
+    //then
+    assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToUpdateParticipationByStatusIsCanceled() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(
+            getStubbedParticipationWithStatus(PARTICIPATION_ID, STUBBED_PARTICIPANT,
+                STUBBED_GATHERING, Status.CANCELED)));
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.updateParticipationStatus(HOST_ID, PARTICIPATION_ID,
+            Status.APPROVED));
+
+    //then
+    assertEquals(ExceptionCode.PARTICIPATION_CONFLICT.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
+  }
+
+  @Test
+  void failToUpdateParticipationByParticipantCount() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+    given(participationRepository.countByGatheringAndStatus(any(Gathering.class),
+        argThat(status -> status.equals(Status.APPROVED))))
+        .willReturn(STUBBED_GATHERING.getMaximumParticipant());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.updateParticipationStatus(HOST_ID, PARTICIPATION_ID,
+            Status.APPROVED));
+
+    //then
+    assertEquals(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
   }
 }
