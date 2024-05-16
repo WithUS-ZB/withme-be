@@ -69,4 +69,8 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
   public boolean getIsMobileAuthenticatedMember(){
     return detailsDomain.isMobileAuthenticatedMember();
   }
+
+  public boolean getIsAdditionalInfoRequired(){
+    return detailsDomain.isAdditionalInfoRequired();
+  }
 }
