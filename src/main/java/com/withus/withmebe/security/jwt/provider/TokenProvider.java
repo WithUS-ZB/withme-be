@@ -26,7 +26,8 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class TokenProvider {
 
-  private static final long TOKEN_EXPIRE_TIME = 3_600_000; // 1000 * 60 * 60 // 1hour
+  private static final long TOKEN_EXPIRE_TIME = 3_600_000*24; // 1000 * 60 * 60 // 1hour
+  // TODO: 테스트 상으로
   private static final String KEY_ROLES = "roles";
   private final UserDetailsService userDetailsService;
   private SecretKey key;
