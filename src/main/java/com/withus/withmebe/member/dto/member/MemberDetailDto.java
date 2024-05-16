@@ -1,6 +1,5 @@
 package com.withus.withmebe.member.dto.member;
 
-import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.type.Gender;
 import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.member.type.SignupPath;
@@ -20,19 +19,4 @@ public record MemberDetailDto(
     Membership membership
 
 ) {
-
-  public static MemberDetailDto fromEntity(Member member) {
-    return new MemberDetailDto(
-        member.getId(),
-        member.getEmail(),
-        member.getNickName(),
-        member.getBirthDate(),
-        member.getGender(),
-        member.getPhoneNumber(),
-        member.getProfileImg(),
-        member.getSignupPath(),
-        member.getSignupDttm(),
-        member.getMembership()
-    );
-  }
 }

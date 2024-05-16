@@ -7,6 +7,8 @@ import static com.withus.withmebe.member.type.SignupPath.NORMAL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.withus.withmebe.common.entity.BaseEntity;
+import com.withus.withmebe.member.dto.member.MemberDetailDto;
+import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.type.Gender;
 import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.member.type.Role;
@@ -101,5 +103,26 @@ public class Member extends BaseEntity {
 
   public boolean isAdult() { // 성인
     return !isMinor();
+  }
+
+  public Member updateAdditionalInfo(AdditionalInfoRequestDto request) {
+    this.gender = request.gender();
+    this.birthDate = request.birthDate();
+    return this;
+  }
+
+  public MemberDetailDto toMemberDetailDto() {
+    return new MemberDetailDto(
+        this.id,
+        this.email,
+        this.nickName,
+        this.birthDate,
+        this.gender,
+        this.phoneNumber,
+        this.profileImg,
+        this.signupPath,
+        this.signupDttm,
+        this.membership
+    );
   }
 }

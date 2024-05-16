@@ -4,6 +4,7 @@ import com.withus.withmebe.member.dto.member.MemberDetailDto;
 import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
+import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.service.MemberService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
@@ -54,5 +55,11 @@ public class MemberController {
     public ResponseEntity<UpdateMemberNickNameDto.Response> setNickname(
             @Valid @RequestBody UpdateMemberNickNameDto.Request request, @CurrentMemberId Long currentMemberId) {
         return ResponseEntity.ok(memberService.updateNickname(request, currentMemberId));
+    }
+
+    @PutMapping("/additionalInfo")
+    public ResponseEntity<MemberDetailDto> setAdditionalInfo(
+        @Valid @RequestBody AdditionalInfoRequestDto request, @CurrentMemberId Long currentMemberId) {
+        return ResponseEntity.ok(memberService.updateAdditionalInfo(request, currentMemberId));
     }
 }
