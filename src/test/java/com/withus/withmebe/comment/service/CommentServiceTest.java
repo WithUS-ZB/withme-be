@@ -76,6 +76,7 @@ class CommentServiceTest {
     //then
     assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(requester.getNickName(), commentResponse.nickName());
+    assertEquals(requester.getProfileImg(), commentResponse.profileImg());
     assertEquals(request.commentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
     assertNotNull(commentResponse.updatedDttm());
@@ -134,6 +135,7 @@ class CommentServiceTest {
     CommentResponse commentResponse1 = commentResponses.getContent().get(0);
     assertEquals(comment1.getId(), commentResponse1.id());
     assertEquals(comment1.getWriter().getNickName(), commentResponse1.nickName());
+    assertEquals(comment1.getWriter().getProfileImg(), commentResponse1.profileImg());
     assertEquals(comment1.getCommentContent(), commentResponse1.commentContent());
     assertEquals(comment1.getCreatedDttm(), commentResponse1.createdDttm());
     assertEquals(comment1.getUpdatedDttm(), commentResponse1.updatedDttm());
@@ -141,6 +143,7 @@ class CommentServiceTest {
     CommentResponse commentResponse2 = commentResponses.getContent().get(1);
     assertEquals(comment2.getId(), commentResponse2.id());
     assertEquals(comment2.getWriter().getNickName(), commentResponse2.nickName());
+    assertEquals(comment2.getWriter().getProfileImg(), commentResponse2.profileImg());
     assertEquals(comment2.getCommentContent(), commentResponse2.commentContent());
     assertEquals(comment2.getCreatedDttm(), commentResponse2.createdDttm());
     assertEquals(comment2.getUpdatedDttm(), commentResponse2.updatedDttm());
@@ -163,6 +166,7 @@ class CommentServiceTest {
     //then
     assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(writer.getNickName(), commentResponse.nickName());
+    assertEquals(writer.getProfileImg(), commentResponse.profileImg());
     assertEquals(request.commentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
     assertNotNull(commentResponse.updatedDttm());
@@ -215,6 +219,7 @@ class CommentServiceTest {
     //then
     assertEquals(COMMENT_ID, commentResponse.id());
     assertEquals(writer.getNickName(), commentResponse.nickName());
+    assertEquals(writer.getProfileImg(), commentResponse.profileImg());
     assertEquals(comment.getCommentContent(), commentResponse.commentContent());
     assertNotNull(commentResponse.createdDttm());
     assertNotNull(commentResponse.updatedDttm());
