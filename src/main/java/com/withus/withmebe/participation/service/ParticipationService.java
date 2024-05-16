@@ -1,7 +1,7 @@
 package com.withus.withmebe.participation.service;
 
 
-import static com.withus.withmebe.gathering.Type.Status.CANCELED;
+import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -42,8 +42,9 @@ public class ParticipationService {
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
         .member(requester)
-        .status((gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME) ?
-            Status.APPROVED : Status.CREATED))
+        .status(
+            (gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)
+                ? Status.APPROVED : Status.CREATED))
         .build());
     return newParticipation.toResponse();
   }
@@ -57,14 +58,14 @@ public class ParticipationService {
   public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId,
       long gatheringId, Pageable pageble) {
 
-    validateReadParticipationsRequest(requesterId, readGathering(gatheringId));
+    validateRequesterIsHost(requesterId, readGathering(gatheringId));
 
     Page<Participation> participations = participationRepository.findByGathering_Id(gatheringId,
         pageble);
     return participations.map(Participation::toGatheringParticipationSimpleInfo);
   }
 
-
+  @Transactional
   public ParticipationResponse cancelParticipation(long requesterId, long participationId) {
 
     Participation participation = readParticipation(participationId);
@@ -80,7 +81,7 @@ public class ParticipationService {
       Status status) {
 
     Participation participation = readParticipation(participationId);
-    validateUpdateParticipationRequest(currentMemberId, participation);
+    validateUpdateParticipationRequest(currentMemberId, participation, status);
 
     participation.setStatus(status);
     Participation updatedParticipation = readParticipation(participationId);
@@ -89,11 +90,9 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public ParticipationResponse readMyParticipation(long requesterId, long participationId) {
-    Participation participation = readParticipation(participationId);
 
-    if (!participation.isParticipant(requesterId)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
+    Participation participation = readParticipation(participationId);
+    validateRequesterIsParticipant(requesterId, participation);
     return participation.toResponse();
   }
 
@@ -104,54 +103,88 @@ public class ParticipationService {
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
 
-  private void validateUpdateParticipationRequest(long requesterId, Participation participation) {
-    Gathering gathering = participation.getGathering();
-    if (!isHost(requesterId, gathering)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
-    if (participation.checkStatus(Status.CANCELED)) {
-      throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
-    }
-    if (isReachedAtMaximumParticipant(gathering)) {
-      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
-    }
+  private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
+
+    validateParticipantsType(requester, gathering);
+    validateRequesterIsNotHost(requester, gathering);
+    validateGatheringStatus(gathering);
+    validateParticipationNotExists(requester, gathering);
+    validateParticipationPeriod(gathering);
+    validateCurrentParticipantCount(gathering);
   }
 
   private void validateCancelParticipationRequest(long requesterId, Participation participation) {
-    if (!participation.isParticipant(requesterId)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
-    if (participation.checkStatus(Status.REJECTED)) {
-      throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
+
+    validateRequesterIsParticipant(requesterId, participation);
+    validateParticipationStatusIsNot(participation, Status.REJECTED);
+  }
+
+  private void validateUpdateParticipationRequest(long requesterId, Participation participation,
+      Status status) {
+
+    validateParticipationStatusIsNot(participation, Status.CANCELED);
+
+    Gathering gathering = participation.getGathering();
+    validateRequesterIsHost(requesterId, gathering);
+
+    if (status == Status.APPROVED) {
+      validateCurrentParticipantCount(gathering);
     }
   }
 
-  private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
+  private void validateParticipantsType(Member requester, Gathering gathering) {
     if (!isMeetAtParticipantsType(requester, gathering)) {
       throw new CustomException(ExceptionCode.PARTICIPANTSTYPE_CONFLICT);
     }
+  }
+
+  private void validateRequesterIsNotHost(Member requester, Gathering gathering) {
     if (isHost(requester.getId(), gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
-    if (isCanceledGathering(gathering)) {
-      throw new CustomException(ExceptionCode.GATHERING_CANCELED);
+  }
+
+  private void validateGatheringStatus(Gathering gathering) {
+    if (!isProgressingGathering(gathering)) {
+      throw new CustomException(ExceptionCode.GATHERING_STATUS_CONFLICT);
     }
+  }
+
+  private void validateParticipationNotExists(Member requester, Gathering gathering) {
     if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
         requester.getId(),
         gathering.getId(), Status.CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
+  }
+
+  private void validateParticipationPeriod(Gathering gathering) {
     if (isParticipationPeriod(gathering)) {
       throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
     }
+  }
+
+  private void validateCurrentParticipantCount(Gathering gathering) {
     if (isReachedAtMaximumParticipant(gathering)) {
       throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
   }
 
-  private void validateReadParticipationsRequest(long requesterId, Gathering gathering) {
+  private void validateRequesterIsHost(long requesterId, Gathering gathering) {
     if (!isHost(requesterId, gathering)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
+  }
+
+  private void validateRequesterIsParticipant(long requesterId, Participation participation) {
+    if (!participation.isParticipant(requesterId)) {
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
+  }
+
+  private void validateParticipationStatusIsNot(Participation participation, Status status) {
+    if (participation.statusEquals(status)) {
+      throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
     }
   }
 
@@ -159,8 +192,8 @@ public class ParticipationService {
     return gathering.getMemberId() == requesterId;
   }
 
-  private boolean isCanceledGathering(Gathering gathering) {
-    return gathering.getStatus() == CANCELED;
+  private boolean isProgressingGathering(Gathering gathering) {
+    return gathering.getStatus() == PROGRESS;
   }
 
   private boolean isMeetAtParticipantsType(Member requester, Gathering gathering) {
@@ -178,7 +211,8 @@ public class ParticipationService {
   }
 
   private boolean isParticipationPeriod(Gathering gathering) {
-    return LocalDate.now().isAfter(gathering.getRecruitmentStartDt()) && LocalDate.now().isBefore(gathering.getRecruitmentEndDt());
+    return LocalDate.now().isAfter(gathering.getRecruitmentStartDt().minusDays(1))
+        && LocalDate.now().isBefore(gathering.getRecruitmentEndDt().plusDays(1));
   }
 
   private Member readMember(long requesterId) {
@@ -195,5 +229,4 @@ public class ParticipationService {
     return participationRepository.findById(participationId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
-
 }
