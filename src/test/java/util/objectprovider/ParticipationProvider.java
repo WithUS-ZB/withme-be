@@ -13,6 +13,11 @@ public class ParticipationProvider {
   }
 
   public static Participation getStubbedParticipation(long participationId, Member participant,
+      Gathering gathering) {
+    return getStubbedParticipationWithStatus(participationId, participant, gathering, Status.CREATED);
+  }
+
+  public static Participation getStubbedParticipationWithStatus(long participationId, Member participant,
       Gathering gathering, Status status) {
     Participation participation = Participation.builder()
         .gathering(gathering)

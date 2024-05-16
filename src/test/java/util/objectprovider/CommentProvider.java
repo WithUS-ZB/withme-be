@@ -8,6 +8,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class CommentProvider {
 
+  private CommentProvider() {
+  }
+
   public static Comment getStubbedComment(long commentId, long gatheringId, Member writer) {
     return getStubbedCommentWithAddCommentRequest(commentId, gatheringId, writer,
         new AddCommentRequest("댓글내용" + commentId));
