@@ -29,8 +29,8 @@ public class CommentService {
   @Transactional
   public CommentResponse createComment(long requesterId, long gatheringId, AddCommentRequest request) {
 
+    validateCreateCommentRequest(gatheringId);
     Member requester = readRequester(requesterId);
-    checkGatheringExist(gatheringId);
 
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
     return newComment.toResponse();
@@ -80,7 +80,7 @@ public class CommentService {
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 
-  private void checkGatheringExist(long gatheringId) {
+  private void validateCreateCommentRequest(long gatheringId) {
     if(!gatheringRepository.existsById(gatheringId)) {
       throw new CustomException(ENTITY_NOT_FOUND);
     }
