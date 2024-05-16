@@ -14,6 +14,7 @@ import com.withus.withmebe.security.anotation.CurrentUserIsMobileAuthenticatedMe
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,7 @@ public class ParticipationController {
   public ResponseEntity<Page<GatheringParticipationSimpleInfo>> getParticipations(
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId,
-      @PageableDefault Pageable pageble) {
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageble) {
     return ResponseEntity.ok(
         participationService.readParticipations(currentMemberId, gatheringId, pageble));
   }
@@ -91,7 +92,8 @@ public class ParticipationController {
 
   @GetMapping("/mylist")
   public ResponseEntity<Page<MyParticipationSimpleInfo>> getMyParticipations(
-      @CurrentMemberId long currentMemberId, @PageableDefault Pageable pageble) {
+      @CurrentMemberId long currentMemberId,
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageble) {
     return ResponseEntity.ok(
         participationService.readMyParticipations(currentMemberId, pageble));
   }
