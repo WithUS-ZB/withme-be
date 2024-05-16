@@ -108,7 +108,7 @@ public class ParticipationService {
     validateParticipantsType(requester, gathering);
     validateRequesterIsNotHost(requester, gathering);
     validateGatheringStatus(gathering);
-    validateParticipationNotExists(requester, gathering);
+    validateParticipationIsNotDuplicated(requester, gathering);
     validateParticipationPeriod(gathering);
     validateCurrentParticipantCount(gathering);
   }
@@ -150,7 +150,7 @@ public class ParticipationService {
     }
   }
 
-  private void validateParticipationNotExists(Member requester, Gathering gathering) {
+  private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
     if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
         requester.getId(),
         gathering.getId(), Status.CANCELED)) {
@@ -159,7 +159,7 @@ public class ParticipationService {
   }
 
   private void validateParticipationPeriod(Gathering gathering) {
-    if (isParticipationPeriod(gathering)) {
+    if (!isParticipationPeriod(gathering)) {
       throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
     }
   }
@@ -211,8 +211,9 @@ public class ParticipationService {
   }
 
   private boolean isParticipationPeriod(Gathering gathering) {
-    return LocalDate.now().isAfter(gathering.getRecruitmentStartDt().minusDays(1))
-        && LocalDate.now().isBefore(gathering.getRecruitmentEndDt().plusDays(1));
+    LocalDate now = LocalDate.now();
+    return now.isAfter(gathering.getRecruitmentStartDt().minusDays(1))
+        && now.isBefore(gathering.getRecruitmentEndDt().plusDays(1));
   }
 
   private Member readMember(long requesterId) {
