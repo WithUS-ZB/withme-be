@@ -22,7 +22,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @Getter
 @Where(clause = "deleted_dttm is null")
-@SQLDelete(sql = "UPDATE Comment SET deletedDttm = NOW() WHERE comment_id = ?")
+@SQLDelete(sql = "UPDATE comment SET deleted_dttm = NOW() WHERE comment_id = ?")
 public class Comment extends BaseEntity {
 
   @Id
@@ -52,6 +52,7 @@ public class Comment extends BaseEntity {
     return CommentResponse.builder()
         .id(this.id)
         .nickName(this.writer.getNickName())
+        .profileImg(this.writer.getProfileImg())
         .commentContent(this.commentContent)
         .createdDttm(this.getCreatedDttm())
         .updatedDttm(this.getUpdatedDttm())

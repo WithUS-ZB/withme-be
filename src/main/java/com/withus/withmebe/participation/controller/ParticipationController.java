@@ -3,11 +3,14 @@ package com.withus.withmebe.participation.controller;
 import static com.withus.withmebe.participation.type.Status.APPROVED;
 import static com.withus.withmebe.participation.type.Status.REJECTED;
 
+import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.service.ParticipationService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
+import com.withus.withmebe.security.anotation.CurrentUserIsMobileAuthenticatedMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +34,13 @@ public class ParticipationController {
   @PostMapping
   public ResponseEntity<ParticipationResponse> addParticipation(
       @CurrentMemberId long currentMemberId,
+      @CurrentUserIsMobileAuthenticatedMember boolean isMobileAuthenticatedMember,
       @RequestParam(value = "gatheringid") long gatheringId) {
+
+    if (!isMobileAuthenticatedMember) {
+      throw new CustomException(ExceptionCode.AUTHENTICATION_ISSUE);
+    }
+
     return ResponseEntity.ok(
         participationService.createParticipation(currentMemberId, gatheringId));
   }

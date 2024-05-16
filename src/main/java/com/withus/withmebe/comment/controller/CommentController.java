@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,7 @@ public class CommentController {
 
   @GetMapping("/list/{gatheringId}")
   public ResponseEntity<Page<CommentResponse>> getComments(@PathVariable long gatheringId,
-      @PageableDefault(size = 10, sort = "createdDttm") Pageable pageble) {
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageble) {
     return ResponseEntity.ok(commentService.readComments(gatheringId, pageble));
   }
 

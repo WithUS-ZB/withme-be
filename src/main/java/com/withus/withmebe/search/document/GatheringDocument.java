@@ -1,5 +1,6 @@
 package com.withus.withmebe.search.document;
 
+import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
@@ -15,37 +16,65 @@ public record GatheringDocument(
     @Id
     @Field(name = "gathering_id")
     Long id,
-    @Field(name = "nickname")
+    @Field(name = "member_id")
+    Long memberId,
+    @Field(name = "nick_name")
     String nickName,
+    @Field(name = "profile_img")
+    String profileImg,
     @Field(type = FieldType.Text, analyzer = "korean")
     String title,
-    @Field(name = "gatheringtype")
+    String content,
+    @Field(name = "gathering_type")
     String gatheringType,
-    @Field(name = "maximumparticipant")
+    @Field(name = "maximum_participant")
     Long maximumParticipant,
-    @Field(name = "startdttm")
-    LocalDateTime startDttm,
-    @Field(name = "enddttm")
-    LocalDateTime endDttm,
-    @Field(name = "applicationdeadline")
-    LocalDateTime applicationDeadLine,
+    LocalDateTime day,
+    LocalDateTime time,
+    @Field(name = "recruitment_start_dt")
+    LocalDateTime recruitmentStartDt,
+    @Field(name = "recruitment_end_dt")
+    LocalDateTime recruitmentEndDt,
+    String category,
     String address,
-    @Field(name = "detailedaddress")
-    String detailedAddress,
-    @Field(name = "mainimg")
+    @Field(name = "main_img")
     String mainImg,
-    @Field(name = "participantstype")
+    @Field(name = "participants_type")
     String participantsType,
     Long fee,
-    @Field(name = "participantselectionmethod")
+    @Field(name = "participant_selection_method")
     String participantSelectionMethod,
-    @Field(name = "likecount")
+    @Field(name = "like_count")
     Long likeCount,
-    @Field(name = "createddttm")
+    @Field(name = "created_dttm")
     LocalDateTime createdDttm,
-    @Field(name = "deleteddttm")
+    @Field(name = "deleted_dttm")
     LocalDateTime deletedDttm,
     String status
 ) {
-
+    public GatheringSearchResponse toGatheringSearchResponse() {
+        return GatheringSearchResponse.builder()
+            .id(this.id)
+            .memberId(this.memberId)
+            .nickName(this.nickName)
+            .profileImg(this.profileImg)
+            .title(this.title)
+            .content(this.content)
+            .gatheringType(this.gatheringType)
+            .maximumParticipant(this.maximumParticipant)
+            .day(this.day.toLocalDate())
+            .time(this.time.toLocalTime())
+            .recruitmentStartDt(this.recruitmentStartDt)
+            .recruitmentEndDt(this.recruitmentEndDt)
+            .category(this.category)
+            .address(this.address)
+            .mainImg(this.mainImg)
+            .participantsType(this.participantsType)
+            .fee(this.fee)
+            .participantSelectionMethod(this.participantSelectionMethod)
+            .likeCount(this.likeCount)
+            .createdDttm(this.createdDttm)
+            .status(this.status)
+            .build();
+    }
 }

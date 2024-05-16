@@ -7,6 +7,7 @@ import lombok.Builder;
 public record CommentResponse(
     Long id,
     String nickName,
+    String profileImg,
     String commentContent,
     LocalDateTime createdDttm,
     LocalDateTime updatedDttm

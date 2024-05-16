@@ -61,3 +61,10 @@ cloud:
       bucket: ${BUCKET_NAME}
     stack:
       auto: false
+
+front:
+  url: http://localhost:5173
+
+festival:
+  api:
+    url: "http://openapi.seoul.go.kr:8088/${FESTIVAL_API_KEY}/json/culturalEventInfo"
