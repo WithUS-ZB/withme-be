@@ -63,6 +63,7 @@ public class MemberService {
     return UpdateMemberNickNameDto.Response.fromEntity(currentMember);
   }
 
+  @Transactional
   public MemberDetailDto updateAdditionalInfo(AdditionalInfoRequestDto request, Long currentMemberId) {
     return getMemberById(currentMemberId).updateAdditionalInfo(request).toMemberDetailDto();
   }
