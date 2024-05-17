@@ -20,16 +20,15 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:testdata.sql")
+@Sql(scripts = "classpath:sql/participation/data.sql")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class ParticipationRepositoryTest {
 
   @Autowired
   private ParticipationRepository participationRepository;
 
-  private final long PARTICIPANT_ID = 2L;
-  private final long GATHERING_ID = 1L;
-
+  private static final long PARTICIPANT_ID = 2L;
+  private static final long GATHERING_ID = 1L;
   private final Pageable PAGEABLE = Pageable.ofSize(10);
 
   @Test

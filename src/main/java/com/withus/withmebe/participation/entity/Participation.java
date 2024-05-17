@@ -84,7 +84,7 @@ public class Participation extends BaseEntity {
     return this.participant.getId() == memberId;
   }
 
-  public boolean checkStatus(Status status) {
+  public boolean statusEquals(Status status) {
     return this.status == status;
   }
 }
