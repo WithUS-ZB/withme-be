@@ -5,6 +5,7 @@ import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
 import com.withus.withmebe.security.service.OAuth2UserService;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,8 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter authenticationFilter;
   private final OAuth2UserService oAuth2UserService;
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
+  @Value("${front.url}")
+  private String frontUrl;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -67,6 +70,7 @@ public class SecurityConfig {
 
         .oauth2Login(oauth2Configurer ->
             oauth2Configurer
+                .loginPage(frontUrl+"/login")
                 .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint(userInfo ->
                     userInfo.userService(oAuth2UserService)));
