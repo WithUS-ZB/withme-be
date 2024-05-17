@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class GatheringLike extends BaseEntity {
 
@@ -24,8 +25,6 @@ public class GatheringLike extends BaseEntity {
 
   @Column(nullable = false)
   private Long memberId;
-
-  @Getter
   @Column(nullable = false)
   private Boolean isLiked = true;
 

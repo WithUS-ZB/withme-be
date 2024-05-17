@@ -16,13 +16,13 @@ public class GatheringLikeService {
   private final GatheringLikeRepository gatheringLikeRepository;
 
   @Transactional
-  public boolean doLike(long requester, long gatheringId) {
+  public boolean doLike(long requesterId, long gatheringId) {
 
-    Optional<GatheringLike> optionalLike = gatheringLikeRepository.findByMemberIdAndGatheringId(requester,
+    Optional<GatheringLike> optionalLike = gatheringLikeRepository.findByMemberIdAndGatheringId(requesterId,
         gatheringId);
 
-    return optionalLike.map(gatheringLike -> updateLike(requester, gatheringLike))
-        .orElseGet(() -> createLike(requester, gatheringId));
+    return optionalLike.map(this::updateLike)
+        .orElseGet(() -> createLike(requesterId, gatheringId));
   }
 
   private boolean createLike(long memberId, long gatheringId) {
@@ -34,17 +34,9 @@ public class GatheringLikeService {
     return gatheringLike.getIsLiked();
   }
 
-  private boolean updateLike(long memberId, GatheringLike gatheringLike) {
+  private boolean updateLike(GatheringLike gatheringLike) {
 
-    validateRequester(memberId, gatheringLike);
     gatheringLike.updateIsLike();
     return gatheringLike.getIsLiked();
-  }
-
-  private void validateRequester(long memberId, GatheringLike gatheringLike) {
-
-    if (!gatheringLike.isMember(memberId)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
   }
 }

@@ -17,7 +17,7 @@ public class GatheringLikeController {
   private final GatheringLikeService gatheringLikeService;
 
   @PutMapping
-  public ResponseEntity<Boolean> doLike(
+  public ResponseEntity<Boolean> updateLike(
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId) {
     return ResponseEntity.ok(gatheringLikeService.doLike(currentMemberId, gatheringId));
