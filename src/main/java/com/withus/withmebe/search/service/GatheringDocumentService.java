@@ -6,6 +6,7 @@ import co.elastic.clients.json.JsonData;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.search.document.GatheringDocument;
 import com.withus.withmebe.search.dto.GatheringSearchResponse;
+import com.withus.withmebe.search.type.Option;
 import com.withus.withmebe.search.type.SearchRange;
 import com.withus.withmebe.search.type.SearchOption;
 import java.util.List;
@@ -57,27 +58,32 @@ public class GatheringDocumentService {
   private Query getBoolQuery(SearchRange range, String title, SearchOption option) {
     return QueryBuilders.bool()
         .must(
-            QueryBuilders.match().field("title").query(title).build()._toQuery(),
-            QueryBuilders.match().field("status").query(Status.PROGRESS.toString()).build()
-                ._toQuery(),
-            QueryBuilders.match().field("gathering_type").query(range.getValue()).build()
-                ._toQuery(),
+            getMatchQuery("title", title),
+            getMatchQuery("status", Status.PROGRESS.toString()),
+            getOptionQuery(range),
             getOptionQuery(option)
         )
-        .mustNot(QueryBuilders.exists().field("deleted_dttm").build()._toQuery()).build()
-        ._toQuery();
+        .mustNot(getExistsQuery("deleted_dttm"))
+        .build()._toQuery();
   }
 
-  private Query getOptionQuery(SearchOption option) {
-    if (option.equals(SearchOption.ALL)) {
-      return QueryBuilders.wildcard().field(option.getField()).build()._toQuery();
-    } else if (option.equals(SearchOption.PAY_HAS)) {
+  private Query getExistsQuery(String fieldName) {
+    return QueryBuilders.exists().field(fieldName).build()._toQuery();
+  }
+
+  private Query getMatchQuery(String fieldName, String query) {
+    return QueryBuilders.match().field(fieldName).query(query).build()._toQuery();
+  }
+
+  private Query getOptionQuery(Option option) {
+    if (option.getName().equals("ALL")) {
+      return QueryBuilders.matchAll().build()._toQuery();
+    } else if (option.getName().equals("PAY_HAS")) {
       return QueryBuilders.range().field(option.getField()).gt(JsonData.fromJson(option.getValue()))
           .build()._toQuery();
     }
     else {
-      return QueryBuilders.match().field(option.getField()).query(option.getValue()).build()
-          ._toQuery();
+      return getMatchQuery(option.getField(), option.getValue());
     }
   }
 }

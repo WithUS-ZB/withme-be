@@ -8,25 +8,29 @@ public class GatheringDocumentProvider {
   private GatheringDocumentProvider() {
   }
 
-//  public static GatheringDocument getStubbedGatheringDocument(long documentId) {
-//    return GatheringDocument.builder()
-//        .id(documentId)
-//        .nickName("nickName" + documentId)
-//        .title("title" + documentId)
-//        .gatheringType("gatheringType" + documentId)
-//        .maximumParticipant(10 + documentId)
-//        .startDttm(LocalDateTime.now())
-//        .endDttm(LocalDateTime.now())
-//        .applicationDeadLine(LocalDateTime.now())
-//        .address("address" + documentId)
-//        .detailedAddress("detailedAddress" + documentId)
-//        .mainImg("mainImg" + documentId)
-//        .participantsType("participantsType" + documentId)
-//        .fee(200 + documentId)
-//        .participantSelectionMethod("participantSelectionMethod" + documentId)
-//        .likeCount(100 + documentId)
-//        .createdDttm(LocalDateTime.now())
-//        .status("status" + documentId)
-//        .build();
-//  }
+  public static GatheringDocument getStubbedGatheringDocument(long documentId) {
+    return GatheringDocument.builder()
+        .id(documentId)
+        .memberId(10 + documentId)
+        .nickName("홍길동" + documentId)
+        .profileImg("프로필이미지" + documentId)
+        .title("제목" + documentId)
+        .content("본문" + documentId)
+        .gatheringType("모임종류" + documentId)
+        .maximumParticipant(100 + documentId)
+        .day(LocalDateTime.now())
+        .time(LocalDateTime.now())
+        .recruitmentStartDt(LocalDateTime.now())
+        .recruitmentEndDt(LocalDateTime.now())
+        .category("카테고리" + documentId)
+        .address("주소" + documentId)
+        .mainImg("메인이미지" + documentId)
+        .participantsType("참여제한" + documentId)
+        .fee(1000 + documentId)
+        .participantSelectionMethod("모집유형" + documentId)
+        .likeCount(10000 + documentId)
+        .createdDttm(LocalDateTime.now())
+        .status("모임상태" + documentId)
+        .build();
+  }
 }
