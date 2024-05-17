@@ -103,7 +103,7 @@ public class Gathering extends BaseEntity {
   @Column(nullable = false)
   private ParticipantSelectionMethod participantSelectionMethod;
 
-  private Long likeCount;
+  private Long likeCount = 0L;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
