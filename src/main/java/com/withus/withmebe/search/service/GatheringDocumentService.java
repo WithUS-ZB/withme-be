@@ -67,7 +67,7 @@ public class GatheringDocumentService {
         .build()._toQuery();
   }
 
-  private static Query getExistsQuery(String fieldName) {
+  private Query getExistsQuery(String fieldName) {
     return QueryBuilders.exists().field(fieldName).build()._toQuery();
   }
 
