@@ -11,6 +11,6 @@ public @interface WithMockCustomUser {
 
   long name() default 99L;
   Role role() default Role.ROLE_MEMBER;
-  boolean isAdult() default true;
+  boolean isMobileAuthenticatedMember() default true;
 
 }
