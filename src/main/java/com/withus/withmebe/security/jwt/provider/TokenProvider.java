@@ -10,6 +10,8 @@ import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import javax.crypto.SecretKey;
@@ -26,7 +28,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class TokenProvider {
 
-  private static final long TOKEN_EXPIRE_TIME = 3_600_000*24; // 1000 * 60 * 60 // 1hour
+  private static final long TOKEN_EXPIRE_TIME = 3_600_000L * 24L; // 1000 * 60 * 60 // 1hour
   // TODO: 테스트 상으로
   private static final String KEY_ROLES = "roles";
   private final UserDetailsService userDetailsService;
@@ -54,15 +56,30 @@ public class TokenProvider {
   }
 
   public boolean validateToken(String token) {
+    return !getExpiration(token).before(new Date());
+  }
+
+  public Duration getTokenDuration(String token) {
+    Instant now = Instant.now();
+    Instant expirationInstant = getExpiration(token).toInstant();
+
+    if (expirationInstant.isBefore(now)) {
+      throw new CustomException(TOKEN_EXPIRED);
+    }
+
+    return Duration.between(now, expirationInstant);
+  }
+
+  private Date getExpiration(String token) {
     if (!StringUtils.hasText(token)) {
       throw new CustomException(TOKEN_EXPIRED);
     }
 
     var claims = this.parseClaims(token);
-    return !claims.getExpiration().before(new Date());
+    return claims.getExpiration();
   }
 
-  private String getUsername(String token) {
+  public String getUsername(String token) {
     return this.parseClaims(token).getSubject();
   }
 
