@@ -1,7 +1,5 @@
 package com.withus.withmebe.gathering.service;
 
-import com.withus.withmebe.common.exception.CustomException;
-import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.entity.GatheringLike;
 import com.withus.withmebe.gathering.repository.GatheringLikeRepository;
 import java.util.Optional;
