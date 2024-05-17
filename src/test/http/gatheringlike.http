@@ -1,0 +1,4 @@
+### 좋아요
+PUT http://localhost:8080/api/gathering/like?gatheringid=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1OTMwNDEyLCJleHAiOjE3MTYwMTY4MTJ9.S2QAdjLzMXh9hhBoLnnNSgERZVi7aT2rZXt5Fi8TKVk

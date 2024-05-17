@@ -4,6 +4,7 @@ import com.withus.withmebe.comment.dto.request.AddCommentRequest;
 import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.comment.service.CommentService;
+import com.withus.withmebe.security.anotation.CurrentMemberId;
 import com.withus.withmebe.security.domain.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +33,11 @@ public class CommentController {
 
   @PostMapping("/add")
   public ResponseEntity<CommentResponse> addComment(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId,
       @Valid @RequestBody AddCommentRequest request) {
     return ResponseEntity.ok(
-        commentService.createComment(customUserDetails.getMemberId(), gatheringId, request));
+        commentService.createComment(currentMemberId, gatheringId, request));
   }
 
   @GetMapping("/list/{gatheringId}")
