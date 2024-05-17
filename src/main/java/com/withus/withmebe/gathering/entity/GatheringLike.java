@@ -1,4 +1,4 @@
-package com.withus.withmebe.like.entity;
+package com.withus.withmebe.gathering.entity;
 
 import com.withus.withmebe.common.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -9,11 +9,10 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-public class Like extends BaseEntity {
+public class GatheringLike extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +30,12 @@ public class Like extends BaseEntity {
   private Boolean isLiked = true;
 
   @Builder
-  public Like(long gatheringId, long memberId) {
+  public GatheringLike(long gatheringId, long memberId) {
     this.gatheringId = gatheringId;
     this.memberId = memberId;
   }
 
-  public Like updateIsLike() {
+  public GatheringLike updateIsLike() {
     this.isLiked = !this.isLiked;
     return this;
   }
