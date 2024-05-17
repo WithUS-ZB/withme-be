@@ -20,6 +20,7 @@ import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
+import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
@@ -374,11 +375,14 @@ class ParticipationServiceTest {
     //then
     assertEquals(ExceptionCode.AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.FORBIDDEN, exception.getHttpStatus());
+
+    STUBBED_PARTICIPATION.setStatus(Status.CREATED);
   }
 
   @Test
   void successToUpdateParticipationToApprove() {
     //given
+
     given(participationRepository.findById(anyLong()))
         .willReturn(Optional.of(STUBBED_PARTICIPATION));
 
@@ -463,5 +467,79 @@ class ParticipationServiceTest {
     //then
     assertEquals(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT.getMessage(), exception.getMessage());
     assertEquals(HttpStatus.CONFLICT, exception.getHttpStatus());
+  }
+
+  @Test
+  void successToReadMyParticipation() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+
+    //when
+    ParticipationResponse participationResponse = participationService.readMyParticipation(
+        PARTICIPANT_ID, PARTICIPATION_ID);
+
+    //then
+    assertEquals(STUBBED_PARTICIPATION.getId(), participationResponse.id());
+    assertEquals(STUBBED_PARTICIPATION.getParticipant().getNickName(),
+        participationResponse.nickName());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), participationResponse.title());
+    assertEquals(STUBBED_PARTICIPATION.getStatus(), participationResponse.status());
+    assertEquals(STUBBED_PARTICIPATION.getCreatedDttm(), participationResponse.createdDttm());
+    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), participationResponse.updatedDttm());
+  }
+
+  @Test
+  void failToReadMyParticipationByFailedReadParticipation() {
+    //given
+    given(participationRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    CustomException exception = assertThrows(CustomException.class,
+        () -> participationService.readMyParticipation(PARTICIPANT_ID, PARTICIPATION_ID));
+
+    //then
+    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+  }
+
+  @Test
+  void successToReadMyParticipations() {
+    //given
+    Participation stubbedParticipation2 = getStubbedParticipation(PARTICIPATION_ID+1 ,
+        STUBBED_PARTICIPANT, getStubbedGathering(GATHERING_ID+1, HOST_ID));
+
+    given(participationRepository.findByParticipant_Id(anyLong(), any(Pageable.class)))
+        .willAnswer(
+            invocationOnMock -> {
+              Pageable pageable = invocationOnMock.getArgument(1);
+              return new PageImpl<Participation>(
+                  List.of(STUBBED_PARTICIPATION, stubbedParticipation2),
+                  pageable, 2);
+            });
+
+    //when
+    Page<MyParticipationSimpleInfo> myParticipationSimpleInfos =
+        participationService.readMyParticipations(PARTICIPANT_ID, PAGEABLE);
+
+    //then
+    assertEquals(2, myParticipationSimpleInfos.getTotalElements());
+    assertEquals(1, myParticipationSimpleInfos.getTotalPages());
+    assertEquals(0, myParticipationSimpleInfos.getNumber());
+
+    MyParticipationSimpleInfo myParticipationSimpleInfo1 =
+        myParticipationSimpleInfos.getContent().get(0);
+    assertEquals(STUBBED_PARTICIPATION.getId(), myParticipationSimpleInfo1.id());
+    assertEquals(STUBBED_PARTICIPATION.getStatus(), myParticipationSimpleInfo1.status());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), myParticipationSimpleInfo1.title());
+    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), myParticipationSimpleInfo1.updatedDttm());
+
+    MyParticipationSimpleInfo myParticipationSimpleInfo2 =
+        myParticipationSimpleInfos.getContent().get(1);
+    assertEquals(stubbedParticipation2.getId(), myParticipationSimpleInfo2.id());
+    assertEquals(stubbedParticipation2.getStatus(), myParticipationSimpleInfo2.status());
+    assertEquals(stubbedParticipation2.getGathering().getTitle(), myParticipationSimpleInfo2.title());
+    assertEquals(stubbedParticipation2.getUpdatedDttm(), myParticipationSimpleInfo2.updatedDttm());
   }
 }

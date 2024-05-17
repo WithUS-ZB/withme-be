@@ -75,7 +75,7 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=" + GATHERING_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -96,7 +96,7 @@ class CommentControllerTest {
     //given
     //when
     //then
-    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=" + GATHERING_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
@@ -111,7 +111,7 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=" + GATHERING_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -127,7 +127,7 @@ class CommentControllerTest {
 
     //when
     //then
-    mockMvc.perform(post(BASE_URL + "/add?gatheringid=1")
+    mockMvc.perform(post(BASE_URL + "/add?gatheringid=" + GATHERING_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .content(GSON.toJson(JSON_OBJECT))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -141,7 +141,7 @@ class CommentControllerTest {
     CommentResponse commentResponse2 =
         getStubbedComment(3L, GATHERING_ID, getStubbedMember(4L)).toResponse();
 
-    given(commentService.readComments(anyLong(), any()))
+    given(commentService.readComments(anyLong(), any(Pageable.class)))
         .willReturn(
             new PageImpl<CommentResponse>(List.of(COMMENT_RESPONSE, commentResponse2), PAGEABLE,
                 2));
