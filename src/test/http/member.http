@@ -32,3 +32,13 @@ Content-Type: application/json
 {
   "nickName": "asfasd"
 }
+
+### 추가 정보 입력
+PUT http://localhost:8080/api/member/additionalInfo
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1ODgyMTMzLCJleHAiOjE3MTU5Njg1MzN9.59FsdyMi5lKL72G5iN2u4yZdE1YEQaVId1zvOznXYZI
+Content-Type: application/json
+
+{
+  "birthDate": "1999-01-01",
+  "gender": "FEMALE"
+}

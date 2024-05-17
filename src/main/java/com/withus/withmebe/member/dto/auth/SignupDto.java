@@ -1,5 +1,6 @@
 package com.withus.withmebe.member.dto.auth;
 
+import com.withus.withmebe.common.anotation.ValidDateFormat;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.type.Gender;
 import jakarta.validation.constraints.Email;
@@ -7,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 public record SignupDto() {
   public record Request(
@@ -20,7 +20,7 @@ public record SignupDto() {
       String passwordChk,
 
       @NotNull
-      @DateTimeFormat(pattern = "yyyy-MM-dd")
+      @ValidDateFormat
       LocalDate birthDate,
 
       @NotNull

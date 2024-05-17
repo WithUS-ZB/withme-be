@@ -8,6 +8,7 @@ import com.withus.withmebe.member.dto.member.MemberDetailDto;
 import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
+import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,8 @@ public class MemberService {
   }
 
   @Transactional(readOnly = true)
-  public MemberDetailDto readCurretLoginMemberDetail(Long currentMemberId) {
-    return MemberDetailDto.fromEntity(
-        getMemberById(currentMemberId)
-    );
+  public MemberDetailDto readCurrentLoginMemberDetail(Long currentMemberId) {
+    return getMemberById(currentMemberId).toMemberDetailDto();
   }
 
   @Transactional(readOnly = true)
@@ -62,6 +61,11 @@ public class MemberService {
     Member currentMember = getMemberById(currentMemberId);
     currentMember.setNickName(requestNickName);
     return UpdateMemberNickNameDto.Response.fromEntity(currentMember);
+  }
+
+  @Transactional
+  public MemberDetailDto updateAdditionalInfo(AdditionalInfoRequestDto request, Long currentMemberId) {
+    return getMemberById(currentMemberId).updateAdditionalInfo(request).toMemberDetailDto();
   }
 
   private Member getMemberById(Long id) {
