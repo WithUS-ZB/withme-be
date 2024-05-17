@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Getter
-public enum SearchOption {
+public enum SearchOption implements Option {
 
   ALL("all", "id", "*"),
   FIRST("first", "participant_selection_method", "FIRST_COME"),
@@ -28,5 +27,19 @@ public enum SearchOption {
       }
     }
     throw new IllegalArgumentException();
+  }
+
+  @Override
+  public String getField() {
+    return field;
+  }
+  @Override
+  public String getName() {
+    return this.toString();
+  }
+
+  @Override
+  public String getValue() {
+    return value;
   }
 }

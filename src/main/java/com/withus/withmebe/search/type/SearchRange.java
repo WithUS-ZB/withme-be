@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Getter
-public enum SearchRange {
+public enum SearchRange implements Option{
   ALL("all", "*"),
   EVENT("event", "EVENT"),
   MEETING("meeting", "MEETING"),
@@ -21,5 +20,20 @@ public enum SearchRange {
       }
     }
     throw new IllegalArgumentException();
+  }
+
+  @Override
+  public String getField() {
+    return "gathering_type";
+  }
+
+  @Override
+  public String getName() {
+    return this.toString();
+  }
+
+  @Override
+  public String getValue() {
+    return value;
   }
 }
