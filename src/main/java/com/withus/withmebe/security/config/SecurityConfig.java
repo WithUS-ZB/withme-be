@@ -1,5 +1,6 @@
 package com.withus.withmebe.security.config;
 
+import com.withus.withmebe.security.handler.OAuth2FailHandler;
 import com.withus.withmebe.security.handler.OAuth2SuccessHandler;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
 import com.withus.withmebe.security.service.OAuth2UserService;
@@ -31,6 +32,7 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter authenticationFilter;
   private final OAuth2UserService oAuth2UserService;
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
+  private final OAuth2FailHandler oAuth2FailHandler;
   @Value("${front.url}")
   private String frontUrl;
 
@@ -72,6 +74,7 @@ public class SecurityConfig {
             oauth2Configurer
                 .loginPage(frontUrl+"/login")
                 .successHandler(oAuth2SuccessHandler)
+                .failureHandler(oAuth2FailHandler)
                 .userInfoEndpoint(userInfo ->
                     userInfo.userService(oAuth2UserService)));
     return http.build();
