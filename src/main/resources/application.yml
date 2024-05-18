@@ -50,6 +50,7 @@ cool-sms:
   api-secret-key: cool-sms.api-secret-key
   domain: https://api.coolsms.co.kr
   sender-phone-number: cool-sms.sender-phone-number
+
 redis:
   key:
     prefix:
@@ -63,7 +64,7 @@ cloud:
       auto: false
 
 front:
-  url: http://localhost:5173
+  url: ${FRONT_URL}
 
 festival:
   api:

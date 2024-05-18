@@ -4,7 +4,9 @@ import com.withus.withmebe.security.handler.OAuth2SuccessHandler;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
 import com.withus.withmebe.security.service.OAuth2UserService;
 import java.util.Arrays;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +32,9 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter authenticationFilter;
   private final OAuth2UserService oAuth2UserService;
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+  @Value("${front.url}")
+  private String frontUrl;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -78,10 +83,10 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
 
     config.setAllowCredentials(true);
-    config.setAllowedOriginPatterns(Arrays.asList("*"));
+    config.setAllowedOriginPatterns(Collections.singletonList(frontUrl));
     config.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
-    config.setAllowedHeaders(Arrays.asList("*"));
-    config.setExposedHeaders(Arrays.asList("Authorization"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
+    config.setExposedHeaders(Collections.singletonList("Authorization"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);

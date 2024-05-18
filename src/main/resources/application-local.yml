@@ -48,10 +48,12 @@ cool-sms:
   api-secret-key: cool-sms.api-secret-key
   domain: https://api.coolsms.co.kr
   sender-phone-number: cool-sms.sender-phone-number
+
 redis:
   key:
     prefix:
       auth-sms: "AuthSms: "
+
 cloud:
   aws:
     s3:
@@ -59,6 +61,9 @@ cloud:
     stack:
       auto: false
 
-
 front:
   url: http://localhost:5173
+
+festival:
+  api:
+    url: "http://openapi.seoul.go.kr:8088/sample/json/culturalEventInfo"
