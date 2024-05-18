@@ -16,6 +16,9 @@ spring:
       host: host.docker.internal
       port: 6379
   security:
+    origin:
+      allow:
+        url: ${ALLOWED_ORIGIN}
     oauth2:
       client:
         registration:

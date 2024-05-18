@@ -16,6 +16,9 @@ spring:
       host: localhost
       port: 6379
   security:
+    origin:
+      allow:
+        url: "*"
     oauth2:
       client:
         registration:

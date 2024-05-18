@@ -33,6 +33,9 @@ public class SecurityConfig {
   private final OAuth2UserService oAuth2UserService;
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
+  @Value("${spring.security.allow.url}")
+  private String allowedOrigin;
+
   @Value("${front.url}")
   private String frontUrl;
 
@@ -83,7 +86,7 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
 
     config.setAllowCredentials(true);
-    config.setAllowedOriginPatterns(Collections.singletonList(frontUrl));
+    config.setAllowedOriginPatterns(Collections.singletonList(allowedOrigin));
     config.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
     config.setAllowedHeaders(Collections.singletonList("*"));
     config.setExposedHeaders(Collections.singletonList("Authorization"));
