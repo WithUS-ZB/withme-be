@@ -11,6 +11,7 @@ import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
 import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
   private final MemberRepository memberRepository;
+  private final S3Service s3Service;
   @Transactional(readOnly = true)
   public MemberInfoDto read(Long memberId) {
     return MemberInfoDto.fromEntity(
@@ -46,8 +48,8 @@ public class MemberService {
   public UpdateMemberProfileImgDto.Response updateProfileImg(
       UpdateMemberProfileImgDto.Request request, Long currentMemberId) {
     Member currentMember = getMemberById(currentMemberId);
-    // TODO: S3로 이미지 처리 필요
-    currentMember.setProfileImg(request.profileImg());
+
+    currentMember.setProfileImg(s3Service.uploadFile(request.profileImg()).url());
     return UpdateMemberProfileImgDto.Response.fromEntity(currentMember);
   }
 

@@ -1,13 +1,14 @@
 package com.withus.withmebe.member.dto.member;
 
+import com.withus.withmebe.common.anotation.ValidMultipartFile;
 import com.withus.withmebe.member.entity.Member;
-import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 public record UpdateMemberProfileImgDto() {
 
   public record Request(
-      @NotBlank
-      String profileImg
+      @ValidMultipartFile
+      MultipartFile profileImg
   ) {
 
   }
