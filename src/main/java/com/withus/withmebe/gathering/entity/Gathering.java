@@ -13,7 +13,6 @@ import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +26,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
@@ -36,6 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Where(clause = "deleted_dttm is null")
 @SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 public class Gathering extends BaseEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "gathering_id")
@@ -45,7 +44,6 @@ public class Gathering extends BaseEntity {
   private Long memberId;
 
   @Column(nullable = false)
-
   private String title;
 
   @Column(columnDefinition = "TEXT")
@@ -210,6 +208,9 @@ public class Gathering extends BaseEntity {
         .lat(this.lat)
         .lng(this.lng)
         .mainImg(this.mainImg)
+        .subImg1(this.subImg1)
+        .subImg2(this.subImg2)
+        .subImg3(this.subImg3)
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)

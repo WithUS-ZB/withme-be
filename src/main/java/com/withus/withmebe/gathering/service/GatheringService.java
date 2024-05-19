@@ -55,6 +55,14 @@ public class GatheringService {
         .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
+  public List<GetGatheringResponse> readGatheringMyList(long currentMemberId) {
+    List<Gathering> myGatherings = gatheringRepository.findAllByMemberId(currentMemberId);
+    return myGatherings.stream()
+        .map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())))
+        .collect(Collectors.toList());
+  }
+
   @Transactional
   public SetGatheringResponse updateGathering(long currentMemberId, long gatheringId,
       SetGatheringRequest setGatheringRequest) {
