@@ -42,8 +42,4 @@ public class GatheringLike extends BaseEntity {
     this.isLiked = !this.isLiked;
     return this;
   }
-
-  public boolean isMember(long memberId) {
-    return this.memberId == memberId;
-  }
 }
