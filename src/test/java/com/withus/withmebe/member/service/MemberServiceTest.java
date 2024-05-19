@@ -13,16 +13,23 @@ import com.withus.withmebe.member.dto.member.MemberDetailDto;
 import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberNickNameDto;
 import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto;
+import com.withus.withmebe.member.dto.member.UpdateMemberProfileImgDto.Request;
 import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.s3.dto.S3Dto;
+import com.withus.withmebe.s3.service.S3Service;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import util.security.WithMockCustomUser;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +38,8 @@ class MemberServiceTest {
 
   @Mock
   private MemberRepository memberRepository;
+  @Mock
+  private S3Service s3Service;
 
   @InjectMocks
   private MemberService memberService;
@@ -100,15 +109,17 @@ class MemberServiceTest {
   }
 
   @Test
-  void updateProfileImg() {
+  void updateProfileImg() throws IOException {
     // given
     Long currentMemberId = 1L;
-    UpdateMemberProfileImgDto.Request request = new UpdateMemberProfileImgDto.Request("profileImg");
     Member member = createEntity();
-    when(memberRepository.findById(currentMemberId)).thenReturn(java.util.Optional.of(member));
-
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("request", "보라색배경화면.jpeg", "jpeg",
+        new FileInputStream("src/test/resources/img/보라색배경화면.jpeg"));
+    when(memberRepository.findById(currentMemberId)).thenReturn(Optional.of(member));
+    when(s3Service.uploadFile(mockMultipartFile)).thenReturn(new S3Dto("url"));
     // when
-    UpdateMemberProfileImgDto.Response result = memberService.updateProfileImg(request,
+    UpdateMemberProfileImgDto.Response result = memberService.updateProfileImg(
+        new Request(mockMultipartFile),
         currentMemberId);
 
     // then
