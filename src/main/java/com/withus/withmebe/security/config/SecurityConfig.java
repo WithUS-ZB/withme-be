@@ -40,9 +40,6 @@ public class SecurityConfig {
   @Value("${spring.security.origin.allow.url}")
   private String allowedOrigin;
 
-  @Value("${front.url}")
-  private String frontUrl;
-
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
