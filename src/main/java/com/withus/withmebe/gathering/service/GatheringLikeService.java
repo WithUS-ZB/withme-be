@@ -21,35 +21,26 @@ public class GatheringLikeService {
   @Transactional
   public boolean doLike(long requesterId, long gatheringId) {
 
-    Gathering gathering = readGathering(gatheringId);
+    Optional<GatheringLike> optionalLike = gatheringLikeRepository.findByMemberIdAndGathering_Id(
+        requesterId, gatheringId);
 
-    Optional<GatheringLike> optionalLike = gatheringLikeRepository.findByMemberIdAndGathering(
-        requesterId, gathering);
-
-    boolean result = optionalLike.map(this::updateLike)
-        .orElseGet(() -> createLike(requesterId, gathering));
-    updateLikeCount(gathering);
-    return result;
+    GatheringLike gatheringLike = optionalLike.map(GatheringLike::updateIsLike)
+        .orElseGet(() -> createLike(requesterId, gatheringId));
+    updateLikeCount(gatheringLike.getGathering());
+    return gatheringLike.getIsLiked();
   }
 
-  private boolean createLike(long memberId, Gathering gathering) {
+  private GatheringLike createLike(long memberId, long gatheringId) {
 
-    GatheringLike gatheringLike = gatheringLikeRepository.save(GatheringLike.builder()
+    return gatheringLikeRepository.save(GatheringLike.builder()
         .memberId(memberId)
-        .gathering(gathering)
+        .gathering(readGathering((gatheringId)))
         .build());
-    return gatheringLike.getIsLiked();
-  }
-
-  private boolean updateLike(GatheringLike gatheringLike) {
-
-    gatheringLike.updateIsLike();
-    return gatheringLike.getIsLiked();
   }
 
   private void updateLikeCount(Gathering gathering) {
     gathering.setLikeCount(
-        gatheringLikeRepository.countGatheringLikeByGatheringAndAndIsLikedIsTrue(gathering));
+        gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(gathering.getId()));
   }
 
   private Gathering readGathering(long gatheringId) {
