@@ -48,7 +48,7 @@ public class MemberController {
 
   @PutMapping("/profile_img")
   public ResponseEntity<UpdateMemberProfileImgDto.Response> setProfileImg(
-      @Valid @RequestBody UpdateMemberProfileImgDto.Request request,
+      @Valid UpdateMemberProfileImgDto.Request request,
       @CurrentMemberId Long currentMemberId) {
     return ResponseEntity.ok(memberService.updateProfileImg(request, currentMemberId));
   }
