@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,17 +47,23 @@ public class GatheringController {
     return ResponseEntity.ok(gatheringService.readGatheringList());
   }
 
+  @GetMapping("/myList")
+  public ResponseEntity<List<GetGatheringResponse>> getGatheringMyList(
+      @CurrentMemberId long currentMemberId) {
+    return ResponseEntity.ok(gatheringService.readGatheringMyList(currentMemberId));
+  }
+
+  @GetMapping("/{gatheringId}")
+  public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
+    return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
+  }
+
   @PutMapping("/{gatheringId}")
   public ResponseEntity<SetGatheringResponse> setGathering(@CurrentMemberId long currentMemberId,
       @PathVariable long gatheringId,
       @Valid @RequestBody SetGatheringRequest setGatheringRequest) {
     return ResponseEntity.ok(
         gatheringService.updateGathering(currentMemberId, gatheringId, setGatheringRequest));
-  }
-
-  @GetMapping("/{gatheringId}")
-  public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
-    return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
   }
 
   @DeleteMapping("/{gatheringId}")

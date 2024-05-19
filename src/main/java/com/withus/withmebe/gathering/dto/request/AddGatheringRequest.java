@@ -67,6 +67,8 @@ public class AddGatheringRequest {
   @NotNull
   private ParticipantSelectionMethod participantSelectionMethod;
 
+  private Long likeCount;
+
   public Gathering toEntity(long memberId, String mainImgUrl, String subImgUrl1,
       String subImgUrl2, String subImgUrl3) {
     return Gathering.builder()

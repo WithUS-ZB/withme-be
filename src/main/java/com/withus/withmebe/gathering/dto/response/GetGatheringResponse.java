@@ -73,6 +73,12 @@ public class GetGatheringResponse {
     @NotBlank
     private String mainImg;
 
+    private String subImg1;
+
+    private String subImg2;
+
+    private String subImg3;
+
     @NotNull
     private ParticipantsType participantsType;
 

@@ -4,9 +4,9 @@ package com.withus.withmebe.gathering.dto.response;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,16 +26,16 @@ public class DeleteGatheringResponse {
     private Long maximumParticipant;
 
     @NotNull
-    private LocalDate recruitmentStartDt;
-
-    @NotNull
-    private LocalDate recruitmentEndDt;
-
-    @NotNull
     private LocalDate day;
 
     @NotNull
     private LocalTime time;
+
+    @NotNull
+    private LocalDate recruitmentStartDt;
+
+    @NotNull
+    private LocalDate recruitmentEndDt;
 
     @NotBlank
     private String category;
@@ -52,8 +52,13 @@ public class DeleteGatheringResponse {
     @NotNull
     private Double lng;
 
-    @NotBlank
     private String mainImg;
+
+    private String subImg1;
+
+    private String subImg2;
+
+    private String subImg3;
 
     @NotNull
     private ParticipantsType participantsType;
@@ -63,4 +68,6 @@ public class DeleteGatheringResponse {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
+
+    private Long likeCount;
 }
