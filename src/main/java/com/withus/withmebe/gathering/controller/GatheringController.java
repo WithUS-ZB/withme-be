@@ -19,41 +19,52 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/gathering")
 public class GatheringController {
 
-    private final GatheringService gatheringService;
+  private final GatheringService gatheringService;
 
-    @PostMapping()
-    public ResponseEntity<AddGatheringResponse> addGathering(@CurrentMemberId long currentMemberId,
-                                                             @Valid @RequestBody AddGatheringRequest addGatheringRequest) {
-        return ResponseEntity.ok(gatheringService.createGathering(currentMemberId, addGatheringRequest));
-    }
+  @PostMapping()
+  public ResponseEntity<AddGatheringResponse> addGathering(@CurrentMemberId long currentMemberId,
+      @Valid @RequestPart AddGatheringRequest addGatheringRequest,
+      @RequestPart("mainImg") MultipartFile mainImg,
+      @RequestPart("subImg1") MultipartFile subImg1,
+      @RequestPart("subImg2") MultipartFile subImg2,
+      @RequestPart("subImg3") MultipartFile subImg3) {
+    return ResponseEntity.ok(
+        gatheringService.createGathering(currentMemberId, addGatheringRequest, mainImg, subImg1,
+            subImg2, subImg3));
+  }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<GetGatheringResponse>> getGatheringList() {
-        return ResponseEntity.ok(gatheringService.readGatheringList());
-    }
+  @GetMapping("/list")
+  public ResponseEntity<List<GetGatheringResponse>> getGatheringList() {
+    return ResponseEntity.ok(gatheringService.readGatheringList());
+  }
 
-    @PutMapping("/{gatheringId}")
-    public ResponseEntity<SetGatheringResponse> setGathering(@CurrentMemberId long currentMemberId,
-                                                             @PathVariable long gatheringId,
-                                                             @Valid @RequestBody SetGatheringRequest setGatheringRequest) {
-        return ResponseEntity.ok(gatheringService.updateGathering(currentMemberId, gatheringId, setGatheringRequest));
-    }
+  @PutMapping("/{gatheringId}")
+  public ResponseEntity<SetGatheringResponse> setGathering(@CurrentMemberId long currentMemberId,
+      @PathVariable long gatheringId,
+      @Valid @RequestBody SetGatheringRequest setGatheringRequest) {
+    return ResponseEntity.ok(
+        gatheringService.updateGathering(currentMemberId, gatheringId, setGatheringRequest));
+  }
 
-    @GetMapping("/{gatheringId}")
-    public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
-        return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
-    }
+  @GetMapping("/{gatheringId}")
+  public ResponseEntity<GetGatheringResponse> getGathering(@PathVariable long gatheringId) {
+    return ResponseEntity.ok(gatheringService.readGathering(gatheringId));
+  }
 
-    @DeleteMapping("/{gatheringId}")
-    public ResponseEntity<DeleteGatheringResponse> removeGathering(@CurrentMemberId long currentMemberId,
-                                                                   @PathVariable long gatheringId) {
-        return ResponseEntity.ok(gatheringService.deleteGathering(currentMemberId, gatheringId));
-    }
+  @DeleteMapping("/{gatheringId}")
+  public ResponseEntity<DeleteGatheringResponse> removeGathering(
+      @CurrentMemberId long currentMemberId,
+      @PathVariable long gatheringId) {
+    return ResponseEntity.ok(gatheringService.deleteGathering(currentMemberId, gatheringId));
+  }
 }
