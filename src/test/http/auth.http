@@ -19,6 +19,12 @@ Content-Type: application/json
   "password": "password123"
 }
 
+### 로그아웃
+POST http://localhost:8080/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1OTMxOTU0LCJleHAiOjE3MTYwMTgzNTR9.6U-VKxdUsOFWsegGlNzMSDa1t-jsx6Bs_hNKzbV0heQ
+
+
 ### 휴대폰 인증번호 메시지 전송
 POST http://localhost:8080/api/auth/sms
 Content-Type: application/json

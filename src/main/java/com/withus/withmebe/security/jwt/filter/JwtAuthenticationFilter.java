@@ -1,6 +1,7 @@
 package com.withus.withmebe.security.jwt.filter;
 
 import com.withus.withmebe.security.jwt.provider.TokenProvider;
+import com.withus.withmebe.security.jwt.repository.AccessTokenRepository;
 import com.withus.withmebe.security.util.MySecurityUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -26,12 +26,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final TokenProvider tokenProvider;
 
+  private final AccessTokenRepository accessTokenRepository;
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
     String token = this.resolveTokenFromRequest(request);
     // 토큰 유효성 검증
-    if (StringUtils.hasText(token) && this.tokenProvider.validateToken(token)) {
+    if (validToken(token)
+    ) {
       // 시큐리티 컨텍스트에 인증정보를 넣어줌
       SecurityContextHolder.getContext().setAuthentication(
           this.tokenProvider.getAuthentication(token));
@@ -41,6 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     // 필터가 연속적으로 되도록
     filterChain.doFilter(request, response);
+  }
+
+  private boolean validToken(String token) {
+    return !(
+        !StringUtils.hasText(token)
+        || !this.tokenProvider.validateToken(token)
+        || !token.equals(accessTokenRepository.get(Long.valueOf(tokenProvider.getUsername(token)))));
   }
 
   private String resolveTokenFromRequest(HttpServletRequest request) {
