@@ -20,10 +20,10 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTQxMTQ4LCJleHAiOjE3MTYyMjc1NDh9.9YXkBHxthZpqtrIPbesG39jPR7qHwXf-8vi8xW5CPIQ
 
 --WebAppBoundary
-Content-Disposition: form-data; name="profileImg"; filename="img.jpeg"
-Content-Type: image/png
+Content-Disposition: form-data; name="profileImg"; filename="파일명.{확장자명}"
+Content-Type: image/확장자명
 
-< C:{경로}\{img.png}
+< {경로}\{파일명.{확장자명}}
 --WebAppBoundary
 
 
