@@ -9,6 +9,7 @@ import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.service.GatheringService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class GatheringController {
       @RequestPart(value = "mainImg", required = false) MultipartFile mainImg,
       @RequestPart(value = "subImg1", required = false) MultipartFile subImg1,
       @RequestPart(value = "subImg2", required = false) MultipartFile subImg2,
-      @RequestPart(value = "subImg3", required = false) MultipartFile subImg3) {
+      @RequestPart(value = "subImg3", required = false) MultipartFile subImg3) throws IOException {
     return ResponseEntity.ok(
         gatheringService.createGathering(currentMemberId, addGatheringRequest, mainImg, subImg1,
             subImg2, subImg3));
