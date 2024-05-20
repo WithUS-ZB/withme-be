@@ -33,10 +33,10 @@ public class GatheringController {
   @PostMapping()
   public ResponseEntity<AddGatheringResponse> addGathering(@CurrentMemberId long currentMemberId,
       @Valid @RequestPart AddGatheringRequest addGatheringRequest,
-      @RequestPart("mainImg") MultipartFile mainImg,
-      @RequestPart("subImg1") MultipartFile subImg1,
-      @RequestPart("subImg2") MultipartFile subImg2,
-      @RequestPart("subImg3") MultipartFile subImg3) {
+      @RequestPart(value = "mainImg", required = false) MultipartFile mainImg,
+      @RequestPart(value = "subImg1", required = false) MultipartFile subImg1,
+      @RequestPart(value = "subImg2", required = false) MultipartFile subImg2,
+      @RequestPart(value = "subImg3", required = false) MultipartFile subImg3) {
     return ResponseEntity.ok(
         gatheringService.createGathering(currentMemberId, addGatheringRequest, mainImg, subImg1,
             subImg2, subImg3));
