@@ -32,7 +32,7 @@ public class GatheringController {
 
   @PostMapping()
   public ResponseEntity<AddGatheringResponse> addGathering(@CurrentMemberId long currentMemberId,
-      @Valid @RequestPart AddGatheringRequest addGatheringRequest,
+      @Valid @RequestPart(required = false) AddGatheringRequest addGatheringRequest,
       @RequestPart(value = "mainImg", required = false) MultipartFile mainImg,
       @RequestPart(value = "subImg1", required = false) MultipartFile subImg1,
       @RequestPart(value = "subImg2", required = false) MultipartFile subImg2,
