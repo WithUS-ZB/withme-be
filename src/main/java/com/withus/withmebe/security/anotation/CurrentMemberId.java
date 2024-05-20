@@ -11,5 +11,5 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Retention(RUNTIME)
 @AuthenticationPrincipal(expression = "memberId")
 public @interface CurrentMemberId {
-
+  boolean required() default false;
 }
