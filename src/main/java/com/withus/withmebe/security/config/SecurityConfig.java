@@ -34,8 +34,6 @@ public class SecurityConfig {
   private final OAuth2UserService oAuth2UserService;
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
   private final OAuth2FailHandler oAuth2FailHandler;
-  @Value("${front.url}")
-  private String frontUrl;
 
   @Value("${spring.security.origin.allow.url}")
   private String allowedOrigin;
