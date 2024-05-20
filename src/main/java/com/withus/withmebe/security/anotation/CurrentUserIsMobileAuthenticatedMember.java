@@ -12,4 +12,5 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @AuthenticationPrincipal(expression = "isMobileAuthenticatedMember")
 public @interface CurrentUserIsMobileAuthenticatedMember {
 
+  boolean required() default false;
 }
