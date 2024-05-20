@@ -16,12 +16,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NR
 
 ### 프로필 이미지 변경
 PUT http://localhost:8080/api/member/profile_img
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE0NjY4OTgyLCJleHAiOjE3MTQ2NzI1ODJ9.hzsoRMNKZHVkzGMnq3x0hvI6rSe6y5TZbRyjC68QD2g
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTQxMTQ4LCJleHAiOjE3MTYyMjc1NDh9.9YXkBHxthZpqtrIPbesG39jPR7qHwXf-8vi8xW5CPIQ
 
-{
-  "profileImg": "asfasd.jpg"
-}
+--WebAppBoundary
+Content-Disposition: form-data; name="profileImg"; filename="파일명.{확장자명}"
+Content-Type: image/확장자명
+
+< {경로}\{파일명.{확장자명}}
+--WebAppBoundary
 
 
 ### 닉네임 변경
