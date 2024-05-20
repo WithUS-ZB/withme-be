@@ -78,7 +78,6 @@ public class SecurityConfig {
 
         .oauth2Login(oauth2Configurer ->
             oauth2Configurer
-                .loginPage(frontUrl+"/login")
                 .successHandler(oAuth2SuccessHandler)
                 .failureHandler(oAuth2FailHandler)
                 .userInfoEndpoint(userInfo ->
