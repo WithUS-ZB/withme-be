@@ -29,14 +29,14 @@ class GatheringLikeRepositoryTest {
     //given
     //when
     Optional<GatheringLike> optionalGatheringLike = gatheringLikeRepository
-        .findByMemberIdAndGatheringId(MEMBER_ID, GATHERING_ID);
+        .findByMemberIdAndGathering_Id(MEMBER_ID, GATHERING_ID);
 
     //then
     GatheringLike gatheringLike = optionalGatheringLike.get();
 
-    assertNotNull(gatheringLike.getGatheringId());
+    assertNotNull(gatheringLike.getGathering());
     assertEquals(MEMBER_ID, gatheringLike.getMemberId());
-    assertEquals(GATHERING_ID, gatheringLike.getGatheringId());
+    assertEquals(GATHERING_ID, gatheringLike.getGathering().getId());
     assertNotNull(gatheringLike.getCreatedDttm());
     assertNotNull(gatheringLike.getUpdatedDttm());
     assertNull(gatheringLike.getDeletedDttm());
@@ -47,6 +47,6 @@ class GatheringLikeRepositoryTest {
     //given
     //when
     //then
-    assertEquals(1L, gatheringLikeRepository.countByGatheringIdAndIsLikedIsTrue(GATHERING_ID));
+    assertEquals(1L, gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(GATHERING_ID));
   }
 }

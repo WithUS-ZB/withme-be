@@ -8,7 +8,9 @@ public class GatheringLikeProvider {
   private GatheringLikeProvider() {
   }
   public static GatheringLike getStubbedGatheringLike(boolean isLiked) {
-    GatheringLike gatheringLike = new GatheringLike();
+    GatheringLike gatheringLike = GatheringLike.builder()
+        .gathering(GatheringProvider.getStubbedGathering(1L,1L))
+        .build();
     ReflectionTestUtils.setField(gatheringLike, "isLiked", isLiked);
     return gatheringLike;
   }

@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.service.GatheringLikeService;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
@@ -57,5 +59,19 @@ class GatheringLikeControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockCustomUser
+  void failToUpdateLikeByNotFount() throws Exception {
+    //given
+    given(gatheringLikeService.doLike(anyLong(), anyLong()))
+        .willThrow(new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
+    //when
+    //then
+    mockMvc.perform(put(BASE_URL + "?gatheringid=1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andExpect(status().isNotFound());
   }
 }
