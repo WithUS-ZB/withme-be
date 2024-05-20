@@ -103,19 +103,21 @@ public class GatheringService {
   @NotNull
   private Result updateImage(MultipartFile mainImg, MultipartFile subImg1, MultipartFile subImg2,
       MultipartFile subImg3) throws IOException {
-    String mainImgUrl = imgService.updateImageToS3(mainImg);
-    String subImgUrl1 = imgService.updateImageToS3(subImg1);
-    String subImgUrl2 = imgService.updateImageToS3(subImg2);
-    String subImgUrl3 = imgService.updateImageToS3(subImg3);
-    log.info("mainImgUrl: {}", mainImgUrl);
-    log.info("subImgUrl1: {}", subImgUrl1);
-    log.info("subImgUrl2: {}", subImgUrl2);
-    log.info("subImgUrl3: {}", subImgUrl3);
+    String mainImgUrl = imageCheckNotNull(mainImg);
+    String subImgUrl1 = imageCheckNotNull(subImg1);
+    String subImgUrl2 = imageCheckNotNull(subImg2);
+    String subImgUrl3 = imageCheckNotNull(subImg3);
     return new Result(mainImgUrl, subImgUrl1, subImgUrl2, subImgUrl3);
+  }
+
+  private String imageCheckNotNull(MultipartFile image) throws IOException {
+    if (image == null) {
+      return "";
+    }
+    return imgService.updateImageToS3(image);
   }
 
   private record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
                         String subImgUrl3) {
-
   }
 }
