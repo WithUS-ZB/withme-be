@@ -3,9 +3,12 @@ package com.withus.withmebe.gathering.entity;
 import com.withus.withmebe.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +23,9 @@ public class GatheringLike extends BaseEntity {
   @Column(name = "like_id")
   private Long id;
 
-  @Column(nullable = false)
-  private Long gatheringId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "gathering_id", nullable = false)
+  private Gathering gathering;
 
   @Column(nullable = false)
   private Long memberId;
@@ -29,17 +33,13 @@ public class GatheringLike extends BaseEntity {
   private Boolean isLiked = true;
 
   @Builder
-  public GatheringLike(long gatheringId, long memberId) {
-    this.gatheringId = gatheringId;
+  public GatheringLike(Gathering gathering, long memberId) {
+    this.gathering = gathering;
     this.memberId = memberId;
   }
 
   public GatheringLike updateIsLike() {
     this.isLiked = !this.isLiked;
     return this;
-  }
-
-  public boolean isMember(long memberId) {
-    return this.memberId == memberId;
   }
 }
