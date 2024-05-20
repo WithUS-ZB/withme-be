@@ -2,6 +2,7 @@ package com.withus.withmebe.security.handler;
 
 import com.withus.withmebe.security.domain.CustomUserDetails;
 import com.withus.withmebe.security.jwt.provider.TokenProvider;
+import com.withus.withmebe.security.jwt.repository.AccessTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,16 +22,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   private final TokenProvider tokenProvider;
   @Value("${front.url}")
   private String frontUrl;
+  private final AccessTokenRepository accessTokenRepository;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException {
     CustomUserDetails oAuth2User = (CustomUserDetails) authentication.getPrincipal();
+    String accessToken = getToken(oAuth2User);
 
     String targetUrl = UriComponentsBuilder.fromUriString(frontUrl + "/auth/success?")
-        .queryParam("Authorization", "Bearer "+ getToken(oAuth2User))
+        .queryParam("Authorization", "Bearer "+ accessToken)
         .queryParam("isAdditionalInfoRequired", oAuth2User.getIsAdditionalInfoRequired())
         .build().toUriString();
+
+    accessTokenRepository.set(
+        oAuth2User.getMemberId(), accessToken, tokenProvider.getTokenDuration(accessToken));
 
     response.sendRedirect(targetUrl);
   }
