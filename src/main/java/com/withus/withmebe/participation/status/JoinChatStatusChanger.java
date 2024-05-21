@@ -6,7 +6,6 @@ import static com.withus.withmebe.participation.type.Status.CHAT_LEFT;
 
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.type.Status;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +26,6 @@ public class JoinChatStatusChanger extends ParticipationStatusChanger{
 
   @Override
   boolean isAvailableUser() {
-    return isParticipant();
+    return isParticipant() || isHost();
   }
 }

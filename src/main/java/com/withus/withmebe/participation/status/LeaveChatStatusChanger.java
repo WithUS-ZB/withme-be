@@ -24,6 +24,6 @@ public class LeaveChatStatusChanger extends ParticipationStatusChanger{
 
   @Override
   boolean isAvailableUser() {
-    return isParticipant();
+    return isParticipant() || isHost();
   }
 }
