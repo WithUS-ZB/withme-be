@@ -10,8 +10,11 @@ import com.withus.withmebe.gathering.service.GatheringService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,14 +53,16 @@ public class GatheringController {
   }
 
   @GetMapping("/list")
-  public ResponseEntity<List<GetGatheringResponse>> getGatheringList() {
-    return ResponseEntity.ok(gatheringService.readGatheringList());
+  public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable) {
+    return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
   }
 
   @GetMapping("/myList")
-  public ResponseEntity<List<GetGatheringResponse>> getGatheringMyList(
-      @CurrentMemberId long currentMemberId) {
-    return ResponseEntity.ok(gatheringService.readGatheringMyList(currentMemberId));
+  public ResponseEntity<Page<GetGatheringResponse>> getGatheringMyList(
+      @CurrentMemberId long currentMemberId,
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable) {
+    return ResponseEntity.ok(gatheringService.readGatheringMyList(currentMemberId, pageable));
   }
 
   @GetMapping("/{gatheringId}")

@@ -15,11 +15,11 @@ import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,18 +52,15 @@ public class GatheringService {
   }
 
   @Transactional(readOnly = true)
-  public List<GetGatheringResponse> readGatheringList() {
-    List<Gathering> gatherings = gatheringRepository.findAllByOrderByCreatedDttmDesc();
-    return gatherings.stream()
-        .map(gathering -> gathering.toGetGatheringResponse(gathering.getMember()))
-        .collect(Collectors.toList());
+  public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
+    return gatheringRepository.findAllByOrderByCreatedDttmDesc(pageable)
+        .map(Gathering::toGetGatheringResponse);
   }
 
   @Transactional(readOnly = true)
-  public List<GetGatheringResponse> readGatheringMyList(long currentMemberId) {
-    List<Gathering> myGatherings = gatheringRepository.findAllByMemberId(currentMemberId);
-    return myGatherings.stream().map(gathering -> gathering.toGetGatheringResponse(gathering.getMember())).collect(
-        Collectors.toList());
+  public Page<GetGatheringResponse> readGatheringMyList(long currentMemberId, Pageable pageable) {
+    return gatheringRepository.findAllByMemberId(currentMemberId, pageable)
+        .map(Gathering::toGetGatheringResponse);
   }
 
   @Transactional
@@ -85,7 +82,7 @@ public class GatheringService {
 
   public GetGatheringResponse readGathering(long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    return gathering.toGetGatheringResponse(gathering.getMember());
+    return gathering.toGetGatheringResponse();
   }
 
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
@@ -131,5 +128,6 @@ public class GatheringService {
 
   public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
                         String subImgUrl3) {
+
   }
 }

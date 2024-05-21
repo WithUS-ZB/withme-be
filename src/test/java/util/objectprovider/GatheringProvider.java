@@ -1,5 +1,7 @@
 package util.objectprovider;
 
+import static util.objectprovider.MemberProvider.getStubbedMember;
+
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
@@ -32,7 +34,7 @@ public class GatheringProvider {
   public static Gathering getStubbedGatheringWithPeriod(long gatheringId, long hostId,
       LocalDate recruitmentStartDt, LocalDate recruitmentEndDt) {
     Gathering gathering = Gathering.builder()
-        .memberId(hostId)
+        .member(getStubbedMember(hostId))
         .title("모임제목" + gatheringId)
         .content("모임본문" + gatheringId)
         .gatheringType((gatheringId % 2 == 0) ? GatheringType.EVENT : GatheringType.MEETING)
