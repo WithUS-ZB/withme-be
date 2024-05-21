@@ -74,6 +74,15 @@ public class GatheringService {
     return gathering.toSetGatheringResponse();
   }
 
+  @Transactional
+  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
+    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Gathering newGathering = findByGatheringId(gathering);
+    newGathering.updateGatheringImage(s3UpdateUrl);
+    return newGathering.toSetGatheringResponse();
+  }
+
   public GetGatheringResponse readGathering(long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
     return gathering.toGetGatheringResponse(gathering.getMember());

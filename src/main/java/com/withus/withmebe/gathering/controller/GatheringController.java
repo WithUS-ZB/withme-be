@@ -72,6 +72,17 @@ public class GatheringController {
         gatheringService.updateGathering(currentMemberId, gatheringId, setGatheringRequest));
   }
 
+  @PutMapping("/image/{gathering}")
+  public ResponseEntity<SetGatheringResponse> setGathering(@PathVariable long gathering,
+      @RequestParam(value = "mainImg", required = false) MultipartFile mainImg,
+      @RequestParam(value = "subImg1", required = false) MultipartFile subImg1,
+      @RequestParam(value = "subImg2", required = false) MultipartFile subImg2,
+      @RequestParam(value = "subImg3", required = false) MultipartFile subImg3) throws IOException {
+    return ResponseEntity.ok(
+        gatheringService.updateGathering(gathering, mainImg, subImg1,
+            subImg2, subImg3));
+  }
+
   @DeleteMapping("/{gatheringId}")
   public ResponseEntity<DeleteGatheringResponse> removeGathering(@CurrentMemberId long currentMemberId,
       @PathVariable long gatheringId) {
