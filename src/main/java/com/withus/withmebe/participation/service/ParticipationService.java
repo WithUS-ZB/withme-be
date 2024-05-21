@@ -16,6 +16,7 @@ import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
+import com.withus.withmebe.participation.status.JoinChatStatusChanger;
 import com.withus.withmebe.participation.type.Status;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -101,6 +102,11 @@ public class ParticipationService {
     Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId,
         pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
+  }
+  public void joinChat(Long currentMemberId, Long participationId) {
+    new JoinChatStatusChanger(
+        readParticipation(participationId), currentMemberId)
+        .updateStatusTemplateMethod();
   }
 
   private void validateCreateParticipationRequest(Member requester, Gathering gathering) {

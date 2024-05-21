@@ -18,6 +18,7 @@ public enum ExceptionCode {
   // BAD_REQUEST: 400
   PASSWORD_CHK_MISMATCH(BAD_REQUEST, "비밀번호 확인이 비밀번호와 일치하지 않습니다."),
   AUTH_CODE_MISMATCH(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
+  INVALID_TIME(BAD_REQUEST, "가능한 시간이 아닙니다."),
 
   // Unauthorized: 401
   TOKEN_EXPIRED(UNAUTHORIZED, "토큰이 만료되었습니다."),
