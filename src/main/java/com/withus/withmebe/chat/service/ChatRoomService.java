@@ -9,8 +9,10 @@ import com.withus.withmebe.chat.repository.ChatRoomRepository;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
+import com.withus.withmebe.participation.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +20,18 @@ public class ChatRoomService {
 
   private final ChatRoomRepository chatRoomRepository;
   private final GatheringRepository gatheringRepository;
+  private final ParticipationService participationService;
 
+  @Transactional
   public ChatRoomDto create(Long currentMemberId, Long gatheringId) {
     Gathering gathering = getGatheringById(gatheringId);
     if (!gathering.isHost(currentMemberId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
+    ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().gathering(gathering).build());
+    participationService.createParticipationByHost(currentMemberId, gathering);
 
-    return chatRoomRepository.save(ChatRoom.builder().gathering(gathering).build()).toResponse();
+    return chatRoom.toResponse();
   }
 
   private Gathering getGatheringById(Long gatheringId) {

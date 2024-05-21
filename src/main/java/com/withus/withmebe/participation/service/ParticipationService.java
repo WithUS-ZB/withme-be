@@ -1,7 +1,9 @@
 package com.withus.withmebe.participation.service;
 
 
+import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
+import static com.withus.withmebe.participation.type.Status.CHAT_JOINED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -11,9 +13,9 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
-import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.status.JoinChatStatusChanger;
@@ -49,6 +51,18 @@ public class ParticipationService {
                 ? Status.APPROVED : Status.CREATED))
         .build());
     return newParticipation.toResponse();
+  }
+
+  public void createParticipationByHost(Long currentMemberId, Gathering gathering) {
+    if (!gathering.isHost(currentMemberId)) {
+      throw new CustomException(AUTHORIZATION_ISSUE);
+    }
+    Member currentMember = readMember(currentMemberId);
+    participationRepository.save(Participation.builder()
+        .gathering(gathering)
+        .participant(currentMember)
+        .status(CHAT_JOINED)
+        .build());
   }
 
   @Transactional(readOnly = true)
@@ -104,6 +118,7 @@ public class ParticipationService {
         pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
+
   @Transactional
   public void joinChat(Long currentMemberId, Long participationId) {
     new JoinChatStatusChanger(
@@ -114,7 +129,7 @@ public class ParticipationService {
   @Transactional
   public void leaveChat(Long currentMemberId, Long participationId) {
     new LeaveChatStatusChanger(
-       readParticipation(participationId), currentMemberId)
+        readParticipation(participationId), currentMemberId)
         .updateStatusTemplateMethod();
   }
 
@@ -155,7 +170,7 @@ public class ParticipationService {
 
   private void validateRequesterIsNotHost(Member requester, Gathering gathering) {
     if (isHost(requester.getId(), gathering)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+      throw new CustomException(AUTHORIZATION_ISSUE);
     }
   }
 
@@ -187,13 +202,13 @@ public class ParticipationService {
 
   private void validateRequesterIsHost(long requesterId, Gathering gathering) {
     if (!isHost(requesterId, gathering)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+      throw new CustomException(AUTHORIZATION_ISSUE);
     }
   }
 
   private void validateRequesterIsParticipant(long requesterId, Participation participation) {
     if (!participation.isParticipant(requesterId)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+      throw new CustomException(AUTHORIZATION_ISSUE);
     }
   }
 
