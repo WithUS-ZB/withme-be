@@ -1,6 +1,6 @@
 package com.withus.withmebe.chat.controller;
 
-import com.withus.withmebe.chat.dto.response.ChatRoomResponse;
+import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.chat.service.ChatRoomService;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
 public class ChatRoomController {
+
   private final ChatRoomService chatRoomService;
 
   @PostMapping
-  public ResponseEntity<ChatRoomResponse> add(
+  public ResponseEntity<ChatRoomDto> add(
       @CurrentMemberId Long currentMemberId,
       @CurrentUserIsMobileAuthenticatedMember boolean isMobileAuthenticatedMember,
-      @RequestParam Long gatheringId)
-  {
+      @RequestParam Long gatheringId
+  ) {
     if (!isMobileAuthenticatedMember) {
       throw new CustomException(ExceptionCode.AUTHENTICATION_ISSUE);
     }

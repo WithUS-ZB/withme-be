@@ -3,7 +3,7 @@ package com.withus.withmebe.chat.dto.response;
 import lombok.Builder;
 
 @Builder
-public record ChatRoomResponse(
+public record ChatRoomDto(
     Long chatId,
 
     String title

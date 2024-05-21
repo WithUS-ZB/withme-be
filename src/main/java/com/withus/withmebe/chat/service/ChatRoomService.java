@@ -3,7 +3,7 @@ package com.withus.withmebe.chat.service;
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
-import com.withus.withmebe.chat.dto.response.ChatRoomResponse;
+import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.chat.entity.ChatRoom;
 import com.withus.withmebe.chat.repository.ChatRoomRepository;
 import com.withus.withmebe.common.exception.CustomException;
@@ -19,7 +19,7 @@ public class ChatRoomService {
   private final ChatRoomRepository chatRoomRepository;
   private final GatheringRepository gatheringRepository;
 
-  public ChatRoomResponse create(Long currentMemberId, Long gatheringId) {
+  public ChatRoomDto create(Long currentMemberId, Long gatheringId) {
     Gathering gathering = getGatheringById(gatheringId);
     if (!gathering.isHost(currentMemberId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);

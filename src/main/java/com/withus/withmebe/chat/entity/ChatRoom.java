@@ -2,7 +2,7 @@ package com.withus.withmebe.chat.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.withus.withmebe.chat.dto.response.ChatRoomResponse;
+import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.entity.Gathering;
 import jakarta.persistence.Entity;
@@ -32,8 +32,8 @@ public class ChatRoom extends BaseEntity {
     this.title = gathering.getTitle();
   }
 
-  public ChatRoomResponse toResponse(){
-    return ChatRoomResponse.builder()
+  public ChatRoomDto toResponse(){
+    return ChatRoomDto.builder()
         .chatId(this.id)
         .title(this.title)
         .build();
