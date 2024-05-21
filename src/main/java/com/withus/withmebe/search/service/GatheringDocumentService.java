@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GatheringDocumentService {
 
   private final ElasticsearchOperations elasticsearchOperations;
+  private static final Query ALL_MATCH_QUERY = QueryBuilders.matchAll().build()._toQuery();
 
   public Page<GatheringSearchResponse> searchGatheringDocumentsByTitle(SearchRange range,
       String title, Pageable pageable, SearchOption option) {
@@ -57,13 +58,20 @@ public class GatheringDocumentService {
   private Query getBoolQuery(SearchRange range, String title, SearchOption option) {
     return QueryBuilders.bool()
         .must(
-            getMultiMatchQuery(title, List.of("title", "ngram_title")),
+            getTitleQuery(title),
             getMatchQuery("status", Status.PROGRESS.toString()),
             getOptionQuery(range),
             getOptionQuery(option)
         )
         .mustNot(getExistsQuery("deleted_dttm"))
         .build()._toQuery();
+  }
+
+  private Query getTitleQuery(String title) {
+    if (title == null || title.isEmpty()) {
+      return ALL_MATCH_QUERY;
+    }
+    return getMultiMatchQuery(title, List.of("title", "ngram_title"));
   }
 
   private Query getExistsQuery(String fieldName) {
@@ -80,7 +88,7 @@ public class GatheringDocumentService {
 
   private Query getOptionQuery(Option option) {
     if (option.getName().equals("ALL")) {
-      return QueryBuilders.matchAll().build()._toQuery();
+      return ALL_MATCH_QUERY;
     } else if (option.getName().equals("PAY_HAS")) {
       return QueryBuilders.range().field(option.getField()).gt(JsonData.fromJson(option.getValue()))
           .build()._toQuery();
