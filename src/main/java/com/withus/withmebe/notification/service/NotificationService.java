@@ -6,10 +6,12 @@ import com.withus.withmebe.notification.entity.Notification;
 import com.withus.withmebe.notification.event.NotificationEvent;
 import com.withus.withmebe.notification.event.NotificationSendEvent;
 import com.withus.withmebe.notification.repository.NotificationRepository;
+import com.withus.withmebe.notification.response.NotificationResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -82,4 +84,11 @@ public class NotificationService {
   public List<Notification> createNotifications(NotificationEvent notificationEvent) {
     return notificationRepository.saveAll(notificationEvent.toEntities());
   }
+
+  @Transactional(readOnly = true)
+  public List<NotificationResponse> readUnreadNotifications(long requesterId) {
+    return notificationRepository.findAllByReceiverAndReadDttmIsNull(requesterId)
+        .stream().map(Notification::toResponse).collect(Collectors.toList());
+  }
+
 }
