@@ -30,6 +30,13 @@ public class GatheringLikeService {
     return gatheringLike.getIsLiked();
   }
 
+  @Transactional(readOnly = true)
+  public boolean isLiked(long requesterId, long gatheringId) {
+    return gatheringLikeRepository.existsGatheringLikeByMemberIdAndGathering_IdAndIsLikedIsTrue(
+        requesterId, gatheringId);
+  }
+
+
   private GatheringLike createLike(long memberId, long gatheringId) {
 
     return gatheringLikeRepository.save(GatheringLike.builder()
@@ -40,7 +47,8 @@ public class GatheringLikeService {
 
   private void updateLikeCount(Gathering gathering) {
     gathering.setLikeCount(
-        gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(gathering.getId()));
+        gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(
+            gathering.getId()));
   }
 
   private Gathering readGathering(long gatheringId) {
