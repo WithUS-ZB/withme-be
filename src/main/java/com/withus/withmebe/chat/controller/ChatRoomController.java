@@ -38,7 +38,7 @@ public class ChatRoomController {
    * @param participationId 참여 id
    * @return 성공하면 200
    */
-  @PutMapping
+  @PutMapping("/join")
   public ResponseEntity<Void> join(
       @CurrentMemberId Long currentMemberId,
       @RequestParam Long participationId
@@ -53,7 +53,7 @@ public class ChatRoomController {
    * @param participationId 참여 id
    * @return 성공하면 200
    */
-  @PutMapping
+  @PutMapping("/leave")
   public ResponseEntity<Void> leave(
       @CurrentMemberId Long currentMemberId,
       @RequestParam Long participationId
