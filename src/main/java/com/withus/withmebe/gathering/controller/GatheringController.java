@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,13 +36,19 @@ public class GatheringController {
 
   @PostMapping()
   public ResponseEntity<AddGatheringResponse> addGathering(@CurrentMemberId long currentMemberId,
-      @Valid @RequestPart(required = false) AddGatheringRequest addGatheringRequest,
-      @RequestPart(value = "mainImg", required = false) MultipartFile mainImg,
-      @RequestPart(value = "subImg1", required = false) MultipartFile subImg1,
-      @RequestPart(value = "subImg2", required = false) MultipartFile subImg2,
-      @RequestPart(value = "subImg3", required = false) MultipartFile subImg3) throws IOException {
+      @Valid @RequestBody AddGatheringRequest addGatheringRequest) {
     return ResponseEntity.ok(
-        gatheringService.createGathering(currentMemberId, addGatheringRequest, mainImg, subImg1,
+        gatheringService.createGathering(currentMemberId, addGatheringRequest));
+  }
+
+  @PostMapping("/image/{gathering}")
+  public ResponseEntity<SetGatheringResponse> addGathering(@PathVariable long gathering,
+      @RequestParam(value = "mainImg", required = false) MultipartFile mainImg,
+      @RequestParam(value = "subImg1", required = false) MultipartFile subImg1,
+      @RequestParam(value = "subImg2", required = false) MultipartFile subImg2,
+      @RequestParam(value = "subImg3", required = false) MultipartFile subImg3) throws IOException {
+    return ResponseEntity.ok(
+        gatheringService.createGathering(gathering, mainImg, subImg1,
             subImg2, subImg3));
   }
 
@@ -66,15 +72,13 @@ public class GatheringController {
 
   @PutMapping("/{gatheringId}")
   public ResponseEntity<SetGatheringResponse> setGathering(@CurrentMemberId long currentMemberId,
-      @PathVariable long gatheringId,
-      @Valid @RequestBody SetGatheringRequest setGatheringRequest) {
+      @PathVariable long gatheringId, @Valid @RequestBody SetGatheringRequest setGatheringRequest) {
     return ResponseEntity.ok(
         gatheringService.updateGathering(currentMemberId, gatheringId, setGatheringRequest));
   }
 
   @DeleteMapping("/{gatheringId}")
-  public ResponseEntity<DeleteGatheringResponse> removeGathering(
-      @CurrentMemberId long currentMemberId,
+  public ResponseEntity<DeleteGatheringResponse> removeGathering(@CurrentMemberId long currentMemberId,
       @PathVariable long gatheringId) {
     return ResponseEntity.ok(gatheringService.deleteGathering(currentMemberId, gatheringId));
   }

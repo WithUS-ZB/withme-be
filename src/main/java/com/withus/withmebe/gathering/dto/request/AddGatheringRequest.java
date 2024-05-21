@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
@@ -55,13 +56,13 @@ public class AddGatheringRequest {
   @NotNull
   private Double lng;
 
-  private String mainImg;
+  private MultipartFile mainImg;
 
-  private String subImg1;
+  private MultipartFile subImg1;
 
-  private String subImg2;
+  private MultipartFile subImg2;
 
-  private String subImg3;
+  private MultipartFile subImg3;
 
   @NotNull
   private ParticipantsType participantsType;
@@ -74,8 +75,7 @@ public class AddGatheringRequest {
 
   private Long likeCount;
 
-  public Gathering toEntity(Member newMember, String mainImgUrl, String subImgUrl1,
-      String subImgUrl2, String subImgUrl3) {
+  public Gathering toEntity(Member newMember) {
     return Gathering.builder()
         .member(newMember)
         .title(this.title)
@@ -91,10 +91,6 @@ public class AddGatheringRequest {
         .detailedAddress(this.detailedAddress)
         .lat(this.lat)
         .lng(this.lng)
-        .mainImg(mainImgUrl)
-        .subImg1(subImgUrl1)
-        .subImg2(subImgUrl2)
-        .subImg3(subImgUrl3)
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)

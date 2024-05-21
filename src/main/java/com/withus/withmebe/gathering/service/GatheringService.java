@@ -35,14 +35,20 @@ public class GatheringService {
 
   @Transactional
   public AddGatheringResponse createGathering(long currentMemberId,
-      AddGatheringRequest addGatheringRequest, MultipartFile mainImg, MultipartFile subImg1,
-      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+      AddGatheringRequest addGatheringRequest){
     Member newMember = findByMemberId(currentMemberId);
     Gathering gathering = gatheringRepository.save(
-        addGatheringRequest.toEntity(newMember, s3UpdateUrl.mainImgUrl(),
-            s3UpdateUrl.subImgUrl1(), s3UpdateUrl.subImgUrl2(), s3UpdateUrl.subImgUrl3()));
+        addGatheringRequest.toEntity(newMember));
     return gathering.toAddGatheringResponse();
+  }
+
+  @Transactional
+  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
+    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Gathering newGathering = findByGatheringId(gathering);
+    newGathering.updateGatheringImage(s3UpdateUrl);
+    return newGathering.toSetGatheringResponse();
   }
 
   @Transactional(readOnly = true)
@@ -76,9 +82,9 @@ public class GatheringService {
     return gathering.toDeleteGatheringResponse();
   }
 
-  private Gathering getGathering(long memberId, long gatheringId) {
+  private Gathering getGathering(long currentMemberId, long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    if (memberId != gathering.getMember().getId()) {
+    if (currentMemberId != gathering.getMember().getId()) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     return gathering;
@@ -111,7 +117,7 @@ public class GatheringService {
     return imgService.updateImageToS3(image);
   }
 
-  private record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
+  public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
                         String subImgUrl3) {
 
   }

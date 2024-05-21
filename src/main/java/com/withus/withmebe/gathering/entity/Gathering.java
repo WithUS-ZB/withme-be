@@ -10,6 +10,7 @@ import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
+import com.withus.withmebe.gathering.service.GatheringService.Result;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +28,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -188,6 +190,9 @@ public class Gathering extends BaseEntity {
         .lat(this.lat)
         .lng(this.lng)
         .mainImg(this.mainImg)
+        .subImg1(this.subImg1)
+        .subImg2(this.subImg2)
+        .subImg3(this.subImg3)
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
@@ -272,5 +277,12 @@ public class Gathering extends BaseEntity {
     category = setGatheringRequest.getCategory();
     fee = setGatheringRequest.getFee();
     participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
+  }
+
+  public void updateGatheringImage(Result s3UpdateUrl) {
+    mainImg = s3UpdateUrl.mainImgUrl();
+    subImg1 = s3UpdateUrl.subImgUrl1();
+    subImg2 = s3UpdateUrl.subImgUrl2();
+    subImg3 = s3UpdateUrl.subImgUrl3();
   }
 }
