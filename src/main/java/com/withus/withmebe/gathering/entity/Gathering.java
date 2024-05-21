@@ -15,9 +15,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.Builder;
@@ -34,14 +37,14 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted_dttm is null")
 @SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 public class Gathering extends BaseEntity {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "gathering_id")
   private Long id;
 
-  @Column(nullable = false)
-  private Long memberId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
   @Column(nullable = false)
   private String title;
@@ -108,7 +111,7 @@ public class Gathering extends BaseEntity {
   private Status status = Status.PROGRESS;
 
   @Builder
-  public Gathering(Long memberId, String title, String content, GatheringType gatheringType,
+  public Gathering(Member member,String title, String content, GatheringType gatheringType,
       Long maximumParticipant,
       LocalDate day, LocalTime time,
       LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
@@ -116,7 +119,7 @@ public class Gathering extends BaseEntity {
       String subImg1, String subImg2, String subImg3,
       ParticipantsType participantsType, Long fee,
       ParticipantSelectionMethod participantSelectionMethod) {
-    this.memberId = memberId;
+    this.member = member;
     this.title = title;
     this.content = content;
     this.gatheringType = gatheringType;
@@ -141,6 +144,8 @@ public class Gathering extends BaseEntity {
 
   public AddGatheringResponse toAddGatheringResponse() {
     return AddGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -161,11 +166,14 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .build();
   }
 
   public SetGatheringResponse toSetGatheringResponse() {
     return SetGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -183,6 +191,7 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .build();
   }
 
@@ -214,12 +223,15 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .createdDttm(this.getCreatedDttm())
         .build();
   }
 
   public DeleteGatheringResponse toDeleteGatheringResponse() {
     return DeleteGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -237,6 +249,7 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .build();
   }
 
@@ -247,6 +260,9 @@ public class Gathering extends BaseEntity {
     maximumParticipant = setGatheringRequest.getMaximumParticipant();
     recruitmentStartDt = setGatheringRequest.getRecruitmentStartDt();
     recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
+    day = setGatheringRequest.getDay();
+    time = setGatheringRequest.getTime();
+    likeCount = setGatheringRequest.getLikeCount();
     address = setGatheringRequest.getAddress();
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();

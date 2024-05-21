@@ -14,6 +14,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class DeleteGatheringResponse {
+    @NotNull
+    private Long memberId;
+
+    @NotNull
+    private Long gatheringId;
+
     @NotBlank
     private String title;
 
