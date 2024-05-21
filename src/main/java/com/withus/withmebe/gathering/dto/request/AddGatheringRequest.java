@@ -4,6 +4,7 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
+import com.withus.withmebe.member.entity.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +15,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class AddGatheringRequest {
+  private Member member;
+
   @NotBlank
   private String title;
 
@@ -71,10 +74,10 @@ public class AddGatheringRequest {
 
   private Long likeCount;
 
-  public Gathering toEntity(long memberId, String mainImgUrl, String subImgUrl1,
+  public Gathering toEntity(Member newMember, String mainImgUrl, String subImgUrl1,
       String subImgUrl2, String subImgUrl3) {
     return Gathering.builder()
-        .memberId(memberId)
+        .member(newMember)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)

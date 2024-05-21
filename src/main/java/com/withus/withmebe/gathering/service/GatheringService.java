@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -34,15 +33,14 @@ public class GatheringService {
   private final MemberRepository memberRepository;
   private final ImgService imgService;
 
-  @SneakyThrows
   @Transactional
   public AddGatheringResponse createGathering(long currentMemberId,
       AddGatheringRequest addGatheringRequest, MultipartFile mainImg, MultipartFile subImg1,
-      MultipartFile subImg2, MultipartFile subImg3) {
+      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
     Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
-    findByMemberId(currentMemberId);
+    Member newMember = findByMemberId(currentMemberId);
     Gathering gathering = gatheringRepository.save(
-        addGatheringRequest.toEntity(currentMemberId, s3UpdateUrl.mainImgUrl(),
+        addGatheringRequest.toEntity(newMember, s3UpdateUrl.mainImgUrl(),
             s3UpdateUrl.subImgUrl1(), s3UpdateUrl.subImgUrl2(), s3UpdateUrl.subImgUrl3()));
     return gathering.toAddGatheringResponse();
   }
@@ -51,16 +49,15 @@ public class GatheringService {
   public List<GetGatheringResponse> readGatheringList() {
     List<Gathering> gatherings = gatheringRepository.findAllByOrderByCreatedDttmDesc();
     return gatherings.stream()
-        .map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())))
+        .map(gathering -> gathering.toGetGatheringResponse(gathering.getMember()))
         .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
   public List<GetGatheringResponse> readGatheringMyList(long currentMemberId) {
     List<Gathering> myGatherings = gatheringRepository.findAllByMemberId(currentMemberId);
-    return myGatherings.stream()
-        .map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())))
-        .collect(Collectors.toList());
+    return myGatherings.stream().map(gathering -> gathering.toGetGatheringResponse(gathering.getMember())).collect(
+        Collectors.toList());
   }
 
   @Transactional
@@ -73,7 +70,7 @@ public class GatheringService {
 
   public GetGatheringResponse readGathering(long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    return gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId()));
+    return gathering.toGetGatheringResponse(gathering.getMember());
   }
 
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
@@ -84,7 +81,7 @@ public class GatheringService {
 
   private Gathering getGathering(long memberId, long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    if (memberId != gathering.getMemberId()) {
+    if (memberId != gathering.getMember().getId()) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     return gathering;
