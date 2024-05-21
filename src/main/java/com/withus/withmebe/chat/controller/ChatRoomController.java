@@ -46,4 +46,19 @@ public class ChatRoomController {
     participationService.joinChat(currentMemberId, participationId);
     return ResponseEntity.ok().build();
   }
+
+  /**
+   * 채팅방 나가기
+   * @param currentMemberId 로그인 멤버 id
+   * @param participationId 참여 id
+   * @return 성공하면 200
+   */
+  @PutMapping
+  public ResponseEntity<Void> leave(
+      @CurrentMemberId Long currentMemberId,
+      @RequestParam Long participationId
+  ) {
+    participationService.leaveChat(currentMemberId, participationId);
+    return ResponseEntity.ok().build();
+  }
 }

@@ -17,6 +17,7 @@ import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.status.JoinChatStatusChanger;
+import com.withus.withmebe.participation.status.LeaveChatStatusChanger;
 import com.withus.withmebe.participation.type.Status;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -103,9 +104,17 @@ public class ParticipationService {
         pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
+  @Transactional
   public void joinChat(Long currentMemberId, Long participationId) {
     new JoinChatStatusChanger(
         readParticipation(participationId), currentMemberId)
+        .updateStatusTemplateMethod();
+  }
+
+  @Transactional
+  public void leaveChat(Long currentMemberId, Long participationId) {
+    new LeaveChatStatusChanger(
+       readParticipation(participationId), currentMemberId)
         .updateStatusTemplateMethod();
   }
 
@@ -236,4 +245,6 @@ public class ParticipationService {
     return participationRepository.findById(participationId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
+
+
 }
