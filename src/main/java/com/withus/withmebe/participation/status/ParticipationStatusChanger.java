@@ -15,13 +15,13 @@ public abstract class ParticipationStatusChanger {
 
   private final List<Status> availableStatus;
 
-  private final Status newSatus;
+  private final Status newStatus;
 
   protected ParticipationStatusChanger(Participation participation, Long currentMemberId, List<Status> availableStatus, Status newSatus) {
     this.participation = participation;
     this.currentMemberId = currentMemberId;
     this.availableStatus = availableStatus;
-    this.newSatus = newSatus;
+    this.newStatus = newSatus;
   }
 
   public final Participation updateStatusTemplateMethod() {
@@ -59,7 +59,7 @@ public abstract class ParticipationStatusChanger {
   }
 
   private void updateStatus() {
-    this.participation.setStatus(this.newSatus);
+    this.participation.setStatus(this.newStatus);
   }
 
   private boolean isAvailableStatus() {
