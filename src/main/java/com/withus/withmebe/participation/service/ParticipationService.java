@@ -43,7 +43,7 @@ public class ParticipationService {
 
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
-        .member(requester)
+        .participant(requester)
         .status(
             (gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)
                 ? Status.APPROVED : Status.CREATED))
