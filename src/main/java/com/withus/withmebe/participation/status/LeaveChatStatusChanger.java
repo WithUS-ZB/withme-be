@@ -14,7 +14,7 @@ public class LeaveChatStatusChanger extends ParticipationStatusChanger{
   public LeaveChatStatusChanger(
       Participation participation, Long currentMemberId
       ) {
-    super(participation, currentMemberId, this.availableStatus, this.newStatus);
+    super(participation, currentMemberId, availableStatus, newStatus);
   }
 
   @Override
