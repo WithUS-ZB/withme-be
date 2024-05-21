@@ -195,14 +195,14 @@ public class Gathering extends BaseEntity {
         .build();
   }
 
-  public GetGatheringResponse toGetGatheringResponse(Member member) {
+  public GetGatheringResponse toGetGatheringResponse() {
     return GetGatheringResponse.builder()
-        .memberId(member.getId())
+        .memberId(this.member.getId())
         .gatheringId(this.id)
         .likeCount(this.likeCount)
         .status(this.status)
-        .profileImg(member.getProfileImg())
-        .nickName(member.getNickName())
+        .profileImg(this.member.getProfileImg())
+        .nickName(this.member.getNickName())
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
