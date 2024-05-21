@@ -8,6 +8,7 @@ import com.withus.withmebe.notification.event.NotificationSendEvent;
 import com.withus.withmebe.notification.repository.NotificationRepository;
 import com.withus.withmebe.notification.response.NotificationResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,5 +98,26 @@ public class NotificationService {
   public Page<NotificationResponse> readNotifications(long requesterId, Pageable pageable) {
     return notificationRepository.findAllByReceiver(requesterId, pageable)
         .map(Notification::toResponse);
+  }
+
+  @Transactional
+  public LocalDateTime updateNotificationRead(long requesterId, long notificationId) {
+
+    Notification notification = readNotification(notificationId);
+    validateRequesterIsReceiver(requesterId, notification);
+
+    notification.readNotification();
+    return notification.getReadDttm();
+  }
+
+  private void validateRequesterIsReceiver(long requesterId, Notification notification) {
+    if (!notification.isReceiver(requesterId)) {
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
+  }
+
+  private Notification readNotification(long notificationId) {
+    return notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
 }
