@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class JoinChatStatusChanger extends ParticipationStatusChanger{
-  private static Status newStatus = CHAT_JOINED;
-  private static List<Status> availableStatus = List.of(APPROVED, CHAT_LEFT);
+  private static final Status newStatus = CHAT_JOINED;
+  private static final List<Status> availableStatus = List.of(APPROVED, CHAT_LEFT);
   public JoinChatStatusChanger(
       Participation participation, Long currentMemberId) {
     super(participation, currentMemberId, availableStatus, newStatus);
