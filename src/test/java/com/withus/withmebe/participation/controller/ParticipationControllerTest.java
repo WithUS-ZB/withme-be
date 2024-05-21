@@ -594,7 +594,7 @@ class ParticipationControllerTest {
 
     //when
     //then
-    mockMvc.perform(get(BASE_URL + "/" + PARTICIPATION_ID)
+    mockMvc.perform(get(BASE_URL + "?gatheringid=" + PARTICIPATION_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
@@ -606,27 +606,15 @@ class ParticipationControllerTest {
   void successToIsParticipatedWhenFalse() throws Exception {
     //given
     given(participationService.isParticipated(anyLong(), anyLong()))
-        .willReturn(true);
+        .willReturn(false);
 
     //when
     //then
-    mockMvc.perform(get(BASE_URL + "/" + PARTICIPATION_ID)
+    mockMvc.perform(get(BASE_URL + "?gatheringid=" + PARTICIPATION_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
-        .andExpect(content().string("true"));
-  }
-
-  @Test
-  @WithMockCustomUser
-  void failToGetMyParticipationByBadRequest() throws Exception {
-    //given
-    //when
-    //then
-    mockMvc.perform(get(BASE_URL + "/" + "PARTICIPATION_ID")
-            .contentType(MediaType.APPLICATION_JSON)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isBadRequest());
+        .andExpect(content().string("false"));
   }
 
   @Test
@@ -642,21 +630,6 @@ class ParticipationControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
-  }
-
-  @Test
-  @WithMockCustomUser
-  void failToGetMyParticipationByAuthorizationIssue() throws Exception {
-    //given
-    given(participationService.isParticipated(anyLong(), anyLong()))
-        .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
-
-    //when
-    //then
-    mockMvc.perform(get(BASE_URL + "/" + PARTICIPATION_ID)
-            .contentType(MediaType.APPLICATION_JSON)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -699,18 +672,6 @@ class ParticipationControllerTest {
         .andExpect(jsonPath("$.content[1].updatedDttm")
             .value(myParticipationSimpleInfo2.updatedDttm()
                 .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-  }
-
-  @Test
-  @WithMockCustomUser
-  void failToGetMyParticipationsByBadRequest() throws Exception {
-    //given
-    //when
-    //then
-    mockMvc.perform(get(BASE_URL + "/mylist" + PARTICIPATION_ID)
-            .contentType(MediaType.APPLICATION_JSON)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isBadRequest());
   }
 
   @Test
