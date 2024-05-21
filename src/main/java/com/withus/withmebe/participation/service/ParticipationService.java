@@ -89,11 +89,9 @@ public class ParticipationService {
   }
 
   @Transactional(readOnly = true)
-  public ParticipationResponse readMyParticipation(long requesterId, long participationId) {
-
-    Participation participation = readParticipation(participationId);
-    validateRequesterIsParticipant(requesterId, participation);
-    return participation.toResponse();
+  public boolean isParticipated(long requesterId, long gatheringId) {
+    return participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requesterId,
+        gatheringId, Status.CANCELED);
   }
 
   @Transactional(readOnly = true)
@@ -151,9 +149,7 @@ public class ParticipationService {
   }
 
   private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
-    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
-        requester.getId(),
-        gathering.getId(), Status.CANCELED)) {
+    if (isParticipated(requester.getId(), gathering.getId())) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
