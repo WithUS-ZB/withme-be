@@ -27,10 +27,10 @@ PUT http://localhost:8080/api/participation/reject/4
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1OTI1NTc1LCJleHAiOjE3MTU5MjkxNzV9.GdmcqBgXi_kTZ9VpmUIyV98l-YIXd8KbGUs_ZhX7nJw
 
-### 내 참여 신청 조회
-GET http://localhost:8080/api/participation/4
+### 참여 신청 여부 확인
+GET http://localhost:8080/api/participation?gatheringid=1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE1OTI1NTc1LCJleHAiOjE3MTU5MjkxNzV9.GdmcqBgXi_kTZ9VpmUIyV98l-YIXd8KbGUs_ZhX7nJw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MzA1NDQxLCJleHAiOjE3MTYzOTE4NDF9.v6NfqfjbIiAbfXNakN10aLUK_77z0d5dBgFC1bzr1u0
 
 ### 내 참여 신청 목록 조회
 GET http://localhost:8080/api/participation/mylist
