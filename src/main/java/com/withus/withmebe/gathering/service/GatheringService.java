@@ -15,12 +15,11 @@ import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,33 +33,34 @@ public class GatheringService {
   private final MemberRepository memberRepository;
   private final ImgService imgService;
 
-  @SneakyThrows
   @Transactional
   public AddGatheringResponse createGathering(long currentMemberId,
-      AddGatheringRequest addGatheringRequest, MultipartFile mainImg, MultipartFile subImg1,
-      MultipartFile subImg2, MultipartFile subImg3) {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
-    findByMemberId(currentMemberId);
+      AddGatheringRequest addGatheringRequest){
+    Member newMember = findByMemberId(currentMemberId);
     Gathering gathering = gatheringRepository.save(
-        addGatheringRequest.toEntity(currentMemberId, s3UpdateUrl.mainImgUrl(),
-            s3UpdateUrl.subImgUrl1(), s3UpdateUrl.subImgUrl2(), s3UpdateUrl.subImgUrl3()));
+        addGatheringRequest.toEntity(newMember));
     return gathering.toAddGatheringResponse();
   }
 
-  @Transactional(readOnly = true)
-  public List<GetGatheringResponse> readGatheringList() {
-    List<Gathering> gatherings = gatheringRepository.findAllByOrderByCreatedDttmDesc();
-    return gatherings.stream()
-        .map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())))
-        .collect(Collectors.toList());
+  @Transactional
+  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
+    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Gathering newGathering = findByGatheringId(gathering);
+    newGathering.updateGatheringImage(s3UpdateUrl);
+    return newGathering.toSetGatheringResponse();
   }
 
   @Transactional(readOnly = true)
-  public List<GetGatheringResponse> readGatheringMyList(long currentMemberId) {
-    List<Gathering> myGatherings = gatheringRepository.findAllByMemberId(currentMemberId);
-    return myGatherings.stream()
-        .map(gathering -> gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId())))
-        .collect(Collectors.toList());
+  public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
+    return gatheringRepository.findAllByOrderByCreatedDttmDesc(pageable)
+        .map(Gathering::toGetGatheringResponse);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<GetGatheringResponse> readGatheringMyList(long currentMemberId, Pageable pageable) {
+    return gatheringRepository.findAllByMemberId(currentMemberId, pageable)
+        .map(Gathering::toGetGatheringResponse);
   }
 
   @Transactional
@@ -71,9 +71,18 @@ public class GatheringService {
     return gathering.toSetGatheringResponse();
   }
 
+  @Transactional
+  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+      MultipartFile subImg2, MultipartFile subImg3) throws IOException {
+    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Gathering newGathering = findByGatheringId(gathering);
+    newGathering.updateGatheringImage(s3UpdateUrl);
+    return newGathering.toSetGatheringResponse();
+  }
+
   public GetGatheringResponse readGathering(long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    return gathering.toGetGatheringResponse(findByMemberId(gathering.getMemberId()));
+    return gathering.toGetGatheringResponse();
   }
 
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
@@ -82,9 +91,9 @@ public class GatheringService {
     return gathering.toDeleteGatheringResponse();
   }
 
-  private Gathering getGathering(long memberId, long gatheringId) {
+  private Gathering getGathering(long currentMemberId, long gatheringId) {
     Gathering gathering = findByGatheringId(gatheringId);
-    if (memberId != gathering.getMemberId()) {
+    if (currentMemberId != gathering.getMember().getId()) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
     return gathering;
@@ -117,7 +126,8 @@ public class GatheringService {
     return imgService.updateImageToS3(image);
   }
 
-  private record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
+  public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
                         String subImgUrl3) {
+
   }
 }

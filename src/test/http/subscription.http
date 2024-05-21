@@ -1,0 +1,24 @@
+### 구독 등록
+POST http://localhost:8080/api/subscription?providerid=2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTc3NTQ4LCJleHAiOjE3MTYyNjM5NDh9.TfV7YYLfAlO5r9BPKCX9GdL1jNi9tE_ildUWTYRIAok
+
+### 구독 여부 조회
+GET http://localhost:8080/api/subscription?providerid=3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTc3NTQ4LCJleHAiOjE3MTYyNjM5NDh9.TfV7YYLfAlO5r9BPKCX9GdL1jNi9tE_ildUWTYRIAok
+
+### 구독 해제
+DELETE http://localhost:8080/api/subscription?providerid=2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTc3NTQ4LCJleHAiOjE3MTYyNjM5NDh9.TfV7YYLfAlO5r9BPKCX9GdL1jNi9tE_ildUWTYRIAok
+
+### 구독 목록 조회
+GET http://localhost:8080/api/subscription/list
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTc3NTQ4LCJleHAiOjE3MTYyNjM5NDh9.TfV7YYLfAlO5r9BPKCX9GdL1jNi9tE_ildUWTYRIAok
+
+### 구독자 목록 조회
+GET http://localhost:8080/api/subscription/subscriber/list
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MTc3ODY2LCJleHAiOjE3MTYyNjQyNjZ9.qtSS_vhDJF3JD30GDf5xmUHssLMc6-MoxAmdUxuJzCU

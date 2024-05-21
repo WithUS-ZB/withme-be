@@ -189,7 +189,7 @@ public class ParticipationService {
   }
 
   private boolean isHost(long requesterId, Gathering gathering) {
-    return gathering.getMemberId() == requesterId;
+    return gathering.getMember().getId() == requesterId;
   }
 
   private boolean isProgressingGathering(Gathering gathering) {

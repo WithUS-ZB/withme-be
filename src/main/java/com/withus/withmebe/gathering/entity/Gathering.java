@@ -10,20 +10,25 @@ import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
+import com.withus.withmebe.gathering.service.GatheringService.Result;
 import com.withus.withmebe.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -34,14 +39,14 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted_dttm is null")
 @SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 public class Gathering extends BaseEntity {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "gathering_id")
   private Long id;
 
-  @Column(nullable = false)
-  private Long memberId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
   @Column(nullable = false)
   private String title;
@@ -108,7 +113,7 @@ public class Gathering extends BaseEntity {
   private Status status = Status.PROGRESS;
 
   @Builder
-  public Gathering(Long memberId, String title, String content, GatheringType gatheringType,
+  public Gathering(Member member,String title, String content, GatheringType gatheringType,
       Long maximumParticipant,
       LocalDate day, LocalTime time,
       LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, String category,
@@ -116,7 +121,7 @@ public class Gathering extends BaseEntity {
       String subImg1, String subImg2, String subImg3,
       ParticipantsType participantsType, Long fee,
       ParticipantSelectionMethod participantSelectionMethod) {
-    this.memberId = memberId;
+    this.member = member;
     this.title = title;
     this.content = content;
     this.gatheringType = gatheringType;
@@ -141,6 +146,8 @@ public class Gathering extends BaseEntity {
 
   public AddGatheringResponse toAddGatheringResponse() {
     return AddGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -161,39 +168,14 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .build();
   }
 
   public SetGatheringResponse toSetGatheringResponse() {
     return SetGatheringResponse.builder()
-        .title(this.title)
-        .content(this.content)
-        .gatheringType(this.gatheringType)
-        .maximumParticipant(this.maximumParticipant)
-        .recruitmentStartDt(this.recruitmentStartDt)
-        .recruitmentEndDt(this.recruitmentEndDt)
-        .day(this.day)
-        .time(this.time)
-        .category(this.category)
-        .address(this.address)
-        .detailedAddress(this.detailedAddress)
-        .lat(this.lat)
-        .lng(this.lng)
-        .mainImg(this.mainImg)
-        .participantsType(this.participantsType)
-        .fee(this.fee)
-        .participantSelectionMethod(this.participantSelectionMethod)
-        .build();
-  }
-
-  public GetGatheringResponse toGetGatheringResponse(Member member) {
-    return GetGatheringResponse.builder()
-        .memberId(member.getId())
+        .memberId(this.member.getId())
         .gatheringId(this.id)
-        .likeCount(this.likeCount)
-        .status(this.status)
-        .profileImg(member.getProfileImg())
-        .nickName(member.getNickName())
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -214,12 +196,47 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
+        .build();
+  }
+
+  public GetGatheringResponse toGetGatheringResponse() {
+    return GetGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
+        .likeCount(this.likeCount)
+        .status(this.status)
+        .profileImg(this.member.getProfileImg())
+        .nickName(this.member.getNickName())
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .day(this.day)
+        .time(this.time)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .mainImg(this.mainImg)
+        .subImg1(this.subImg1)
+        .subImg2(this.subImg2)
+        .subImg3(this.subImg3)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .createdDttm(this.getCreatedDttm())
         .build();
   }
 
   public DeleteGatheringResponse toDeleteGatheringResponse() {
     return DeleteGatheringResponse.builder()
+        .memberId(this.member.getId())
+        .gatheringId(this.id)
         .title(this.title)
         .content(this.content)
         .gatheringType(this.gatheringType)
@@ -237,6 +254,7 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
+        .likeCount(this.likeCount)
         .build();
   }
 
@@ -247,6 +265,9 @@ public class Gathering extends BaseEntity {
     maximumParticipant = setGatheringRequest.getMaximumParticipant();
     recruitmentStartDt = setGatheringRequest.getRecruitmentStartDt();
     recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
+    day = setGatheringRequest.getDay();
+    time = setGatheringRequest.getTime();
+    likeCount = setGatheringRequest.getLikeCount();
     address = setGatheringRequest.getAddress();
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();
@@ -256,5 +277,12 @@ public class Gathering extends BaseEntity {
     category = setGatheringRequest.getCategory();
     fee = setGatheringRequest.getFee();
     participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
+  }
+
+  public void updateGatheringImage(Result s3UpdateUrl) {
+    mainImg = s3UpdateUrl.mainImgUrl();
+    subImg1 = s3UpdateUrl.subImgUrl1();
+    subImg2 = s3UpdateUrl.subImgUrl2();
+    subImg3 = s3UpdateUrl.subImgUrl3();
   }
 }
