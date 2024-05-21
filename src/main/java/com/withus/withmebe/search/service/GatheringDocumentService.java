@@ -37,7 +37,6 @@ public class GatheringDocumentService {
     SearchHits<GatheringDocument> searchHits = elasticsearchOperations.search(
         getSearchQuery(range, title, pageable, option),
         GatheringDocument.class, IndexCoordinates.of("gathering"));
-
     List<GatheringSearchResponse> gatheringSearchResponses = StreamUtils.createStreamFromIterator(
             searchHits.iterator())
         .map(hit -> hit.getContent().toGatheringSearchResponse())
@@ -58,7 +57,7 @@ public class GatheringDocumentService {
   private Query getBoolQuery(SearchRange range, String title, SearchOption option) {
     return QueryBuilders.bool()
         .must(
-            getMatchQuery("title", title),
+            getMultiMatchQuery(title, List.of("title", "ngram_title")),
             getMatchQuery("status", Status.PROGRESS.toString()),
             getOptionQuery(range),
             getOptionQuery(option)
@@ -75,14 +74,17 @@ public class GatheringDocumentService {
     return QueryBuilders.match().field(fieldName).query(query).build()._toQuery();
   }
 
+  private Query getMultiMatchQuery(String query, List<String> fields) {
+    return QueryBuilders.multiMatch().query(query).fields(fields).build()._toQuery();
+  }
+
   private Query getOptionQuery(Option option) {
     if (option.getName().equals("ALL")) {
       return QueryBuilders.matchAll().build()._toQuery();
     } else if (option.getName().equals("PAY_HAS")) {
       return QueryBuilders.range().field(option.getField()).gt(JsonData.fromJson(option.getValue()))
           .build()._toQuery();
-    }
-    else {
+    } else {
       return getMatchQuery(option.getField(), option.getValue());
     }
   }
