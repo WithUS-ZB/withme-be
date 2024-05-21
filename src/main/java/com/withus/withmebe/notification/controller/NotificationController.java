@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,5 +47,11 @@ public class NotificationController {
   public ResponseEntity<LocalDateTime> setNotificationRead(
       @CurrentMemberId long memberId, @PathVariable("notificationid") long notificationId) {
     return ResponseEntity.ok(notificationService.updateNotificationRead(memberId, notificationId));
+  }
+
+  @DeleteMapping("/{notificationid}")
+  public ResponseEntity<Boolean> removeNotification(
+      @CurrentMemberId long memberId, @PathVariable("notificationid") long notificationId) {
+    return ResponseEntity.ok(notificationService.deleteNotification(memberId, notificationId));
   }
 }

@@ -110,6 +110,15 @@ public class NotificationService {
     return notification.getReadDttm();
   }
 
+  public Boolean deleteNotification(long requesterId, long notificationId) {
+
+    Notification notification = readNotification(notificationId);
+    validateRequesterIsReceiver(requesterId, notification);
+
+    notificationRepository.delete(notification);
+    return true;
+  }
+
   private void validateRequesterIsReceiver(long requesterId, Notification notification) {
     if (!notification.isReceiver(requesterId)) {
       throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
