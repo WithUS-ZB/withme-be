@@ -11,6 +11,7 @@ public interface GatheringLikeRepository extends JpaRepository<GatheringLike, Lo
 
   @EntityGraph(attributePaths = "gathering")
   Optional<GatheringLike> findByMemberIdAndGathering_Id(Long memberId, Long gatheringId);
-
   Long countGatheringLikesByGathering_IdAndIsLikedIsTrue(Long gatheringId);
+
+  boolean existsGatheringLikeByMemberIdAndGathering_IdAndIsLikedIsTrue(Long memberId, Long gatheringId);
 }
