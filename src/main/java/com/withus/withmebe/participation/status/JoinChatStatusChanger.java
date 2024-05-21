@@ -20,8 +20,9 @@ public class JoinChatStatusChanger extends ParticipationStatusChanger{
 
   @Override
   boolean isAvailableTime() {
-    return participation.getGathering().getRecruitmentStartDt().isBefore(LocalDate.now())
-        && participation.getGathering().getGatheringDateTime().isAfter(LocalDateTime.now());
+    LocalDateTime now = LocalDateTime.now();
+    return participation.getGathering().getRecruitmentStartDt().isBefore(now.toLocalDate())
+        && participation.getGathering().getGatheringDateTime().isAfter(now);
   }
 
   @Override
