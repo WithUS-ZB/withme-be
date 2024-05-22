@@ -108,6 +108,7 @@ public class ParticipationService {
     validateGatheringStatus(gathering);
     validateParticipationIsNotDuplicated(requester, gathering);
     validateParticipationPeriod(gathering);
+    validateMyParticipationMaximum(requester);
     validateCurrentParticipantCount(gathering);
   }
 
@@ -181,6 +182,14 @@ public class ParticipationService {
   private void validateParticipationStatusIsNot(Participation participation, Status status) {
     if (participation.statusEquals(status)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
+    }
+  }
+
+  private void validateMyParticipationMaximum(Member requester) {
+    if (!requester.isPremiumMember() &&
+        participationRepository.countByParticipant_IdAndStatusIsNot(requester.getId(),
+            Status.CANCELED) >= 5) {
+      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPATION);
     }
   }
 
