@@ -32,7 +32,16 @@
         "type": "custom",
         "tokenizer": "edge_ngram_tokenizer",
         "filter": [
-          "lowercase"
+          "lowercase",
+          "asciifolding"
+        ]
+      },
+      "standard_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "asciifolding"
         ]
       }
     }
