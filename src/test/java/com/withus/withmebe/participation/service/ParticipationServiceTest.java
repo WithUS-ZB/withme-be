@@ -11,7 +11,7 @@ import static util.objectprovider.GatheringProvider.getStubbedGatheringPeriodAlw
 import static util.objectprovider.MemberProvider.getStubbedMember;
 import static util.objectprovider.MemberProvider.getStubbedMinorMember;
 import static util.objectprovider.ParticipationProvider.getStubbedParticipation;
-import static util.objectprovider.ParticipationProvider.getStubbedParticipationWithStatus;
+import static util.objectprovider.ParticipationProvider.getStubbedParticipationByStatus;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -251,10 +251,10 @@ class ParticipationServiceTest {
   @Test
   void successToReadParticipations() {
     //given
-    Participation stubbedParticipation1 = getStubbedParticipationWithStatus(PARTICIPATION_ID,
+    Participation stubbedParticipation1 = getStubbedParticipationByStatus(PARTICIPATION_ID,
         STUBBED_PARTICIPANT, STUBBED_GATHERING, Status.APPROVED);
     Member stubbedParticipant2 = getStubbedMember(PARTICIPANT_ID + 1);
-    Participation stubbedParticipation2 = getStubbedParticipationWithStatus(PARTICIPATION_ID + 1,
+    Participation stubbedParticipation2 = getStubbedParticipationByStatus(PARTICIPATION_ID + 1,
         stubbedParticipant2, STUBBED_GATHERING, Status.CREATED);
 
     given(gatheringRepository.findById(anyLong()))
@@ -437,7 +437,7 @@ class ParticipationServiceTest {
     //given
     given(participationRepository.findById(anyLong()))
         .willReturn(Optional.of(
-            getStubbedParticipationWithStatus(PARTICIPATION_ID, STUBBED_PARTICIPANT,
+            getStubbedParticipationByStatus(PARTICIPATION_ID, STUBBED_PARTICIPANT,
                 STUBBED_GATHERING, Status.CANCELED)));
 
     //when
