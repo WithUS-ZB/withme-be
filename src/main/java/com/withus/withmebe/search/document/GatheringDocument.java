@@ -56,7 +56,7 @@ public record GatheringDocument(
 ) {
     public GatheringSearchResponse toGatheringSearchResponse() {
         return GatheringSearchResponse.builder()
-            .id(this.id)
+            .gatheringId(this.id)
             .memberId(this.memberId)
             .nickName(this.nickName)
             .profileImg(this.profileImg)
