@@ -47,6 +47,9 @@ spring:
       port: ${RABBITMQ_PORT}
   elasticsearch:
     uri: ${ELASTICSEARCH_URI}
+  gathering:
+    reminder:
+      cron: 0 0/15 * * * ?
 
 cool-sms:
   api-key: cool-sms.api-key
