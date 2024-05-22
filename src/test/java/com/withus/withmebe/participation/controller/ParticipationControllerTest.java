@@ -587,46 +587,41 @@ class ParticipationControllerTest {
 
   @Test
   @WithMockCustomUser
-  void successToGetMyParticipation() throws Exception {
+  void successToIsParticipatedWhenTrue() throws Exception {
     //given
-    given(participationService.readMyParticipation(anyLong(), anyLong()))
-        .willReturn(PARTICIPATION_RESPONSE);
+    given(participationService.isParticipated(anyLong(), anyLong()))
+        .willReturn(true);
 
     //when
     //then
-    mockMvc.perform(get(BASE_URL + "/" + PARTICIPATION_ID)
+    mockMvc.perform(get(BASE_URL + "?gatheringid=" + PARTICIPATION_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(PARTICIPATION_RESPONSE.id()))
-        .andExpect(jsonPath("$.nickName").value(PARTICIPATION_RESPONSE.nickName()))
-        .andExpect(jsonPath("$.title").value(PARTICIPATION_RESPONSE.title()))
-        .andExpect(jsonPath("$.status").value(PARTICIPATION_RESPONSE.status().toString()))
-        .andExpect(jsonPath("$.createdDttm")
-            .value(
-                PARTICIPATION_RESPONSE.createdDttm().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-        .andExpect(jsonPath("$.updatedDttm")
-            .value(PARTICIPATION_RESPONSE.updatedDttm()
-                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        .andExpect(content().string("true"));
   }
 
   @Test
   @WithMockCustomUser
-  void failToGetMyParticipationByBadRequest() throws Exception {
+  void successToIsParticipatedWhenFalse() throws Exception {
     //given
+    given(participationService.isParticipated(anyLong(), anyLong()))
+        .willReturn(false);
+
     //when
     //then
-    mockMvc.perform(get(BASE_URL + "/" + "PARTICIPATION_ID")
+    mockMvc.perform(get(BASE_URL + "?gatheringid=" + PARTICIPATION_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isOk())
+        .andExpect(content().string("false"));
   }
 
   @Test
   @WithMockCustomUser
   void failToGetMyParticipationByEntityNotFound() throws Exception {
     //given
-    given(participationService.readMyParticipation(anyLong(), anyLong()))
+    given(participationService.isParticipated(anyLong(), anyLong()))
         .willThrow(new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
 
     //when
@@ -635,21 +630,6 @@ class ParticipationControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
-  }
-
-  @Test
-  @WithMockCustomUser
-  void failToGetMyParticipationByAuthorizationIssue() throws Exception {
-    //given
-    given(participationService.readMyParticipation(anyLong(), anyLong()))
-        .willThrow(new CustomException(ExceptionCode.AUTHORIZATION_ISSUE));
-
-    //when
-    //then
-    mockMvc.perform(get(BASE_URL + "/" + PARTICIPATION_ID)
-            .contentType(MediaType.APPLICATION_JSON)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -692,18 +672,6 @@ class ParticipationControllerTest {
         .andExpect(jsonPath("$.content[1].updatedDttm")
             .value(myParticipationSimpleInfo2.updatedDttm()
                 .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-  }
-
-  @Test
-  @WithMockCustomUser
-  void failToGetMyParticipationsByBadRequest() throws Exception {
-    //given
-    //when
-    //then
-    mockMvc.perform(get(BASE_URL + "/mylist" + PARTICIPATION_ID)
-            .contentType(MediaType.APPLICATION_JSON)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andExpect(status().isBadRequest());
   }
 
   @Test

@@ -109,11 +109,9 @@ public class ParticipationService {
   }
 
   @Transactional(readOnly = true)
-  public ParticipationResponse readMyParticipation(long requesterId, long participationId) {
-
-    Participation participation = readParticipation(participationId);
-    validateRequesterIsParticipant(requesterId, participation);
-    return participation.toResponse();
+  public boolean isParticipated(long requesterId, long gatheringId) {
+    return participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(requesterId,
+        gatheringId, Status.CANCELED);
   }
 
   @Transactional(readOnly = true)
@@ -144,6 +142,7 @@ public class ParticipationService {
     validateGatheringStatus(gathering);
     validateParticipationIsNotDuplicated(requester, gathering);
     validateParticipationPeriod(gathering);
+    validateMyParticipationMaximum(requester);
     validateCurrentParticipantCount(gathering);
   }
 
@@ -185,9 +184,7 @@ public class ParticipationService {
   }
 
   private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
-    if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
-        requester.getId(),
-        gathering.getId(), CANCELED)) {
+    if (isParticipated(requester.getId(), gathering.getId())) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
@@ -206,19 +203,27 @@ public class ParticipationService {
 
   private void validateRequesterIsHost(long requesterId, Gathering gathering) {
     if (!isHost(requesterId, gathering)) {
-      throw new CustomException(AUTHORIZATION_ISSUE);
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
   }
 
   private void validateRequesterIsParticipant(long requesterId, Participation participation) {
     if (!participation.isParticipant(requesterId)) {
-      throw new CustomException(AUTHORIZATION_ISSUE);
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
     }
   }
 
   private void validateParticipationStatusIsNot(Participation participation, Status status) {
     if (participation.statusEquals(status)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
+    }
+  }
+
+  private void validateMyParticipationMaximum(Member requester) {
+    if (!requester.isPremiumMember() &&
+        participationRepository.countByParticipant_IdAndStatusIsNot(requester.getId(),
+            Status.CANCELED) >= 5) {
+      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPATION);
     }
   }
 
@@ -264,6 +269,4 @@ public class ParticipationService {
     return participationRepository.findById(participationId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
   }
-
-
 }

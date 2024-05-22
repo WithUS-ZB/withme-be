@@ -74,7 +74,13 @@ public class Participation extends BaseEntity {
   public MyParticipationSimpleInfo toMyParticipationSimpleInfo() {
     return MyParticipationSimpleInfo.builder()
         .id(this.id)
+        .gatheringId(this.gathering.getId())
         .title(this.gathering.getTitle())
+        .mainImg(this.gathering.getMainImg())
+        .day(this.gathering.getDay())
+        .time(this.gathering.getTime())
+        .gatheringType(this.gathering.getGatheringType())
+        .gatheringStatus(this.gathering.getStatus())
         .status(this.status)
         .updatedDttm(this.getUpdatedDttm())
         .build();

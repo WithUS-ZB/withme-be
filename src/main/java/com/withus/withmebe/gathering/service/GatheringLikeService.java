@@ -2,12 +2,15 @@ package com.withus.withmebe.gathering.service;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.dto.response.LikedGatheringSimpleInfo;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.entity.GatheringLike;
 import com.withus.withmebe.gathering.repository.GatheringLikeRepository;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,17 @@ public class GatheringLikeService {
     return gatheringLike.getIsLiked();
   }
 
+  @Transactional(readOnly = true)
+  public boolean isLiked(long requesterId, long gatheringId) {
+    return gatheringLikeRepository.existsGatheringLikeByMemberIdAndGathering_IdAndIsLikedIsTrue(
+        requesterId, gatheringId);
+  }
+
+  public Page<LikedGatheringSimpleInfo> readLikedGatherings(long requesterId, Pageable pageable) {
+    return gatheringLikeRepository.findByMemberIdAndIsLikedIsTrue(requesterId, pageable).map(GatheringLike::toLikedGatheringSimpleInfo);
+  }
+
+
   private GatheringLike createLike(long memberId, long gatheringId) {
 
     return gatheringLikeRepository.save(GatheringLike.builder()
@@ -40,7 +54,8 @@ public class GatheringLikeService {
 
   private void updateLikeCount(Gathering gathering) {
     gathering.setLikeCount(
-        gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(gathering.getId()));
+        gatheringLikeRepository.countGatheringLikesByGathering_IdAndIsLikedIsTrue(
+            gathering.getId()));
   }
 
   private Gathering readGathering(long gatheringId) {

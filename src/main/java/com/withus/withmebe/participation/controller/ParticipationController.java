@@ -83,11 +83,11 @@ public class ParticipationController {
         participationService.updateParticipationStatus(currentMemberId, participationId, REJECTED));
   }
 
-  @GetMapping("/{participationId}")
-  public ResponseEntity<ParticipationResponse> getMyParticipation(
-      @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
+  @GetMapping
+  public ResponseEntity<Boolean> isParticipated(
+      @CurrentMemberId long currentMemberId, @RequestParam("gatheringid") long gatheringId) {
     return ResponseEntity.ok(
-        participationService.readMyParticipation(currentMemberId, participationId));
+        participationService.isParticipated(currentMemberId, gatheringId));
   }
 
   @GetMapping("/mylist")

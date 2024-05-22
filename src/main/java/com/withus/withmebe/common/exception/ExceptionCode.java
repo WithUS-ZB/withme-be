@@ -44,9 +44,11 @@ public enum ExceptionCode {
   REACHED_AT_MAXIMUM_PARTICIPANT(CONFLICT, "최대 참여 인원에 도달했습니다."),
   NOT_PARTICIPATION_PERIOD(CONFLICT, "참여 신청 기간이 아닙니다."),
   SUBSCRIPTION_DUPLICATED(CONFLICT, "이미 구독중입니다."),
+  REACHED_AT_MAXIMUM_PARTICIPATION(CONFLICT, "참여 신청 가능한 모임 최대 한도에 도달했습니다."),
 
   // Internal Server Error
-  FAIL_TO_REQUEST_OPEN_API(INTERNAL_SERVER_ERROR, "오픈 API 정보 요청에 실패했습니다.")
+  FAIL_TO_REQUEST_OPEN_API(INTERNAL_SERVER_ERROR, "오픈 API 정보 요청에 실패했습니다."),
+  FAIL_TO_SEND_NOTIFICATION(INTERNAL_SERVER_ERROR, "알림 전송에 실패했습니다.")
 
   ;
 

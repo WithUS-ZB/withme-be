@@ -65,7 +65,7 @@ class GatheringDocumentServiceTest {
     assertEquals(0, gatheringSearchResponses.getNumber());
 
     GatheringSearchResponse searchResult1 = gatheringSearchResponses.getContent().get(0);
-    assertEquals(gatheringDocument1.id(), searchResult1.id());
+    assertEquals(gatheringDocument1.id(), searchResult1.gatheringId());
     assertEquals(gatheringDocument1.memberId(), searchResult1.memberId());
     assertEquals(gatheringDocument1.nickName(), searchResult1.nickName());
     assertEquals(gatheringDocument1.profileImg(), searchResult1.profileImg());
@@ -89,7 +89,7 @@ class GatheringDocumentServiceTest {
     assertEquals(gatheringDocument1.status(), searchResult1.status());
 
     GatheringSearchResponse searchResult2 = gatheringSearchResponses.getContent().get(1);
-    assertEquals(gatheringDocument2.id(), searchResult2.id());
+    assertEquals(gatheringDocument2.id(), searchResult2.gatheringId());
     assertEquals(gatheringDocument2.memberId(), searchResult2.memberId());
     assertEquals(gatheringDocument2.nickName(), searchResult2.nickName());
     assertEquals(gatheringDocument2.profileImg(), searchResult2.profileImg());

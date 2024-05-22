@@ -4,6 +4,7 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.type.Status;
 import jakarta.persistence.LockModeType;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -26,4 +27,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
   @EntityGraph(attributePaths = "gathering")
   Page<Participation> findByParticipant_Id(Long requesterId, Pageable pageable);
+  List<Participation> findAllByGatheringAndStatusEquals(Gathering gathering, Status status);
+
+  long countByParticipant_IdAndStatusIsNot(Long requesterId, Status status);
 }

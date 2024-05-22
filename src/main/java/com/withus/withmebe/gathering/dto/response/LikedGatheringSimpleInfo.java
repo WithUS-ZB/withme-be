@@ -1,4 +1,4 @@
-package com.withus.withmebe.participation.dto;
+package com.withus.withmebe.gathering.dto.response;
 
 import com.withus.withmebe.gathering.Type.GatheringType;
 import java.time.LocalDate;
@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import lombok.Builder;
 
 @Builder
-public record MyParticipationSimpleInfo(
+public record LikedGatheringSimpleInfo (
     Long id,
     Long gatheringId,
     String title,
@@ -15,10 +15,9 @@ public record MyParticipationSimpleInfo(
     LocalDate day,
     LocalTime time,
     GatheringType gatheringType,
-    com.withus.withmebe.gathering.Type.Status gatheringStatus,
-    com.withus.withmebe.participation.type.Status status,
+    Long likeCount,
     LocalDateTime updatedDttm
-
-) {
+)
+{
 
 }

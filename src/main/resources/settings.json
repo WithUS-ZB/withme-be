@@ -4,14 +4,44 @@
       "nori_mixed": {
         "type": "nori_tokenizer",
         "decompound_mode": "mixed"
+      },
+      "edge_ngram_tokenizer": {
+        "type": "edge_ngram",
+        "min_gram": 1,
+        "max_gram": 10,
+        "token_chars": [
+          "letter",
+          "digit"
+        ]
+      }
+    },
+    "filter": {
+      "nori_readingform": {
+        "type": "nori_readingform"
       }
     },
     "analyzer": {
       "korean": {
-        "type": "nori",
+        "type": "custom",
         "tokenizer": "nori_mixed",
         "filter": [
-          "nori_readingform", "nori_posfilter"
+          "nori_readingform"
+        ]
+      },
+      "edge_ngram_analyzer": {
+        "type": "custom",
+        "tokenizer": "edge_ngram_tokenizer",
+        "filter": [
+          "lowercase",
+          "asciifolding"
+        ]
+      },
+      "standard_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "asciifolding"
         ]
       }
     }

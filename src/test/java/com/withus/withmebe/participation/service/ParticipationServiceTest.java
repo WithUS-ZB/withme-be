@@ -470,45 +470,34 @@ class ParticipationServiceTest {
   }
 
   @Test
-  void successToReadMyParticipation() {
+  void successToIsParticipatedWhenTrue() {
     //given
-    given(participationRepository.findById(anyLong()))
-        .willReturn(Optional.of(STUBBED_PARTICIPATION));
+    given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
+        anyLong(), argThat(status -> status.equals(Status.CANCELED))))
+        .willReturn(true);
 
     //when
-    ParticipationResponse participationResponse = participationService.readMyParticipation(
-        PARTICIPANT_ID, PARTICIPATION_ID);
-
     //then
-    assertEquals(STUBBED_PARTICIPATION.getId(), participationResponse.id());
-    assertEquals(STUBBED_PARTICIPATION.getParticipant().getNickName(),
-        participationResponse.nickName());
-    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), participationResponse.title());
-    assertEquals(STUBBED_PARTICIPATION.getStatus(), participationResponse.status());
-    assertEquals(STUBBED_PARTICIPATION.getCreatedDttm(), participationResponse.createdDttm());
-    assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), participationResponse.updatedDttm());
+    assertTrue(participationService.isParticipated(PARTICIPANT_ID, GATHERING_ID));
   }
 
   @Test
-  void failToReadMyParticipationByFailedReadParticipation() {
+  void successToIsParticipatedWhenFalse() {
     //given
-    given(participationRepository.findById(anyLong()))
-        .willReturn(Optional.empty());
+    given(participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(anyLong(),
+        anyLong(), argThat(status -> status.equals(Status.CANCELED))))
+        .willReturn(false);
 
     //when
-    CustomException exception = assertThrows(CustomException.class,
-        () -> participationService.readMyParticipation(PARTICIPANT_ID, PARTICIPATION_ID));
-
     //then
-    assertEquals(ExceptionCode.ENTITY_NOT_FOUND.getMessage(), exception.getMessage());
-    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertFalse(participationService.isParticipated(PARTICIPANT_ID, GATHERING_ID));
   }
 
   @Test
   void successToReadMyParticipations() {
     //given
-    Participation stubbedParticipation2 = getStubbedParticipation(PARTICIPATION_ID+1 ,
-        STUBBED_PARTICIPANT, getStubbedGathering(GATHERING_ID+1, HOST_ID));
+    Participation stubbedParticipation2 = getStubbedParticipation(PARTICIPATION_ID + 1,
+        STUBBED_PARTICIPANT, getStubbedGathering(GATHERING_ID + 1, HOST_ID));
 
     given(participationRepository.findByParticipant_Id(anyLong(), any(Pageable.class)))
         .willAnswer(

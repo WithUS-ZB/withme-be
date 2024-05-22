@@ -7,7 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record GatheringSearchResponse(
-    Long id,
+    Long gatheringId,
     Long memberId,
     String nickName,
     String profileImg,

@@ -24,6 +24,8 @@ public record GatheringDocument(
     String profileImg,
     @Field(type = FieldType.Text, analyzer = "korean")
     String title,
+    @Field(type = FieldType.Text, analyzer = "edge_ngram_analyzer", searchAnalyzer = "standard_analyzer", name = "ngram_title")
+    String ngramTitle,
     String content,
     @Field(name = "gathering_type")
     String gatheringType,
@@ -54,7 +56,7 @@ public record GatheringDocument(
 ) {
     public GatheringSearchResponse toGatheringSearchResponse() {
         return GatheringSearchResponse.builder()
-            .id(this.id)
+            .gatheringId(this.id)
             .memberId(this.memberId)
             .nickName(this.nickName)
             .profileImg(this.profileImg)
