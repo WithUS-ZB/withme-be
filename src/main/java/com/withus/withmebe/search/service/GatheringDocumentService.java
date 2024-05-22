@@ -2,6 +2,7 @@ package com.withus.withmebe.search.service;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.json.JsonData;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.search.document.GatheringDocument;
@@ -83,7 +84,7 @@ public class GatheringDocumentService {
   }
 
   private Query getMultiMatchQuery(String query, List<String> fields) {
-    return QueryBuilders.multiMatch().query(query).fields(fields).build()._toQuery();
+    return QueryBuilders.multiMatch().query(query).fields(fields).type(TextQueryType.CrossFields).build()._toQuery();
   }
 
   private Query getOptionQuery(Option option) {
