@@ -53,6 +53,7 @@ public class GatheringLike extends BaseEntity {
         .day(this.gathering.getDay())
         .time(this.gathering.getTime())
         .gatheringType(this.gathering.getGatheringType())
+        .likeCount(this.gathering.getLikeCount())
         .updatedDttm(this.getUpdatedDttm())
         .build();
   }

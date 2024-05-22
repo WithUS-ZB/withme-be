@@ -15,6 +15,7 @@ public record LikedGatheringSimpleInfo (
     LocalDate day,
     LocalTime time,
     GatheringType gatheringType,
+    Long likeCount,
     LocalDateTime updatedDttm
 )
 {
