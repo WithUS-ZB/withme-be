@@ -7,3 +7,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NR
 GET http://localhost:8080/api/gathering/like?gatheringid=1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MzA5NzMwLCJleHAiOjE3MTYzOTYxMzB9.LuKQkPMsZuu4QXUuzxkLVvJVwHZmR8XXfzoOM7NPlJU
+
+### 좋아요 모임 목록
+GET http://localhost:8080/api/gathering/like/list
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2MzU2MjkwLCJleHAiOjE3MTY0NDI2OTB9.dMwppcum2JjoAN_pxRTa7tdfN3An-ktSfQFq2OhcP2k

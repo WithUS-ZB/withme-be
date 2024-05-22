@@ -1,6 +1,7 @@
 package com.withus.withmebe.gathering.entity;
 
 import com.withus.withmebe.common.entity.BaseEntity;
+import com.withus.withmebe.gathering.dto.response.LikedGatheringSimpleInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,5 +42,18 @@ public class GatheringLike extends BaseEntity {
   public GatheringLike updateIsLike() {
     this.isLiked = !this.isLiked;
     return this;
+  }
+
+  public LikedGatheringSimpleInfo toLikedGatheringSimpleInfo() {
+    return LikedGatheringSimpleInfo.builder()
+        .id(this.id)
+        .gatheringId(this.gathering.getId())
+        .title(this.gathering.getTitle())
+        .mainImg(this.gathering.getMainImg())
+        .day(this.gathering.getDay())
+        .time(this.gathering.getTime())
+        .gatheringType(this.gathering.getGatheringType())
+        .updatedDttm(this.getUpdatedDttm())
+        .build();
   }
 }
