@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static util.objectprovider.GatheringProvider.getStubbedGathering;
 import static util.objectprovider.MemberProvider.getStubbedMember;
 import static util.objectprovider.ParticipationProvider.getStubbedParticipation;
-import static util.objectprovider.ParticipationProvider.getStubbedParticipationWithStatus;
+import static util.objectprovider.ParticipationProvider.getStubbedParticipationByStatus;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -255,7 +255,7 @@ class ParticipationControllerTest {
     GatheringParticipationSimpleInfo gatheringParticipationSimpleInfo1 =
         STUBBED_PARTICIPATION.toGatheringParticipationSimpleInfo();
     GatheringParticipationSimpleInfo gatheringParticipationSimpleInfo2 =
-        getStubbedParticipationWithStatus(PARTICIPATION_ID + 1,
+        getStubbedParticipationByStatus(PARTICIPATION_ID + 1,
             getStubbedMember(PARTICIPANT_ID + 1), STUBBED_GATHERING,
             Status.APPROVED).toGatheringParticipationSimpleInfo();
 
@@ -659,7 +659,7 @@ class ParticipationControllerTest {
     MyParticipationSimpleInfo myParticipationSimpleInfo1 =
         STUBBED_PARTICIPATION.toMyParticipationSimpleInfo();
     MyParticipationSimpleInfo myParticipationSimpleInfo2 =
-        getStubbedParticipationWithStatus(PARTICIPATION_ID + 1,
+        getStubbedParticipationByStatus(PARTICIPATION_ID + 1,
             getStubbedMember(PARTICIPANT_ID + 1), STUBBED_GATHERING,
             Status.APPROVED).toMyParticipationSimpleInfo();
 
