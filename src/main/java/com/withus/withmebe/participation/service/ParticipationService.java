@@ -3,7 +3,11 @@ package com.withus.withmebe.participation.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
+import static com.withus.withmebe.participation.type.Status.APPROVED;
+import static com.withus.withmebe.participation.type.Status.CANCELED;
 import static com.withus.withmebe.participation.type.Status.CHAT_JOINED;
+import static com.withus.withmebe.participation.type.Status.CREATED;
+import static com.withus.withmebe.participation.type.Status.REJECTED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -48,7 +52,7 @@ public class ParticipationService {
         .participant(requester)
         .status(
             (gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)
-                ? Status.APPROVED : Status.CREATED))
+                ? APPROVED : CREATED))
         .build());
     return newParticipation.toResponse();
   }
@@ -67,7 +71,7 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Long readApprovedParticipationCount(long gatheringId) {
-    return participationRepository.countByGathering_IdAndStatus(gatheringId, Status.APPROVED);
+    return participationRepository.countByGathering_IdAndStatus(gatheringId, APPROVED);
   }
 
   @Transactional(readOnly = true)
@@ -87,7 +91,7 @@ public class ParticipationService {
     Participation participation = readParticipation(participationId);
     validateCancelParticipationRequest(requesterId, participation);
 
-    participation.setStatus(Status.CANCELED);
+    participation.setStatus(CANCELED);
     Participation updatedParticipation = readParticipation(participationId);
     return updatedParticipation.toResponse();
   }
@@ -146,18 +150,18 @@ public class ParticipationService {
   private void validateCancelParticipationRequest(long requesterId, Participation participation) {
 
     validateRequesterIsParticipant(requesterId, participation);
-    validateParticipationStatusIsNot(participation, Status.REJECTED);
+    validateParticipationStatusIsNot(participation, REJECTED);
   }
 
   private void validateUpdateParticipationRequest(long requesterId, Participation participation,
       Status status) {
 
-    validateParticipationStatusIsNot(participation, Status.CANCELED);
+    validateParticipationStatusIsNot(participation, CANCELED);
 
     Gathering gathering = participation.getGathering();
     validateRequesterIsHost(requesterId, gathering);
 
-    if (status == Status.APPROVED) {
+    if (status == APPROVED) {
       validateCurrentParticipantCount(gathering);
     }
   }
@@ -183,7 +187,7 @@ public class ParticipationService {
   private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
     if (participationRepository.existsByParticipant_IdAndGathering_IdAndStatusIsNot(
         requester.getId(),
-        gathering.getId(), Status.CANCELED)) {
+        gathering.getId(), CANCELED)) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
   }
@@ -236,7 +240,7 @@ public class ParticipationService {
   }
 
   private boolean isReachedAtMaximumParticipant(Gathering gathering) {
-    return participationRepository.countByGatheringAndStatus(gathering, Status.APPROVED)
+    return participationRepository.countByGatheringAndStatus(gathering, APPROVED)
         >= gathering.getMaximumParticipant();
   }
 
