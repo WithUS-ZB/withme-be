@@ -40,7 +40,7 @@ public class GatheringLikeService {
   }
 
   public Page<LikedGatheringSimpleInfo> readLikedGatherings(long requesterId, Pageable pageable) {
-    return gatheringLikeRepository.findByMemberId(requesterId, pageable).map(GatheringLike::toLikedGatheringSimpleInfo);
+    return gatheringLikeRepository.findByMemberIdAndIsLikedIsTrue(requesterId, pageable).map(GatheringLike::toLikedGatheringSimpleInfo);
   }
 
 
