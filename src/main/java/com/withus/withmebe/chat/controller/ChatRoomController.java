@@ -1,12 +1,18 @@
 package com.withus.withmebe.chat.controller;
 
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.chat.service.ChatRoomService;
 import com.withus.withmebe.participation.service.ParticipationService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,4 +79,20 @@ public class ChatRoomController {
     participationService.leaveChat(currentMemberId, participationId);
     return ResponseEntity.ok().build();
   }
+
+  /**
+   * 내가 참여하고 있는 채팅 목록 조회
+   *
+   * @param currentMemberId 로그인 멤버 id
+   * @param pageable 페이지 설정
+   * @return 성공시 200, 나의 참여 채팅방 목록
+   */
+  @GetMapping("/list")
+  public ResponseEntity<Page<ChatRoomDto>> getMyList(@CurrentMemberId Long currentMemberId
+      , @PageableDefault(value = 5, sort = "createdDttm", direction = DESC) Pageable pageable) {
+    return ResponseEntity.ok(
+        chatRoomService.readMyList(currentMemberId, pageable)
+    );
+  }
+
 }

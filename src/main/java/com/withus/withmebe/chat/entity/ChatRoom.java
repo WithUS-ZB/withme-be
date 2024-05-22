@@ -32,7 +32,7 @@ public class ChatRoom extends BaseEntity {
     this.title = gathering.getTitle();
   }
 
-  public ChatRoomDto toResponse(){
+  public ChatRoomDto toDto(){
     return ChatRoomDto.builder()
         .chatId(this.id)
         .title(this.title)
