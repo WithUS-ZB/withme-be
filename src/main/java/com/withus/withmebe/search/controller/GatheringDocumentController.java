@@ -25,7 +25,7 @@ public class GatheringDocumentController {
   @GetMapping("/title")
   public ResponseEntity<Page<GatheringSearchResponse>> searchGatheringDocuments(
       @RequestParam SearchRange range,
-      @RequestParam String title,
+      @RequestParam(required = false) String title,
       @PageableDefault(sort = "created_dttm", direction = Direction.DESC) Pageable pageable,
       @RequestParam SearchOption option
   ) {

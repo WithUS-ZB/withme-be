@@ -24,6 +24,8 @@ public record GatheringDocument(
     String profileImg,
     @Field(type = FieldType.Text, analyzer = "korean")
     String title,
+    @Field(type = FieldType.Text, analyzer = "edge_ngram_analyzer", searchAnalyzer = "standard", name = "ngram_title")
+    String ngramTitle,
     String content,
     @Field(name = "gathering_type")
     String gatheringType,
