@@ -21,7 +21,7 @@ public class ParticipationProvider {
       Gathering gathering, Status status) {
     Participation participation = Participation.builder()
         .gathering(gathering)
-        .member(participant)
+        .participant(participant)
         .status(status)
         .build();
     ReflectionTestUtils.setField(participation, "id", participationId);
