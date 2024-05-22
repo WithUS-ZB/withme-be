@@ -4,6 +4,7 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
 import com.withus.withmebe.gathering.dto.response.AddGatheringResponse;
@@ -14,24 +15,37 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.notification.event.NotificationEvent;
+import com.withus.withmebe.notification.type.NotificationType;
+import com.withus.withmebe.participation.entity.Participation;
+import com.withus.withmebe.participation.repository.ParticipationRepository;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@EnableScheduling
 public class GatheringService {
 
   private final GatheringRepository gatheringRepository;
   private final MemberRepository memberRepository;
   private final ImgService imgService;
+  private final ParticipationRepository participationRepository;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Transactional
   public AddGatheringResponse createGathering(long currentMemberId,
@@ -129,5 +143,22 @@ public class GatheringService {
   public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
                         String subImgUrl3) {
 
+  }
+
+  @Scheduled(cron = "${spring.gathering.reminder.cron}")
+  public void gatheringReminder() {
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow, Status.PROGRESS);
+    for (Gathering gathering : gatherings) {
+      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering, com.withus.withmebe.participation.type.Status.APPROVED)
+          .stream().map(Participation::getParticipant)
+          .map(Member::getId).collect(Collectors.toList());
+      eventPublisher.publishEvent(NotificationEvent.builder()
+          .receivers(participants)
+          .message("모임 [" + gathering.getTitle() + "] 시작 하루 전입니다.")
+          .notificationType(NotificationType.GATHERING)
+          .build()
+      );
+    }
   }
 }

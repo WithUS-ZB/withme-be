@@ -40,12 +40,14 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
   rabbitmq:
-    host: localhost
-    port: 5672
     username: guest
     password: guest
+    stream:
+      host: localhost
+      port: 5672
   elasticsearch:
     uri : localhost:9200
+
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key
