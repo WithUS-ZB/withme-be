@@ -7,6 +7,7 @@ import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.entity.Gathering;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class ChatRoom extends BaseEntity {
 
   @MapsId
   @OneToOne(fetch = LAZY)
+  @JoinColumn(name="gathering_id")
   private Gathering gathering;
 
   private String title;
@@ -36,6 +38,8 @@ public class ChatRoom extends BaseEntity {
     return ChatRoomDto.builder()
         .chatId(this.id)
         .title(this.title)
+        .gatheringId(this.id)
+        .localDateTime(this.gathering.getGatheringDateTime())
         .build();
   }
 }
