@@ -1,8 +1,12 @@
 package com.withus.withmebe.gathering.controller;
 
+import com.withus.withmebe.gathering.dto.response.LikedGatheringSimpleInfo;
 import com.withus.withmebe.gathering.service.GatheringLikeService;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,5 +33,12 @@ public class GatheringLikeController {
       @CurrentMemberId long currentMemberId,
       @RequestParam(value = "gatheringid") long gatheringId) {
     return ResponseEntity.ok(gatheringLikeService.isLiked(currentMemberId, gatheringId));
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<Page<LikedGatheringSimpleInfo>> getLikedGatherings(
+      @CurrentMemberId long currentMemberId,
+      @PageableDefault Pageable pageable) {
+    return ResponseEntity.ok(gatheringLikeService.readLikedGatherings(currentMemberId, pageable));
   }
 }
