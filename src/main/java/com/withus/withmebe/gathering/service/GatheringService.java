@@ -59,9 +59,9 @@ public class GatheringService {
   @Transactional
   public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
-    newGathering.updateGatheringImage(s3UpdateUrl);
+    newGathering.initiateGatheringImages(s3UpdateUrl);
     return newGathering.toSetGatheringResponse();
   }
 
@@ -88,9 +88,9 @@ public class GatheringService {
   @Transactional
   public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
-    newGathering.updateGatheringImage(s3UpdateUrl);
+    newGathering.updateGatheringImages(s3UpdateUrl);
     return newGathering.toSetGatheringResponse();
   }
 
@@ -124,7 +124,7 @@ public class GatheringService {
   }
 
   @NotNull
-  private Result updateImage(MultipartFile mainImg, MultipartFile subImg1, MultipartFile subImg2,
+  private Result updateImages(MultipartFile mainImg, MultipartFile subImg1, MultipartFile subImg2,
       MultipartFile subImg3) throws IOException {
     String mainImgUrl = imageCheckNotNull(mainImg);
     String subImgUrl1 = imageCheckNotNull(subImg1);

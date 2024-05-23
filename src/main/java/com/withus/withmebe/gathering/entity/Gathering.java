@@ -28,7 +28,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -279,10 +278,19 @@ public class Gathering extends BaseEntity {
     participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
   }
 
-  public void updateGatheringImage(Result s3UpdateUrl) {
+  public void initiateGatheringImages(Result s3UpdateUrl) {
     mainImg = s3UpdateUrl.mainImgUrl();
     subImg1 = s3UpdateUrl.subImgUrl1();
     subImg2 = s3UpdateUrl.subImgUrl2();
     subImg3 = s3UpdateUrl.subImgUrl3();
   }
+
+  public void updateGatheringImages(Result s3UpdateUrl) {
+    mainImg = (s3UpdateUrl.mainImgUrl().isEmpty())? mainImg:s3UpdateUrl.mainImgUrl();
+    subImg1 = (s3UpdateUrl.subImgUrl1().isEmpty())? subImg1:s3UpdateUrl.subImgUrl1();
+    subImg2 = (s3UpdateUrl.subImgUrl2().isEmpty())? subImg2:s3UpdateUrl.subImgUrl2();
+    subImg3 = (s3UpdateUrl.subImgUrl3().isEmpty())? subImg3:s3UpdateUrl.subImgUrl3();
+  }
+
+
 }
