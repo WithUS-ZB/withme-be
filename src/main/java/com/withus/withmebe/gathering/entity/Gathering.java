@@ -271,7 +271,6 @@ public class Gathering extends BaseEntity {
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();
     lng = setGatheringRequest.getLng();
-    mainImg = setGatheringRequest.getMainImg();
     participantsType = setGatheringRequest.getParticipantsType();
     category = setGatheringRequest.getCategory();
     fee = setGatheringRequest.getFee();
@@ -286,10 +285,10 @@ public class Gathering extends BaseEntity {
   }
 
   public void updateGatheringImages(Result s3UpdateUrl) {
-    mainImg = (!s3UpdateUrl.mainImgUrl().isEmpty())? mainImg:s3UpdateUrl.mainImgUrl();
-    subImg1 = (!s3UpdateUrl.subImgUrl1().isEmpty())? subImg1:s3UpdateUrl.subImgUrl1();
-    subImg2 = (!s3UpdateUrl.subImgUrl2().isEmpty())? subImg2:s3UpdateUrl.subImgUrl2();
-    subImg3 = (!s3UpdateUrl.subImgUrl3().isEmpty())? subImg3:s3UpdateUrl.subImgUrl3();
+    mainImg = (s3UpdateUrl.mainImgUrl().isEmpty())? mainImg:s3UpdateUrl.mainImgUrl();
+    subImg1 = (s3UpdateUrl.subImgUrl1().isEmpty())? subImg1:s3UpdateUrl.subImgUrl1();
+    subImg2 = (s3UpdateUrl.subImgUrl2().isEmpty())? subImg2:s3UpdateUrl.subImgUrl2();
+    subImg3 = (s3UpdateUrl.subImgUrl3().isEmpty())? subImg3:s3UpdateUrl.subImgUrl3();
   }
 
 
