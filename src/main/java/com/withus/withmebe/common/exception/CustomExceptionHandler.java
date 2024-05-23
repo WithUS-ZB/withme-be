@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -58,6 +59,17 @@ public class CustomExceptionHandler {
         , e.getClass().getSimpleName(), status.value(), request.getRequestURI(),
         e.getMessage());
     return ResponseEntity.badRequest().body(errors);
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  @ResponseStatus(BAD_REQUEST)
+  public ResponseEntity<Map<String, String>> handleMissingServletRequestParameter(
+      MissingServletRequestParameterException e,
+      HttpServletRequest request) {
+    HttpStatus status = BAD_REQUEST;
+    log.error("MissingServletRequestParameterException 호출:{}:{}({}) {}"
+        , e.getClass().getSimpleName(), status.value(), request.getRequestURI(), e.getMessage());
+    return ResponseEntity.status(status).body(getResponse(e, status));
   }
 
   private static Map<String, String> getResponse(Exception e, HttpStatus status) {
