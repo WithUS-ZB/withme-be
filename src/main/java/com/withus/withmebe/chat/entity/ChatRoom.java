@@ -52,4 +52,11 @@ public class ChatRoom extends BaseEntity {
         .memberCount(this.memberCount)
         .build();
   }
+
+
+
+  public void updateByMessage(ChatMessage chatMessage){
+    this.lastMessageContent = chatMessage.getContent();
+    this.lastMessageDttm = chatMessage.getCreatedDttm();
+  }
 }
