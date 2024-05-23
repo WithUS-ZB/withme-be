@@ -53,7 +53,13 @@ public class ChatRoom extends BaseEntity {
         .build();
   }
 
+  public void memberCountUp(){
+    this.memberCount++;
+  }
 
+  public void memberCountDown(){
+    this.memberCount--;
+  }
 
   public void updateByMessage(ChatMessage chatMessage){
     this.lastMessageContent = chatMessage.getContent();

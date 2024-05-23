@@ -3,6 +3,7 @@ package com.withus.withmebe.chat.service;
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
+import com.withus.withmebe.chat.dto.ChatMessageDto;
 import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.chat.entity.ChatRoom;
 import com.withus.withmebe.chat.repository.ChatRoomRepository;
@@ -23,18 +24,36 @@ public class ChatRoomService {
 
   private final ChatRoomRepository chatRoomRepository;
   private final GatheringRepository gatheringRepository;
+
   private final ParticipationService participationService;
+  private final ChatMessageService chatMessageService;
 
   @Transactional
   public ChatRoomDto create(Long currentMemberId, Long gatheringId) {
-    Gathering gathering = getGatheringById(gatheringId);
+    Gathering gathering = readGatheringByIdOrThrow(gatheringId);
     if (!gathering.isHost(currentMemberId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().gathering(gathering).build());
-    participationService.createParticipationByHost(currentMemberId, gathering);
+    participationService.createParticipationByHost(currentMemberId, gathering.getId());
 
     return chatRoom.toDto();
+  }
+
+  @Transactional
+  public ChatMessageDto join(Long memberId, Long chatroomId, Long participationId) {
+    participationService.joinChatroom(memberId, participationId);
+    // TODO: 동시성 문제 해결 필요
+    readChatroomByIdOrThrow(chatroomId).memberCountUp();
+    return chatMessageService.join(memberId, chatroomId);
+  }
+
+  @Transactional
+  public ChatMessageDto leave(Long memberId, Long chatroomId, Long participationId) {
+    participationService.joinChatroom(memberId, participationId);
+    // TODO: 동시성 문제 해결 필요
+    readChatroomByIdOrThrow(chatroomId).memberCountDown();
+    return chatMessageService.leave(memberId, chatroomId);
   }
 
   @Transactional(readOnly = true)
@@ -43,8 +62,12 @@ public class ChatRoomService {
         Status.CHAT_JOINED, currentMemberId, pageable).map(ChatRoom::toDto);
   }
 
-  private Gathering getGatheringById(Long gatheringId) {
+  private Gathering readGatheringByIdOrThrow(Long gatheringId) {
     return gatheringRepository.findById(gatheringId)
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+  }
+  private ChatRoom readChatroomByIdOrThrow(Long chatroomId) {
+    return chatRoomRepository.findById(chatroomId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 }

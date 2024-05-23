@@ -61,7 +61,7 @@ class ChatRoomServiceTest {
     ChatRoomDto chatRoomDto = chatRoomService.create(currentMemberId, gatheringId);
 
     assertNotNull(chatRoomDto);
-    verify(participationService, times(1)).createParticipationByHost(currentMemberId, gathering);
+    verify(participationService, times(1)).createParticipationByHost(currentMemberId, gathering.getId());
   }
 
   @Test
