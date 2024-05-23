@@ -1,6 +1,7 @@
 package com.withus.withmebe.chat.service;
 
 import static com.withus.withmebe.chat.type.MessageType.JOIN;
+import static com.withus.withmebe.chat.type.MessageType.LEAVE;
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
 import com.withus.withmebe.chat.dto.ChatMessageDto;
@@ -26,6 +27,10 @@ public class ChatMessageService {
 
   public ChatMessageDto join(Long memberId, Long roomId) {
     return createChatMessage(roomId, memberId, JOIN, JOIN.getValue());
+  }
+
+  public ChatMessageDto leave(Long memberId, Long roomId) {
+    return createChatMessage(roomId, memberId, LEAVE, LEAVE.getValue());
   }
 
   private ChatMessageDto createChatMessage(

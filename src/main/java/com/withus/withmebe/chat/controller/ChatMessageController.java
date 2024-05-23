@@ -23,4 +23,10 @@ public class ChatMessageController {
     ChatMessageDto chatMessageDto = chatMessageService.join(Long.valueOf(principal.getName()), roomId);
     messagingTemplate.convertAndSend(DESTINATION_PREFIX + roomId, chatMessageDto);
   }
+
+  @MessageMapping("/room/{room_id}/leave")
+  public void leave(Principal principal, @DestinationVariable("room_id") Long roomId) {
+    ChatMessageDto chatMessageDto = chatMessageService.leave(Long.valueOf(principal.getName()), roomId);
+    messagingTemplate.convertAndSend(DESTINATION_PREFIX + roomId, chatMessageDto);
+  }
 }
