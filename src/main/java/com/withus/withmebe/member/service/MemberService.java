@@ -24,9 +24,7 @@ public class MemberService {
   private final S3Service s3Service;
   @Transactional(readOnly = true)
   public MemberInfoDto read(Long memberId) {
-    return MemberInfoDto.fromEntity(
-        getMemberById(memberId)
-    );
+    return getMemberById(memberId).toMemberInfoDto();
   }
 
   @Transactional(readOnly = true)

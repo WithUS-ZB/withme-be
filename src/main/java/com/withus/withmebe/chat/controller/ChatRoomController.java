@@ -6,7 +6,9 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 import com.withus.withmebe.chat.dto.ChatMessageDto;
 import com.withus.withmebe.chat.dto.response.ChatRoomDto;
 import com.withus.withmebe.chat.service.ChatRoomService;
+import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -102,4 +105,11 @@ public class ChatRoomController {
     );
   }
 
+  @GetMapping("/{room_id}/participants")
+  public ResponseEntity<List<MemberInfoDto>> getParticipantsByRoom(
+      @CurrentMemberId Long currentMemberId, @PathVariable("room_id") Long roomId){
+    return ResponseEntity.ok(
+        chatRoomService.readParticipantsByRoom(currentMemberId, roomId)
+    );
+  }
 }

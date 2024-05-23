@@ -8,6 +8,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.dto.member.MemberDetailDto;
+import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.member.dto.member.request.AdditionalInfoRequestDto;
 import com.withus.withmebe.member.type.Gender;
 import com.withus.withmebe.member.type.Membership;
@@ -122,6 +123,13 @@ public class Member extends BaseEntity {
         this.profileImg,
         this.signupPath,
         this.signupDttm,
+        this.membership
+    );
+  }
+  public MemberInfoDto toMemberInfoDto(){
+    return new MemberInfoDto(
+        this.nickName,
+        this.profileImg,
         this.membership
     );
   }
