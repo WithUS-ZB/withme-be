@@ -70,6 +70,9 @@ public class Participation extends BaseEntity {
     return GatheringParticipationSimpleInfo.builder()
         .id(this.id)
         .nickName(this.participant.getNickName())
+        .birthDate(this.participant.getBirthDate())
+        .gender(this.participant.getGender())
+        .profileImg(this.participant.getProfileImg())
         .status(this.status)
         .updatedDttm(this.getUpdatedDttm())
         .build();
