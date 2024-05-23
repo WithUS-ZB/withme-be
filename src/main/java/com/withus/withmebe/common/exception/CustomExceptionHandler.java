@@ -68,7 +68,8 @@ public class CustomExceptionHandler {
       HttpServletRequest request) {
     HttpStatus status = BAD_REQUEST;
     log.error("MissingServletRequestParameterException 호출:{}:{}({}) {}"
-        , e.getClass().getSimpleName(), status.value(), request.getRequestURI(), e.getMessage());
+        , e.getClass().getSimpleName(), status.value(),
+        request.getRequestURI() + "?" + request.getQueryString(), e.getMessage());
     return ResponseEntity.status(status).body(getResponse(e, status));
   }
 
