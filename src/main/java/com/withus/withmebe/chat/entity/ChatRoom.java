@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,12 @@ public class ChatRoom extends BaseEntity {
 
   private String title;
 
+  private String lastMessageContent;
+
+  private LocalDateTime lastMessageDttm;
+
+  private Long memberCount;
+
   @Builder
   public ChatRoom(Gathering gathering){
     this.gathering = gathering;
@@ -39,7 +46,10 @@ public class ChatRoom extends BaseEntity {
         .chatId(this.id)
         .title(this.title)
         .gatheringId(this.id)
-        .localDateTime(this.gathering.getGatheringDateTime())
+        .gatheringDttm(this.gathering.getGatheringDateTime())
+        .lastMessageContent(this.lastMessageContent)
+        .lastMessageDttm(this.lastMessageDttm)
+        .memberCount(this.memberCount)
         .build();
   }
 }
