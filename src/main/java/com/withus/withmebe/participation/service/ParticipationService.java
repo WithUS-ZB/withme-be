@@ -96,8 +96,8 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Page<MyParticipationSimpleInfo> readMyParticipations(long requesterId, Pageable pageble) {
-    Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId,
-        pageble);
+    Page<Participation> participations = participationRepository.findByParticipant_IdAndStatusIsNot(
+        requesterId, Status.CANCELED, pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
 

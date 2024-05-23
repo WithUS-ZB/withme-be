@@ -499,10 +499,11 @@ class ParticipationServiceTest {
     Participation stubbedParticipation2 = getStubbedParticipation(PARTICIPATION_ID + 1,
         STUBBED_PARTICIPANT, getStubbedGathering(GATHERING_ID + 1, HOST_ID));
 
-    given(participationRepository.findByParticipant_Id(anyLong(), any(Pageable.class)))
+    given(participationRepository.findByParticipant_IdAndStatusIsNot(anyLong(),
+        argThat(status -> status.equals(Status.CANCELED)), any(Pageable.class)))
         .willAnswer(
             invocationOnMock -> {
-              Pageable pageable = invocationOnMock.getArgument(1);
+              Pageable pageable = invocationOnMock.getArgument(2);
               return new PageImpl<Participation>(
                   List.of(STUBBED_PARTICIPATION, stubbedParticipation2),
                   pageable, 2);
@@ -521,14 +522,16 @@ class ParticipationServiceTest {
         myParticipationSimpleInfos.getContent().get(0);
     assertEquals(STUBBED_PARTICIPATION.getId(), myParticipationSimpleInfo1.id());
     assertEquals(STUBBED_PARTICIPATION.getStatus(), myParticipationSimpleInfo1.status());
-    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(), myParticipationSimpleInfo1.title());
+    assertEquals(STUBBED_PARTICIPATION.getGathering().getTitle(),
+        myParticipationSimpleInfo1.title());
     assertEquals(STUBBED_PARTICIPATION.getUpdatedDttm(), myParticipationSimpleInfo1.updatedDttm());
 
     MyParticipationSimpleInfo myParticipationSimpleInfo2 =
         myParticipationSimpleInfos.getContent().get(1);
     assertEquals(stubbedParticipation2.getId(), myParticipationSimpleInfo2.id());
     assertEquals(stubbedParticipation2.getStatus(), myParticipationSimpleInfo2.status());
-    assertEquals(stubbedParticipation2.getGathering().getTitle(), myParticipationSimpleInfo2.title());
+    assertEquals(stubbedParticipation2.getGathering().getTitle(),
+        myParticipationSimpleInfo2.title());
     assertEquals(stubbedParticipation2.getUpdatedDttm(), myParticipationSimpleInfo2.updatedDttm());
   }
 }

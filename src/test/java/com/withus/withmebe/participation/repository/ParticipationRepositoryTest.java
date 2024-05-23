@@ -90,8 +90,8 @@ class ParticipationRepositoryTest {
   void testToFindByParticipant_Id() {
     //given
     //when
-    Page<Participation> participations = participationRepository.findByParticipant_Id(
-        PARTICIPANT_ID, PAGEABLE);
+    Page<Participation> participations = participationRepository.findByParticipant_IdAndStatusIsNot(
+        PARTICIPANT_ID, Status.CANCELED, PAGEABLE);
 
     //then
     assertEquals(2L, participations.getTotalElements());
