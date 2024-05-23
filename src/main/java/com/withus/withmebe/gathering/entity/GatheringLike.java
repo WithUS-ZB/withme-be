@@ -13,10 +13,14 @@ import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Where(clause = "deleted_dttm is null")
+@SQLDelete(sql = "UPDATE gathering_like SET deleted_dttm = CURRENT_TIMESTAMP, updated_dttm = CURRENT_TIMESTAMP WHERE like_id = ?")
 public class GatheringLike extends BaseEntity {
 
   @Id

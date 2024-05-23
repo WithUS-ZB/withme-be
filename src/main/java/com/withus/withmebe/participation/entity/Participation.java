@@ -21,10 +21,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Where(clause = "deleted_dttm is null")
+@SQLDelete(sql = "UPDATE participation SET deleted_dttm = CURRENT_TIMESTAMP, updated_dttm = CURRENT_TIMESTAMP WHERE participation_id = ?")
 public class Participation extends BaseEntity {
 
   @Id

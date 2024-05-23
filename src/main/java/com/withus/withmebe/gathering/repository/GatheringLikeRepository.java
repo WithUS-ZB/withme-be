@@ -1,6 +1,7 @@
 package com.withus.withmebe.gathering.repository;
 
 import com.withus.withmebe.gathering.entity.GatheringLike;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,6 @@ public interface GatheringLikeRepository extends JpaRepository<GatheringLike, Lo
 
   @EntityGraph(attributePaths = "gathering")
   Page<GatheringLike> findByMemberIdAndIsLikedIsTrue(Long memberId, Pageable pageable);
+
+  List<GatheringLike> findAllByGathering_Id(Long gatheringId);
 }

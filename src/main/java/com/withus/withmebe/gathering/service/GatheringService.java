@@ -12,6 +12,7 @@ import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
+import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
@@ -102,6 +103,7 @@ public class GatheringService {
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
     Gathering gathering = getGathering(currentMemberId, gatheringId);
     gatheringRepository.deleteById(gatheringId);
+    eventPublisher.publishEvent(new DeleteGatheringEvent(gatheringId));
     return gathering.toDeleteGatheringResponse();
   }
 
