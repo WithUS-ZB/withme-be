@@ -10,6 +10,8 @@ import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import com.withus.withmebe.search.type.Option;
 import com.withus.withmebe.search.type.SearchRange;
 import com.withus.withmebe.search.type.SearchOption;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class GatheringDocumentService {
 
   public Page<GatheringSearchResponse> searchGatheringDocumentsByTitle(SearchRange range,
       String title, Pageable pageable, SearchOption option) {
+    title = decodeURL(title);
 
     SearchHits<GatheringDocument> searchHits = elasticsearchOperations.search(
         getSearchQuery(range, title, pageable, option),
@@ -96,5 +99,9 @@ public class GatheringDocumentService {
     } else {
       return getMatchQuery(option.getField(), option.getValue());
     }
+  }
+
+  private String decodeURL(String encodedURL) {
+    return URLDecoder.decode(encodedURL, StandardCharsets.UTF_8);
   }
 }
