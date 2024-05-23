@@ -74,6 +74,7 @@ public class Participation extends BaseEntity {
         .gender(this.participant.getGender())
         .profileImg(this.participant.getProfileImg())
         .status(this.status)
+        .createdDttm(this.getCreatedDttm())
         .updatedDttm(this.getUpdatedDttm())
         .build();
   }
