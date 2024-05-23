@@ -101,7 +101,7 @@ public class GatheringService {
 
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
     Gathering gathering = getGathering(currentMemberId, gatheringId);
-    gatheringRepository.delete(gathering);
+    gatheringRepository.deleteById(gatheringId);
     return gathering.toDeleteGatheringResponse();
   }
 
