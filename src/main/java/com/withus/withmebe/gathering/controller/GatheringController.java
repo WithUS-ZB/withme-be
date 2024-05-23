@@ -58,7 +58,7 @@ public class GatheringController {
     return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
   }
 
-  @GetMapping("/myList")
+  @GetMapping("/mylist")
   public ResponseEntity<Page<GetGatheringResponse>> getGatheringMyList(
       @CurrentMemberId long currentMemberId,
       @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable) {

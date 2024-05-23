@@ -14,6 +14,7 @@ import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
+import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
@@ -26,7 +27,9 @@ import com.withus.withmebe.participation.status.JoinChatStatusChanger;
 import com.withus.withmebe.participation.status.LeaveChatStatusChanger;
 import com.withus.withmebe.participation.type.Status;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -116,10 +119,11 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Page<MyParticipationSimpleInfo> readMyParticipations(long requesterId, Pageable pageble) {
-    Page<Participation> participations = participationRepository.findByParticipant_Id(requesterId,
-        pageble);
+    Page<Participation> participations = participationRepository.findByParticipant_IdAndStatusIsNot(
+        requesterId, Status.CANCELED, pageble);
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
+
 
   @Transactional
   public void joinChat(Long currentMemberId, Long participationId) {
@@ -133,6 +137,13 @@ public class ParticipationService {
     new LeaveChatStatusChanger(
         readParticipation(participationId), currentMemberId)
         .updateStatusTemplateMethod();
+  }
+
+  @EventListener
+  protected void deleteGatheringParticipations(DeleteGatheringEvent deleteGatheringEvent) {
+    List<Participation> participations = participationRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId());
+    participationRepository.deleteAll(participations);
+
   }
 
   private void validateCreateParticipationRequest(Member requester, Gathering gathering) {

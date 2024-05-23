@@ -37,7 +37,7 @@ import org.hibernate.annotations.Where;
 @Setter
 @NoArgsConstructor
 @Where(clause = "deleted_dttm is null")
-@SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
+@SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP, updated_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 public class Gathering extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -272,7 +272,6 @@ public class Gathering extends BaseEntity {
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();
     lng = setGatheringRequest.getLng();
-    mainImg = setGatheringRequest.getMainImg();
     participantsType = setGatheringRequest.getParticipantsType();
     category = setGatheringRequest.getCategory();
     fee = setGatheringRequest.getFee();
