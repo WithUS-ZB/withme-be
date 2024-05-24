@@ -53,7 +53,7 @@ public class ChatRoomService {
 
   @Transactional
   public ChatMessageDto leave(Long memberId, Long chatroomId, Long participationId) {
-    participationService.joinChatroom(memberId, participationId);
+    participationService.leaveChatroom(memberId, participationId);
     // TODO: 동시성 문제 해결 필요
     readChatroomByIdOrThrow(chatroomId).memberCountDown();
     return chatMessageService.leave(memberId, chatroomId);
