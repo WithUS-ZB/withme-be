@@ -4,6 +4,7 @@ import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUN
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
@@ -50,7 +51,7 @@ public class GatheringService {
 
   @Transactional
   public AddGatheringResponse createGathering(long currentMemberId,
-      AddGatheringRequest addGatheringRequest){
+      AddGatheringRequest addGatheringRequest) {
     Member newMember = findByMemberId(currentMemberId);
     Gathering gathering = gatheringRepository.save(
         addGatheringRequest.toEntity(newMember));
@@ -58,7 +59,8 @@ public class GatheringService {
   }
 
   @Transactional
-  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg,
+      MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
     Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
@@ -67,9 +69,14 @@ public class GatheringService {
   }
 
   @Transactional(readOnly = true)
-  public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
-    return gatheringRepository.findAllByOrderByCreatedDttmDesc(pageable)
-        .map(Gathering::toGetGatheringResponse);
+  public Page<GetGatheringResponse> readGatheringList(GatheringType range, Pageable pageable) {
+    if (range.equals(GatheringType.ALL)) {
+      return gatheringRepository.findAllBy(pageable)
+          .map(Gathering::toGetGatheringResponse);
+    } else {
+      return gatheringRepository.findAllByGatheringType(range, pageable)
+          .map(Gathering::toGetGatheringResponse);
+    }
   }
 
   @Transactional(readOnly = true)
@@ -87,7 +94,8 @@ public class GatheringService {
   }
 
   @Transactional
-  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg,
+      MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
     Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
@@ -143,16 +151,18 @@ public class GatheringService {
   }
 
   public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
-                        String subImgUrl3) {
+                       String subImgUrl3) {
 
   }
 
   @Scheduled(cron = "${spring.gathering.reminder.cron}")
   public void gatheringReminder() {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
-    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow, Status.PROGRESS);
+    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow,
+        Status.PROGRESS);
     for (Gathering gathering : gatherings) {
-      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering, com.withus.withmebe.participation.type.Status.APPROVED)
+      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering,
+              com.withus.withmebe.participation.type.Status.APPROVED)
           .stream().map(Participation::getParticipant)
           .map(Member::getId).collect(Collectors.toList());
       eventPublisher.publishEvent(NotificationEvent.builder()

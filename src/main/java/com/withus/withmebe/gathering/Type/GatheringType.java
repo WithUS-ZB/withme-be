@@ -4,8 +4,19 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum GatheringType {
-    MEETING("미팅"),
-    EVENT("이벤트");
+    ALL("all", "전체"),
+    MEETING("meeting","미팅"),
+    EVENT("event","이벤트");
 
+    private final String request;
     private final String value;
+
+    public static GatheringType of(String request) {
+        for (GatheringType type : GatheringType.values()) {
+            if (type.request.equals(request)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
 }
