@@ -105,6 +105,12 @@ public class ChatRoomController {
     );
   }
 
+  /**
+   * 방에 참여하고 있는 참여자 리스트
+   * @param currentMemberId 로그인 멤버 id
+   * @param roomId 채팅방 id
+   * @return 성공하면 200, 멤버 info
+   */
   @GetMapping("/{room_id}/participants")
   public ResponseEntity<List<MemberInfoDto>> getParticipantsByRoom(
       @CurrentMemberId Long currentMemberId, @PathVariable("room_id") Long roomId){
