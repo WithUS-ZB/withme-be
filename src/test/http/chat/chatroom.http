@@ -13,3 +13,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZXMiOlsiUk9MRV9NR
 ### 내가 참여하고 있는 채팅 목록 조회
 GET http://localhost:8080/api/chatroom/list
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2Mzc5MzE0LCJleHAiOjE3MTY0NjU3MTR9.jStTEXVHRa7qW8MLYBTSNJzYtEjDQKFwb1ZbiMmoG6E
+
+###
+GET http://localhost:8080/api/chatroom/3/participants
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2NTU1MDMyLCJleHAiOjE3MTY2NDE0MzJ9.uECvUWizDCBMQc9klSTA_zfHAJO2Z4ThDqp7iyTWWbM
