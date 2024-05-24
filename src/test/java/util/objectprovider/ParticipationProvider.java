@@ -14,14 +14,14 @@ public class ParticipationProvider {
 
   public static Participation getStubbedParticipation(long participationId, Member participant,
       Gathering gathering) {
-    return getStubbedParticipationWithStatus(participationId, participant, gathering, Status.CREATED);
+    return getStubbedParticipationByStatus(participationId, participant, gathering, Status.CREATED);
   }
 
-  public static Participation getStubbedParticipationWithStatus(long participationId, Member participant,
+  public static Participation getStubbedParticipationByStatus(long participationId, Member participant,
       Gathering gathering, Status status) {
     Participation participation = Participation.builder()
         .gathering(gathering)
-        .member(participant)
+        .participant(participant)
         .status(status)
         .build();
     ReflectionTestUtils.setField(participation, "id", participationId);

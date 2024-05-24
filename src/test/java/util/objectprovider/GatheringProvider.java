@@ -8,6 +8,7 @@ import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.entity.Gathering;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -23,24 +24,45 @@ public class GatheringProvider {
    * ParticipantsType.ADULT, ParticipantSelectionMethod.UNLIMITED_APPLICATION, Status.PROGRESS
    */
   public static Gathering getStubbedGathering(long gatheringId, long hostId) {
-    return getStubbedGatheringWithPeriod(gatheringId, hostId, LocalDate.now().minusDays(1),
+    return getStubbedGatheringByPeriod(gatheringId, hostId, LocalDate.now().minusDays(1),
         LocalDate.now().plusDays(1));
   }
 
   public static Gathering getStubbedGatheringPeriodAlwaysFalse(long gatheringId, long hostId) {
-    return getStubbedGatheringWithPeriod(gatheringId, hostId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
+    return getStubbedGatheringByPeriod(gatheringId, hostId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
   }
 
-  public static Gathering getStubbedGatheringWithPeriod(long gatheringId, long hostId,
+  public static Gathering getStubbedGatheringByPeriod(
+      long gatheringId, long hostId,
       LocalDate recruitmentStartDt, LocalDate recruitmentEndDt) {
+    return getStubbedGatheringByPeriodAndGatheringDateTime(
+        gatheringId, hostId, recruitmentStartDt, recruitmentEndDt
+        , recruitmentEndDt.plusDays(1).atTime(LocalTime.of(13,0)));
+  }
+
+  public static Gathering getStubbedGatheringByPeriodAndGatheringDateTime(
+      long gatheringId, long hostId,
+      LocalDate recruitmentStartDt, LocalDate recruitmentEndDt, LocalDateTime gatheringDateTime) {
+    return getStubbedGatheringByPeriodAndGatheringDateTimeAndStatus(
+        gatheringId, hostId, recruitmentStartDt, recruitmentEndDt, gatheringDateTime
+        ,  (gatheringId % 2 == 0) ? Status.CANCELED : Status.PROGRESS);
+  }
+
+  public static Gathering getStubbedGatheringByPeriodAndGatheringDateTimeAndStatus(
+      long gatheringId
+      , long hostId,
+      LocalDate recruitmentStartDt
+      , LocalDate recruitmentEndDt
+      , LocalDateTime gatheringDateTime
+      , Status status) {
     Gathering gathering = Gathering.builder()
         .member(getStubbedMember(hostId))
         .title("모임제목" + gatheringId)
         .content("모임본문" + gatheringId)
         .gatheringType((gatheringId % 2 == 0) ? GatheringType.EVENT : GatheringType.MEETING)
         .maximumParticipant(10 + gatheringId)
-        .day(LocalDate.now())
-        .time(LocalTime.now())
+        .day(gatheringDateTime.toLocalDate())
+        .time(gatheringDateTime.toLocalTime())
         .recruitmentStartDt(recruitmentStartDt)
         .recruitmentEndDt(recruitmentEndDt)
         .category("모임카테고리" + gatheringId)
@@ -56,8 +78,7 @@ public class GatheringProvider {
         .build();
     ReflectionTestUtils.setField(gathering, "id", gatheringId);
     ReflectionTestUtils.setField(gathering, "likeCount", 100 + gatheringId);
-    ReflectionTestUtils.setField(gathering, "status",
-        (gatheringId % 2 == 0) ? Status.CANCELED : Status.PROGRESS);
+    ReflectionTestUtils.setField(gathering, "status", status);
 
     return gathering;
   }

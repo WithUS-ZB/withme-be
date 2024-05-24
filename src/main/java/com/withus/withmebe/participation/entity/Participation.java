@@ -49,9 +49,9 @@ public class Participation extends BaseEntity {
   private Status status;
 
   @Builder
-  public Participation(Gathering gathering, Member member, Status status) {
+  public Participation(Gathering gathering, Member participant, Status status) {
     this.gathering = gathering;
-    this.participant = member;
+    this.participant = participant;
     this.status = status;
   }
 

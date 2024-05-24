@@ -23,6 +23,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -284,12 +285,19 @@ public class Gathering extends BaseEntity {
     subImg3 = s3UpdateUrl.subImgUrl3();
   }
 
+  public boolean isHost(Long memberId){
+    return this.member.getId().equals(memberId);
+  }
+
+  public LocalDateTime getGatheringDateTime(){
+    return LocalDateTime.of(this.day, this.time);
+  }
+  
   public void updateGatheringImages(Result s3UpdateUrl) {
     mainImg = (s3UpdateUrl.mainImgUrl().isEmpty())? mainImg:s3UpdateUrl.mainImgUrl();
     subImg1 = (s3UpdateUrl.subImgUrl1().isEmpty())? subImg1:s3UpdateUrl.subImgUrl1();
     subImg2 = (s3UpdateUrl.subImgUrl2().isEmpty())? subImg2:s3UpdateUrl.subImgUrl2();
     subImg3 = (s3UpdateUrl.subImgUrl3().isEmpty())? subImg3:s3UpdateUrl.subImgUrl3();
   }
-
 
 }

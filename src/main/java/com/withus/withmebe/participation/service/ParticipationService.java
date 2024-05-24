@@ -1,7 +1,13 @@
 package com.withus.withmebe.participation.service;
 
 
+import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
+import static com.withus.withmebe.participation.type.Status.APPROVED;
+import static com.withus.withmebe.participation.type.Status.CANCELED;
+import static com.withus.withmebe.participation.type.Status.CHAT_JOINED;
+import static com.withus.withmebe.participation.type.Status.CREATED;
+import static com.withus.withmebe.participation.type.Status.REJECTED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
@@ -12,11 +18,13 @@ import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
+import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
-import com.withus.withmebe.participation.dto.GatheringParticipationSimpleInfo;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
+import com.withus.withmebe.participation.status.JoinChatStatusChanger;
+import com.withus.withmebe.participation.status.LeaveChatStatusChanger;
 import com.withus.withmebe.participation.type.Status;
 import java.time.LocalDate;
 import java.util.List;
@@ -44,17 +52,29 @@ public class ParticipationService {
 
     Participation newParticipation = participationRepository.save(Participation.builder()
         .gathering(gathering)
-        .member(requester)
+        .participant(requester)
         .status(
             (gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)
-                ? Status.APPROVED : Status.CREATED))
+                ? APPROVED : CREATED))
         .build());
     return newParticipation.toResponse();
   }
 
+  public void createParticipationByHost(Long currentMemberId, Gathering gathering) {
+    if (!gathering.isHost(currentMemberId)) {
+      throw new CustomException(AUTHORIZATION_ISSUE);
+    }
+    Member currentMember = readMember(currentMemberId);
+    participationRepository.save(Participation.builder()
+        .gathering(gathering)
+        .participant(currentMember)
+        .status(CHAT_JOINED)
+        .build());
+  }
+
   @Transactional(readOnly = true)
   public Long readApprovedParticipationCount(long gatheringId) {
-    return participationRepository.countByGathering_IdAndStatus(gatheringId, Status.APPROVED);
+    return participationRepository.countByGathering_IdAndStatus(gatheringId, APPROVED);
   }
 
   @Transactional(readOnly = true)
@@ -74,7 +94,7 @@ public class ParticipationService {
     Participation participation = readParticipation(participationId);
     validateCancelParticipationRequest(requesterId, participation);
 
-    participation.setStatus(Status.CANCELED);
+    participation.setStatus(CANCELED);
     Participation updatedParticipation = readParticipation(participationId);
     return updatedParticipation.toResponse();
   }
@@ -104,10 +124,26 @@ public class ParticipationService {
     return participations.map(Participation::toMyParticipationSimpleInfo);
   }
 
+
+  @Transactional
+  public void joinChat(Long currentMemberId, Long participationId) {
+    new JoinChatStatusChanger(
+        readParticipation(participationId), currentMemberId)
+        .updateStatusTemplateMethod();
+  }
+
+  @Transactional
+  public void leaveChat(Long currentMemberId, Long participationId) {
+    new LeaveChatStatusChanger(
+        readParticipation(participationId), currentMemberId)
+        .updateStatusTemplateMethod();
+  }
+
   @EventListener
   protected void deleteGatheringParticipations(DeleteGatheringEvent deleteGatheringEvent) {
     List<Participation> participations = participationRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId());
     participationRepository.deleteAll(participations);
+
   }
 
   private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
@@ -124,18 +160,18 @@ public class ParticipationService {
   private void validateCancelParticipationRequest(long requesterId, Participation participation) {
 
     validateRequesterIsParticipant(requesterId, participation);
-    validateParticipationStatusIsNot(participation, Status.REJECTED);
+    validateParticipationStatusIsNot(participation, REJECTED);
   }
 
   private void validateUpdateParticipationRequest(long requesterId, Participation participation,
       Status status) {
 
-    validateParticipationStatusIsNot(participation, Status.CANCELED);
+    validateParticipationStatusIsNot(participation, CANCELED);
 
     Gathering gathering = participation.getGathering();
     validateRequesterIsHost(requesterId, gathering);
 
-    if (status == Status.APPROVED) {
+    if (status == APPROVED) {
       validateCurrentParticipantCount(gathering);
     }
   }
@@ -148,7 +184,7 @@ public class ParticipationService {
 
   private void validateRequesterIsNotHost(Member requester, Gathering gathering) {
     if (isHost(requester.getId(), gathering)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+      throw new CustomException(AUTHORIZATION_ISSUE);
     }
   }
 
@@ -220,7 +256,7 @@ public class ParticipationService {
   }
 
   private boolean isReachedAtMaximumParticipant(Gathering gathering) {
-    return participationRepository.countByGatheringAndStatus(gathering, Status.APPROVED)
+    return participationRepository.countByGatheringAndStatus(gathering, APPROVED)
         >= gathering.getMaximumParticipant();
   }
 
