@@ -73,6 +73,4 @@ public class AddGatheringResponse {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
-
-    private Long likeCount;
 }

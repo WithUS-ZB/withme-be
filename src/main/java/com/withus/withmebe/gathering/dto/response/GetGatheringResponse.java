@@ -21,8 +21,6 @@ public class GetGatheringResponse {
     @NotNull
     private Long gatheringId;
 
-    private Long likeCount;
-
     @NotNull
     private Status status;
 
@@ -87,6 +85,8 @@ public class GetGatheringResponse {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
+
+    private Long likeCount;
 
     @NotNull
     private LocalDateTime createdDttm;

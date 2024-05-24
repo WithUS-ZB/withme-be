@@ -4,6 +4,7 @@ import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -75,4 +76,7 @@ public class SetGatheringResponse {
     private ParticipantSelectionMethod participantSelectionMethod;
 
     private Long likeCount;
+
+    @NotNull
+    private LocalDateTime createdDttm;
 }

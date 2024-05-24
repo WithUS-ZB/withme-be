@@ -65,7 +65,5 @@ public class SetGatheringRequest {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
-
-    private Long likeCount;
 }
 
