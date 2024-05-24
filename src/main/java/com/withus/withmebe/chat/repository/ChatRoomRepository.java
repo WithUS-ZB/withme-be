@@ -13,9 +13,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-  @Query("SELECT cr FROM Participation p " +
-      "JOIN p.gathering g " +
-      "JOIN ChatRoom cr ON cr.gathering.id = g.id " +
+
+  @Query("SELECT cr FROM ChatRoom cr " +
+      "JOIN cr.gathering g " +
+      "JOIN Participation p ON p.gathering.id = g.id " +
       "WHERE p.participant.id = :memberId AND p.status = :status")
   Page<ChatRoom> findChatRoomsByStatusAndParticipantId(
       Status status, Long memberId, Pageable pageable);
