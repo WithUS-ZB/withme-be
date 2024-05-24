@@ -75,12 +75,24 @@ public class AddGatheringRequest {
   private ParticipantSelectionMethod participantSelectionMethod;
 
   public Gathering toEntity(Member newMember) {
-    return Gathering.builder().member(newMember).title(this.title).content(this.content)
-        .gatheringType(this.gatheringType).maximumParticipant(this.maximumParticipant).day(this.day)
-        .time(this.time).recruitmentStartDt(this.recruitmentStartDt)
-        .recruitmentEndDt(this.recruitmentEndDt).category(this.category).address(this.address)
-        .detailedAddress(this.detailedAddress).lat(this.lat).lng(this.lng)
-        .participantsType(this.participantsType).fee(this.fee)
-        .participantSelectionMethod(this.participantSelectionMethod).build();
+    return Gathering.builder()
+        .member(newMember)
+        .title(this.title)
+        .content(this.content)
+        .gatheringType(this.gatheringType)
+        .maximumParticipant(this.maximumParticipant)
+        .day(this.day)
+        .time(this.time)
+        .recruitmentStartDt(this.recruitmentStartDt)
+        .recruitmentEndDt(this.recruitmentEndDt)
+        .category(this.category)
+        .address(this.address)
+        .detailedAddress(this.detailedAddress)
+        .lat(this.lat)
+        .lng(this.lng)
+        .participantsType(this.participantsType)
+        .fee(this.fee)
+        .participantSelectionMethod(this.participantSelectionMethod)
+        .build();
   }
 }
