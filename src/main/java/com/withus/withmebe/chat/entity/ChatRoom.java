@@ -54,11 +54,11 @@ public class ChatRoom extends BaseEntity {
   }
 
   public void memberCountUp(){
-    this.memberCount++;
+    this.memberCount = this.memberCount == null ? 1 : this.memberCount+1;
   }
 
   public void memberCountDown(){
-    this.memberCount--;
+    this.memberCount = this.memberCount == null ? -1 : this.memberCount-1;
   }
 
   public void updateByMessage(ChatMessage chatMessage){
