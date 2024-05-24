@@ -49,7 +49,7 @@ spring:
     uri: ${ELASTICSEARCH_URI}
   gathering:
     reminder:
-      cron: 0 0/15 * * * ?
+      cron: 0 0/5 * * * ?
 
 cool-sms:
   api-key: cool-sms.api-key

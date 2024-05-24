@@ -29,7 +29,7 @@ public class NotificationService {
 
   private final NotificationRepository notificationRepository;
   private final ApplicationEventPublisher eventPublisher;
-  private static final long SSE_TIME_OUT = 1000 * 60 * 15;
+  private static final long SSE_TIME_OUT = 1000 * 60 * 60;
   private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
 
