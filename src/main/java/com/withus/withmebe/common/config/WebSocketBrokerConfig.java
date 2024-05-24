@@ -1,14 +1,23 @@
 package com.withus.withmebe.common.config;
 
+import com.withus.withmebe.common.websocket.interceptor.WebSocketInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+@Order(Ordered.HIGHEST_PRECEDENCE + 99) // WebSocketInterceptor가 먼저 처리될 수 있도록 설정
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSocketMessageBroker // 메시지 브로커가 지원하는 WebSocket 메시지 처리를 활성화
 public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
+
+  private final WebSocketInterceptor webSocketInterceptor;
 
   /**
    * STOMP에서 사용하는 메시지 브로커를 설정하는 부분
@@ -36,5 +45,11 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+    registry.addEndpoint("/ws").setAllowedOriginPatterns("*");
+  }
+
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(webSocketInterceptor);
   }
 }
