@@ -97,7 +97,7 @@ public class ChatRoomController {
    * @param pageable 페이지 설정
    * @return 성공시 200, 나의 참여 채팅방 목록
    */
-  @GetMapping("/list")
+  @GetMapping("/my-list")
   public ResponseEntity<Page<ChatRoomDto>> getMyList(@CurrentMemberId Long currentMemberId
       , @PageableDefault(value = 5, sort = "lastMessageDttm", direction = DESC) Pageable pageable) {
     return ResponseEntity.ok(
