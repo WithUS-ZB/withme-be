@@ -2,6 +2,7 @@ package com.withus.withmebe.gathering.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
+import com.withus.withmebe.common.anotation.GatheringLimit;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.Type.GatheringType;
@@ -43,18 +44,18 @@ import org.springframework.context.ApplicationEventPublisher;
 @EnableScheduling
 public class GatheringService {
 
+  private final ApplicationEventPublisher eventPublisher;
+  private final ParticipationRepository participationRepository;
   private final GatheringRepository gatheringRepository;
   private final MemberRepository memberRepository;
   private final ImgService imgService;
-  private final ParticipationRepository participationRepository;
-  private final ApplicationEventPublisher eventPublisher;
 
   @Transactional
+  @GatheringLimit(value = 5)
   public AddGatheringResponse createGathering(long currentMemberId,
       AddGatheringRequest addGatheringRequest) {
     Member newMember = findByMemberId(currentMemberId);
-    Gathering gathering = gatheringRepository.save(
-        addGatheringRequest.toEntity(newMember));
+    Gathering gathering = gatheringRepository.save(addGatheringRequest.toEntity(newMember));
     return gathering.toAddGatheringResponse();
   }
 
