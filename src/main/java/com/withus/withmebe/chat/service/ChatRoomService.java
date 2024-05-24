@@ -74,11 +74,12 @@ public class ChatRoomService {
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 
+  @Transactional(readOnly = true)
   public List<MemberInfoDto> readParticipantsByRoom(Long memberId, Long roomId) {
-    if(!chatRoomRepository.existsByCurrentMemberIdAndParticipationStatusAndRoomId(memberId, roomId, CHAT_JOINED)){
+    if(!chatRoomRepository.existsByCurrentMemberIdAndRoomIdAndParticipationStatus(memberId, roomId, CHAT_JOINED)){
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
-    return chatRoomRepository.findByParticipationStatusAndRoomId(CHAT_JOINED, roomId)
+    return chatRoomRepository.findByParticipantOfChatroomByStatusAndRoomId(CHAT_JOINED, roomId)
         .stream().map(Member::toMemberInfoDto).toList();
   }
 }
