@@ -61,8 +61,8 @@ public class Notification extends BaseEntity {
         .id(this.id)
         .message(this.message)
         .notificationType(this.notificationType)
-        .readDttm(this.readDttm)
-        .createdDttm(this.getCreatedDttm())
+        .readDttm(this.readDttm.toString())
+        .createdDttm(this.getCreatedDttm().toString())
         .build();
   }
 

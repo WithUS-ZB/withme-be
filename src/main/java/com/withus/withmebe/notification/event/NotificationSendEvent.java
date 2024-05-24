@@ -18,7 +18,7 @@ public record NotificationSendEvent(
         .id(this.id)
         .message(this.message)
         .notificationType(this.notificationType)
-        .createdDttm(this.createdDttm)
+        .createdDttm(this.createdDttm.toString())
         .build();
   }
 
