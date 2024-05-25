@@ -62,11 +62,11 @@ public class ChatRoomController {
    * @param participationId 참여 id
    * @return 성공하면 200
    */
-  @PutMapping("/join")
+  @PutMapping("/{room_id}/join")
   public ResponseEntity<Void> join(
-      @CurrentMemberId Long currentMemberId,
-      @RequestParam Long chatroomId,
-      @RequestParam Long participationId
+      @CurrentMemberId Long currentMemberId
+      , @PathVariable("room_id") Long chatroomId
+      , @RequestParam Long participationId
   ) {
     ChatMessageDto chatMessageDto = chatRoomService.join(currentMemberId, chatroomId,
         participationId);
@@ -82,11 +82,11 @@ public class ChatRoomController {
    * @param participationId 참여 id
    * @return 성공하면 200
    */
-  @PutMapping("/leave")
+  @PutMapping("/{room_id}/leave")
   public ResponseEntity<Void> leave(
-      @CurrentMemberId Long currentMemberId,
-      @RequestParam Long chatroomId,
-      @RequestParam Long participationId
+      @CurrentMemberId Long currentMemberId
+      , @PathVariable("room_id") Long chatroomId
+      , @RequestParam Long participationId
   ) {
     ChatMessageDto chatMessageDto = chatRoomService.leave(currentMemberId, chatroomId,
         participationId);
@@ -102,7 +102,8 @@ public class ChatRoomController {
    * @return 성공시 200, 나의 참여 채팅방 목록
    */
   @GetMapping("/my-list")
-  public ResponseEntity<Page<ChatRoomDto>> getMyList(@CurrentMemberId Long currentMemberId
+  public ResponseEntity<Page<ChatRoomDto>> getMyList(
+      @CurrentMemberId Long currentMemberId
       , @PageableDefault(value = 5, sort = "lastMessageDttm", direction = DESC) Pageable pageable) {
     return ResponseEntity.ok(
         chatRoomService.readMyList(currentMemberId, pageable)
@@ -118,7 +119,8 @@ public class ChatRoomController {
    */
   @GetMapping("/{room_id}/participants")
   public ResponseEntity<List<MemberInfoDto>> getParticipantsByRoom(
-      @CurrentMemberId Long currentMemberId, @PathVariable("room_id") Long roomId) {
+      @CurrentMemberId Long currentMemberId
+      , @PathVariable("room_id") Long roomId) {
     return ResponseEntity.ok(
         chatRoomService.readParticipantsByRoom(currentMemberId, roomId)
     );
