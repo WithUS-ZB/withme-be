@@ -47,16 +47,13 @@ public class CommentService {
   public CommentResponse updateComment(long requesterId, long commentId, SetCommentRequest request) {
 
     Comment comment = readEditableComment(requesterId, commentId);
-
-    comment.setCommentContent(request.commentContent());
-    Comment updatedComment = readComment(commentId);
-    return updatedComment.toResponse();
+    comment.updateComment(request);
+    return comment.toResponse();
   }
 
   public CommentResponse deleteComment(long requesterId, long commentId) {
 
     Comment comment = readEditableComment(requesterId, commentId);
-
     commentRepository.delete(comment);
     return comment.toResponse();
   }
