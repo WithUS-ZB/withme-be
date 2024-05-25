@@ -6,6 +6,7 @@ import static com.withus.withmebe.participation.type.Status.CHAT_JOINED;
 
 import com.withus.withmebe.chat.dto.ChatMessageDto;
 import com.withus.withmebe.chat.dto.response.ChatRoomDto;
+import com.withus.withmebe.chat.dto.response.ParticipationInfoOfChatroom;
 import com.withus.withmebe.chat.entity.ChatRoom;
 import com.withus.withmebe.chat.repository.ChatRoomRepository;
 import com.withus.withmebe.common.exception.CustomException;
@@ -13,6 +14,8 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.member.entity.Member;
+import com.withus.withmebe.participation.entity.Participation;
+import com.withus.withmebe.participation.repository.ParticipationRepository;
 import com.withus.withmebe.participation.service.ParticipationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ public class ChatRoomService {
 
   private final ChatRoomRepository chatRoomRepository;
   private final GatheringRepository gatheringRepository;
+  private final ParticipationRepository participationRepository;
 
   private final ParticipationService participationService;
   private final ChatMessageService chatMessageService;
@@ -81,5 +85,16 @@ public class ChatRoomService {
     }
     return chatRoomRepository.findByParticipantOfChatroomByStatusAndRoomId(CHAT_JOINED, roomId)
         .stream().map(Member::toMemberInfoDto).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public ParticipationInfoOfChatroom readParticipationJoinInfo(Long memberId, Long chatroomId) {
+    ChatRoom chatRoom = readChatroomByIdOrThrow(chatroomId);
+    Participation participation = participationRepository.findByParticipant_IdAndGatheringAndStatus(
+        memberId, chatRoom.getGathering(), CHAT_JOINED);
+    if(participation == null){
+      throw new CustomException(ENTITY_NOT_FOUND);
+    }
+    return participation.toParticipationInfoOfChatroom(chatroomId, chatRoom.getTitle());
   }
 }

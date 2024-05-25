@@ -22,6 +22,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   long countByGatheringAndStatus(Gathering gathering, Status status);
 
+  Participation findByParticipant_IdAndGatheringAndStatus(Long participantId, Gathering gathering, Status status);
+
   @EntityGraph(attributePaths = "participant")
   Page<Participation> findByGathering_Id(Long gatheringId, Pageable pageable);
 

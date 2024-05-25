@@ -5,6 +5,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import com.withus.withmebe.chat.dto.ChatMessageDto;
 import com.withus.withmebe.chat.dto.response.ChatRoomDto;
+import com.withus.withmebe.chat.dto.response.ParticipationInfoOfChatroom;
 import com.withus.withmebe.chat.service.ChatRoomService;
 import com.withus.withmebe.member.dto.member.MemberInfoDto;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
 public class ChatRoomController {
+
   private static final String DESTINATION_PREFIX = "/topic/chatroom/";
   private final ChatRoomService chatRoomService;
   private final SimpMessagingTemplate messagingTemplate;
@@ -56,7 +58,7 @@ public class ChatRoomController {
    * 채팅방 참여
    *
    * @param currentMemberId 로그인 멤버 id
-   * @param chatroomId 채팅방 id
+   * @param chatroomId      채팅방 id
    * @param participationId 참여 id
    * @return 성공하면 200
    */
@@ -66,7 +68,8 @@ public class ChatRoomController {
       @RequestParam Long chatroomId,
       @RequestParam Long participationId
   ) {
-    ChatMessageDto chatMessageDto = chatRoomService.join(currentMemberId, chatroomId, participationId);
+    ChatMessageDto chatMessageDto = chatRoomService.join(currentMemberId, chatroomId,
+        participationId);
     messagingTemplate.convertAndSend(DESTINATION_PREFIX + chatroomId, chatMessageDto);
     return ResponseEntity.ok().build();
   }
@@ -75,7 +78,7 @@ public class ChatRoomController {
    * 채팅방 나가기
    *
    * @param currentMemberId 로그인 멤버 id
-   * @param chatroomId 채팅방 id
+   * @param chatroomId      채팅방 id
    * @param participationId 참여 id
    * @return 성공하면 200
    */
@@ -85,7 +88,8 @@ public class ChatRoomController {
       @RequestParam Long chatroomId,
       @RequestParam Long participationId
   ) {
-    ChatMessageDto chatMessageDto = chatRoomService.leave(currentMemberId, chatroomId, participationId);
+    ChatMessageDto chatMessageDto = chatRoomService.leave(currentMemberId, chatroomId,
+        participationId);
     messagingTemplate.convertAndSend(DESTINATION_PREFIX + chatroomId, chatMessageDto);
     return ResponseEntity.ok().build();
   }
@@ -94,7 +98,7 @@ public class ChatRoomController {
    * 내가 참여하고 있는 채팅 목록 조회
    *
    * @param currentMemberId 로그인 멤버 id
-   * @param pageable 페이지 설정
+   * @param pageable        페이지 설정
    * @return 성공시 200, 나의 참여 채팅방 목록
    */
   @GetMapping("/my-list")
@@ -107,15 +111,35 @@ public class ChatRoomController {
 
   /**
    * 방에 참여하고 있는 참여자 리스트
+   *
    * @param currentMemberId 로그인 멤버 id
-   * @param roomId 채팅방 id
+   * @param roomId          채팅방 id
    * @return 성공하면 200, 멤버 info
    */
   @GetMapping("/{room_id}/participants")
   public ResponseEntity<List<MemberInfoDto>> getParticipantsByRoom(
-      @CurrentMemberId Long currentMemberId, @PathVariable("room_id") Long roomId){
+      @CurrentMemberId Long currentMemberId, @PathVariable("room_id") Long roomId) {
     return ResponseEntity.ok(
         chatRoomService.readParticipantsByRoom(currentMemberId, roomId)
+    );
+  }
+
+  /**
+   * 참여중인 채팅방에 대한 나의 참여 정보
+   * <p>
+   * 해당 채팅룸에 대한 참여 정보를 가져옵니다.
+   *
+   * @param currentMemberId 로그인 멤버 id
+   * @param chatroomId      채팅방 id
+   * @return 성공하면 200과 참가 정보를 반환합니다. / 참여중이 아니면 404 Error 를 반환합니다.
+   */
+  @GetMapping("/{room_id}/my-participation-join-info")
+  public ResponseEntity<ParticipationInfoOfChatroom> getMyParticipationJoinInfoOfChatroom(
+      @CurrentMemberId Long currentMemberId
+      , @PathVariable("room_id") Long chatroomId
+  ) {
+    return ResponseEntity.ok(
+        chatRoomService.readParticipationJoinInfo(currentMemberId, chatroomId)
     );
   }
 }
