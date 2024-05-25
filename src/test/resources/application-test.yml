@@ -13,3 +13,7 @@ spring:
   h2:
     console:
       enabled: true
+
+festival:
+  api:
+    url: http://openapi.seoul.go.kr:8088/sample/json/culturalEventInfo
