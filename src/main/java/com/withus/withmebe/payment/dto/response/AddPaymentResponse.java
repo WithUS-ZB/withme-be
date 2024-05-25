@@ -5,11 +5,11 @@ import lombok.Builder;
 @Builder
 public record AddPaymentResponse(
     String siteCd,
-    Long id,
+    String ordrId,
+    String payMethod,
     String goodName,
-    Long goodPrice,
-    Long payerId,
-    String certInfo
+    String goodMny,
+    String shopUserId
 ) {
 
 }

@@ -1,13 +1,14 @@
 package com.withus.withmebe.payment.type;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
-public enum Status {
-  CREATED("승인대기"),
-  APPROVED("결제승인"),
-  CANCELED("결제취소"),
-  ;
+public enum PayType {
+  PACA("신용카드", "100000000000");
+
 
   private final String value;
+  private final String code;
 }
