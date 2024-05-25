@@ -1,20 +1,20 @@
 package com.withus.withmebe.payment.dto.request;
 
-import com.withus.withmebe.payment.type.PayMethod;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record ApprovePaymentRequest(
-    @NotNull
-    Long id,
-    @NotNull
-    Long payerId,
     @NotBlank
-    PayMethod payMethod,
+    String encData,
     @NotBlank
-    String tradeNo,
+    String encInfo,
+    @NotBlank
+    String tranCd,
     @NotNull
-    Long amount
+    Long ordrMony,
+    @NotBlank
+    Long ordrNo
+
 ) {
 
 }
