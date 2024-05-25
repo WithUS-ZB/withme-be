@@ -1,17 +1,16 @@
 package com.withus.withmebe.payment.dto.response;
 
-import com.withus.withmebe.payment.type.PayMethod;
 import com.withus.withmebe.payment.type.Status;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
 public record PaymentResponse(
-    Long id,
+    Long paymentId,
     String goodName,
     Long goodPrice,
     Status status,
-    PayMethod payMethod,
+    String payMethod,
     String tradeNo,
     LocalDateTime updatedDttm
 )
