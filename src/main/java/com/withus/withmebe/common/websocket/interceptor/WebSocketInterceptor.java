@@ -14,7 +14,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -40,7 +39,6 @@ public class WebSocketInterceptor implements ChannelInterceptor {
       }
       Authentication authentication = this.tokenProvider.getAuthentication(accessToken);
       accessor.setUser(authentication);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
     }
     return message;
   }
