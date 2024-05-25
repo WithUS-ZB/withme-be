@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import util.security.WithMockCustomUser;
@@ -32,45 +31,45 @@ class GatheringLikeControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
+
   private static final String BASE_URL = "/api/gathering/like";
+  private static final long GATHERING_ID = 1L;
+  private static final long REQUESTER_ID = 2L;
 
   @Test
-  @WithMockCustomUser
+  @WithMockCustomUser(memberId = REQUESTER_ID)
   void successToUpdateLike() throws Exception {
     //given
-    given(gatheringLikeService.doLike(anyLong(), anyLong()))
+    given(gatheringLikeService.doLike(REQUESTER_ID, GATHERING_ID))
         .willReturn(true);
     //when
     //then
-    mockMvc.perform(put(BASE_URL + "?gatheringid=1")
-            .contentType(MediaType.APPLICATION_JSON)
+    mockMvc.perform(put(BASE_URL + "?gatheringid=" + GATHERING_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
   }
 
   @Test
-  @WithMockCustomUser
-  void failToUpdateLikeByBadRequest() throws Exception {
+  @WithMockCustomUser(memberId = REQUESTER_ID)
+  void failToUpdateLikeByBadRequestWhenNoGatheringId() throws Exception {
     //given
     //when
     //then
-    mockMvc.perform(put(BASE_URL)
-            .contentType(MediaType.APPLICATION_JSON)
+    mockMvc.perform(put(BASE_URL + "?gatheringid=")
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isBadRequest());
   }
 
   @Test
-  @WithMockCustomUser
+  @WithMockCustomUser(memberId = REQUESTER_ID)
   void failToUpdateLikeByNotFount() throws Exception {
     //given
     given(gatheringLikeService.doLike(anyLong(), anyLong()))
         .willThrow(new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
     //when
     //then
-    mockMvc.perform(put(BASE_URL + "?gatheringid=1")
-            .contentType(MediaType.APPLICATION_JSON)
+    mockMvc.perform(put(BASE_URL + "?gatheringid=" + GATHERING_ID)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isNotFound());
   }
