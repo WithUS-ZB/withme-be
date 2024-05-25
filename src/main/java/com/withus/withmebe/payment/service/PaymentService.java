@@ -1,25 +1,34 @@
 package com.withus.withmebe.payment.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
+import static com.withus.withmebe.common.exception.ExceptionCode.FAIL_TO_REQUEST_APPROVE_PAYMENT;
+import static com.withus.withmebe.common.exception.ExceptionCode.FAIL_TO_REQUEST_OPEN_API;
 import static com.withus.withmebe.common.exception.ExceptionCode.MEMBERSHIP_CONFLICT;
 import static com.withus.withmebe.common.exception.ExceptionCode.PAYMENT_CONFLICT;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
 import com.withus.withmebe.member.type.Membership;
 import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
+import com.withus.withmebe.payment.dto.request.ApproveRequestToKcp;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.PaymentResponse;
 import com.withus.withmebe.payment.entity.Payment;
 import com.withus.withmebe.payment.repository.PaymentRepository;
+import com.withus.withmebe.payment.type.PayType;
 import com.withus.withmebe.payment.type.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +56,7 @@ public class PaymentService {
   private final static String SITE_CD = "T0000";
   private final static long PREMIUM_MEMBERSHIP_PRICE = 10000L;
   private final static String PREMIUM_MEMBERSHIP_NAME = "프리미엄 멤버쉽";
+  private final static String APPROVE_URL = "https://stg-spl.kcp.co.kr/gw/enc/v1/payment";
 
   @Transactional
   public AddPaymentResponse createPayment(long requesterId) {
@@ -56,22 +66,22 @@ public class PaymentService {
         .payerId(requesterId)
         .goodName(PREMIUM_MEMBERSHIP_NAME)
         .goodPrice(PREMIUM_MEMBERSHIP_PRICE)
+        .payType(PayType.PACA)
         .build());
-    return newPayment.toAddPaymentResponse(SITE_CD, KCP_CERT_INFO);
+    return newPayment.toAddPaymentResponse(SITE_CD);
   }
 
   @Transactional
   public PaymentResponse approvePayment(long requesterId, ApprovePaymentRequest request) {
-    Payment payment = readPayment(request.id());
+    Payment payment = readPayment(request.ordrNo());
     validateApprovePaymentRequest(requesterId, request, payment);
 
-    payment.approve(request);
+    String tradeNo = requestApproveToKcp(
+        payment.toApproveRequestToKcp(SITE_CD, KCP_CERT_INFO, request));
+    payment.approve(tradeNo);
+    changeMemberShip(requesterId);
 
-    Member requester = readMember(requesterId);
-    requester.setMembership(Membership.PREMIUM);
-
-    Payment approvedPayment = readPayment(request.id());
-    return approvedPayment.toPaymentResponse();
+    return payment.toPaymentResponse();
   }
 
   @Transactional
@@ -80,18 +90,41 @@ public class PaymentService {
     validateCancelPaymentRequest(requesterId, payment);
 
     payment.cancel();
-    Member requester = readMember(requesterId);
-    requester.setMembership(Membership.FREE);
-    Payment canceledPayment = readPayment(paymentId);
-    return canceledPayment.toPaymentResponse();
+    changeMemberShip(requesterId);
+
+    return payment.toPaymentResponse();
   }
 
   @Transactional(readOnly = true)
   public Page<PaymentResponse> readPayments(long requesterId, Pageable pageable) {
-    Page<Payment> payments = paymentRepository.findByMemberIdAndStatusIsNot(requesterId,
-        Status.CREATED, pageable);
 
-    return payments.map(Payment::toPaymentResponse);
+    return paymentRepository.findByMemberIdAndStatusIsNot(requesterId, Status.CREATED, pageable)
+        .map(Payment::toPaymentResponse);
+  }
+
+  private String requestApproveToKcp(ApproveRequestToKcp request) {
+    RestTemplate restTemplate = new RestTemplate();
+    Gson gson = new Gson();
+
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(APPROVE_URL,
+        gson.toJson(request), String.class);
+
+    if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200)) {
+      throw new CustomException(FAIL_TO_REQUEST_APPROVE_PAYMENT);
+    }
+
+    return JsonParser.parseString(responseEntity.getBody())
+        .getAsJsonObject().get("tno")
+        .getAsString();
+  }
+
+  private void changeMemberShip(long requesterId) {
+    Member requester = readMember(requesterId);
+    if (requester.isPremiumMember()) {
+      requester.setMembership(Membership.FREE);
+    } else {
+      requester.setMembership(Membership.PREMIUM);
+    }
   }
 
   private void validateApprovePaymentRequest(long requesterId, ApprovePaymentRequest request,
@@ -102,7 +135,7 @@ public class PaymentService {
     if (!payment.isPayer(requesterId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
-    if (!payment.isValidApproveRequest(request)) {
+    if (!payment.isGoodPrice(request)) {
       throw new CustomException(PAYMENT_CONFLICT);
     }
   }
