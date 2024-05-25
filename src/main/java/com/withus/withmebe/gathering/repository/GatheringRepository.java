@@ -22,4 +22,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long> {
     Page<Gathering> findAllByMemberId(long currentMemberId, Pageable pageable);
 
     List<Gathering> findAllByDayAndStatusEquals(LocalDate day, Status status);
+
+    int countByMemberId(long memberId);
 }

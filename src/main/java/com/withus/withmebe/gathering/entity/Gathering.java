@@ -168,7 +168,6 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
-        .likeCount(this.likeCount)
         .build();
   }
 
@@ -204,7 +203,6 @@ public class Gathering extends BaseEntity {
     return GetGatheringResponse.builder()
         .memberId(this.member.getId())
         .gatheringId(this.id)
-        .likeCount(this.likeCount)
         .status(this.status)
         .profileImg(this.member.getProfileImg())
         .nickName(this.member.getNickName())
@@ -267,7 +265,6 @@ public class Gathering extends BaseEntity {
     recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
     day = setGatheringRequest.getDay();
     time = setGatheringRequest.getTime();
-    likeCount = setGatheringRequest.getLikeCount();
     address = setGatheringRequest.getAddress();
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();

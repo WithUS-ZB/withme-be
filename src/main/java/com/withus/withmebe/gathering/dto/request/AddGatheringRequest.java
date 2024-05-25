@@ -1,5 +1,6 @@
 package com.withus.withmebe.gathering.dto.request;
 
+import com.withus.withmebe.common.anotation.ValidDateRange;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
@@ -7,16 +8,16 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.member.entity.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Setter
 @Getter
+@Setter
+@ValidDateRange
 public class AddGatheringRequest {
-  private Member member;
 
   @NotBlank
   private String title;
@@ -72,8 +73,6 @@ public class AddGatheringRequest {
 
   @NotNull
   private ParticipantSelectionMethod participantSelectionMethod;
-
-  private Long likeCount;
 
   public Gathering toEntity(Member newMember) {
     return Gathering.builder()

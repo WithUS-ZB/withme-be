@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,8 +20,6 @@ public class GetGatheringResponse {
 
     @NotNull
     private Long gatheringId;
-
-    private Long likeCount;
 
     @NotNull
     private Status status;
@@ -87,6 +85,8 @@ public class GetGatheringResponse {
 
     @NotNull
     private ParticipantSelectionMethod participantSelectionMethod;
+
+    private Long likeCount;
 
     @NotNull
     private LocalDateTime createdDttm;
