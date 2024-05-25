@@ -2,7 +2,6 @@ package com.withus.withmebe.payment.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
 import static com.withus.withmebe.common.exception.ExceptionCode.FAIL_TO_REQUEST_APPROVE_PAYMENT;
-import static com.withus.withmebe.common.exception.ExceptionCode.FAIL_TO_REQUEST_OPEN_API;
 import static com.withus.withmebe.common.exception.ExceptionCode.MEMBERSHIP_CONFLICT;
 import static com.withus.withmebe.common.exception.ExceptionCode.PAYMENT_CONFLICT;
 
