@@ -27,8 +27,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
       "WHERE cr.id = :roomId AND p.status = :status")
   List<Member> findByParticipantOfChatroomByStatusAndRoomId(Status status, Long roomId);
 
-
-
   @Query("SELECT COUNT(cr) > 0 FROM Participation p " +
       "JOIN p.gathering g " +
       "JOIN ChatRoom cr ON cr.gathering.id = g.id " +
@@ -37,11 +35,4 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
       @Param("memberId") Long memberId,
       @Param("roomId") Long roomId,
       @Param("status") Status status);
-
-  @Query("SELECT COUNT(cr) > 0 FROM Participation p " +
-      "JOIN p.gathering g " +
-      "JOIN ChatRoom cr ON cr.gathering.id = g.id " +
-      "WHERE p.participant.id = :memberId AND cr.id = :roomId AND p.status = :status")
-  boolean existsByCurrentMemberIdAndRoomIdAndParticipationStatus(
-      );
 }
