@@ -68,18 +68,10 @@ public class ChatRoomService {
         CHAT_JOINED, currentMemberId, pageable).map(ChatRoom::toDto);
   }
 
-  private Gathering readGatheringByIdOrThrow(Long gatheringId) {
-    return gatheringRepository.findById(gatheringId)
-        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-  }
-  private ChatRoom readChatroomByIdOrThrow(Long chatroomId) {
-    return chatRoomRepository.findById(chatroomId)
-        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-  }
-
   @Transactional(readOnly = true)
   public List<MemberInfoDto> readParticipantsByRoom(Long memberId, Long roomId) {
-    if(!chatRoomRepository.existsByCurrentMemberIdAndRoomIdAndParticipationStatus(memberId, roomId, CHAT_JOINED)){
+    if (!chatRoomRepository.existsByCurrentMemberIdAndRoomIdAndParticipationStatus(memberId, roomId,
+        CHAT_JOINED)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     return chatRoomRepository.findByParticipantOfChatroomByStatusAndRoomId(CHAT_JOINED, roomId)
@@ -90,8 +82,18 @@ public class ChatRoomService {
   public ParticipationInfoOfChatroom readParticipationJoinInfo(Long memberId, Long chatroomId) {
     ChatRoom chatRoom = readChatroomByIdOrThrow(chatroomId);
     return participationRepository.findByParticipant_IdAndGatheringAndStatus(
-        memberId, chatRoom.getGathering(), CHAT_JOINED)
+            memberId, chatRoom.getGathering(), CHAT_JOINED)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND))
         .toParticipationInfoOfChatroom(chatroomId, chatRoom.getTitle());
+  }
+
+  private Gathering readGatheringByIdOrThrow(Long gatheringId) {
+    return gatheringRepository.findById(gatheringId)
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+  }
+
+  private ChatRoom readChatroomByIdOrThrow(Long chatroomId) {
+    return chatRoomRepository.findById(chatroomId)
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 }
