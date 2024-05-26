@@ -90,11 +90,9 @@ public class ChatRoomService {
   @Transactional(readOnly = true)
   public ParticipationInfoOfChatroom readParticipationJoinInfo(Long memberId, Long chatroomId) {
     ChatRoom chatRoom = readChatroomByIdOrThrow(chatroomId);
-    Participation participation = participationRepository.findByParticipant_IdAndGatheringAndStatus(
-        memberId, chatRoom.getGathering(), CHAT_JOINED);
-    if(participation == null){
-      throw new CustomException(ENTITY_NOT_FOUND);
-    }
-    return participation.toParticipationInfoOfChatroom(chatroomId, chatRoom.getTitle());
+    return participationRepository.findByParticipant_IdAndGatheringAndStatus(
+        memberId, chatRoom.getGathering(), CHAT_JOINED)
+        .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND))
+        .toParticipationInfoOfChatroom(chatroomId, chatRoom.getTitle());
   }
 }
