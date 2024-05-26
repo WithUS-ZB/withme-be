@@ -36,7 +36,7 @@ class GatheringLikeServiceTest {
   @Test
   void successToDoLikeWhenNewLike() {
     //given
-    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(anyLong(), anyLong()))
+    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(MEMBER_ID, GATHERING_ID))
         .willReturn(Optional.empty());
     given(gatheringRepository.findById(anyLong()))
         .willReturn(Optional.of(getStubbedGathering(GATHERING_ID, MEMBER_ID)));
@@ -52,7 +52,7 @@ class GatheringLikeServiceTest {
   @Test
   void successToDoLikeWhenLikeWasTrue() {
     //given
-    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(anyLong(), anyLong()))
+    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(MEMBER_ID, GATHERING_ID))
         .willReturn(Optional.of(getStubbedGatheringLike(true)));
 
     //when
@@ -65,7 +65,7 @@ class GatheringLikeServiceTest {
   @Test
   void successToDoLikeWhenLikeWasFalse() {
     //given
-    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(anyLong(), anyLong()))
+    given(gatheringLikeRepository.findByMemberIdAndGathering_Id(MEMBER_ID, GATHERING_ID))
         .willReturn(Optional.of(getStubbedGatheringLike(false)));
 
     //when

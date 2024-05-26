@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,7 @@ public class GatheringLikeService {
   }
 
   @EventListener
+  @Async
   protected void deleteGatheringLike(DeleteGatheringEvent deleteGatheringEvent) {
     List<GatheringLike> gatheringLikes = gatheringLikeRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId());
     gatheringLikeRepository.deleteAll(gatheringLikes);
