@@ -7,6 +7,7 @@ import lombok.Builder;
 public record ParticipationInfoOfChatroom(
     Long participationId,
     Long chatroomId,
+    Long memberId,
     String nickname,
     String chatroomTitle,
     Status participationStatus

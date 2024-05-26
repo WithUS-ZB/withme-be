@@ -8,6 +8,7 @@ import lombok.Builder;
 public record ChatMessageDto(
     Long chatId,
     String content,
+    Long memberId,
     String nickName,
     MessageType messageType,
     LocalDateTime chatDateTime

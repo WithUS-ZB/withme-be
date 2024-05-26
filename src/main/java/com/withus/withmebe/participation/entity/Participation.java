@@ -91,6 +91,7 @@ public class Participation extends BaseEntity {
     return ParticipationInfoOfChatroom.builder()
         .participationId(this.id)
         .chatroomId(chatroomId)
+        .memberId(this.participant.getId())
         .nickname(this.participant.getNickName())
         .chatroomTitle(chatroomTitle)
         .participationStatus(this.status)

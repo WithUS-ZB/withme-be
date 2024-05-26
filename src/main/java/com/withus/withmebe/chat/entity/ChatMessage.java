@@ -23,6 +23,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ChatMessage extends BaseEntity {
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  @Column(name = "chat_message_history_id")
+  private Long id;
+
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "chatroom_id")
@@ -32,10 +37,6 @@ public class ChatMessage extends BaseEntity {
   @JoinColumn(name = "chat_member_id")
   Member chatMember;
 
-  @Id
-  @GeneratedValue(strategy = IDENTITY)
-  @Column(name = "chat_message_history_id")
-  private Long id;
   @Column(nullable = false)
   private String content;
 
@@ -55,6 +56,7 @@ public class ChatMessage extends BaseEntity {
     return ChatMessageDto.builder()
         .chatId(this.id)
         .content(this.content)
+        .memberId(this.chatMember.getId())
         .nickName(this.chatMember.getNickName())
         .messageType(this.type)
         .chatDateTime(this.getCreatedDttm())
