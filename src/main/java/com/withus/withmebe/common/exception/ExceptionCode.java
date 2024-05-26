@@ -19,6 +19,7 @@ public enum ExceptionCode {
   PASSWORD_CHK_MISMATCH(BAD_REQUEST, "비밀번호 확인이 비밀번호와 일치하지 않습니다."),
   AUTH_CODE_MISMATCH(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
   INVALID_TIME(BAD_REQUEST, "가능한 시간이 아닙니다."),
+  INVALID_PATH_FORMAT(BAD_REQUEST, "유효하지 않은 경로입니다."),
 
   // Unauthorized: 401
   TOKEN_EXPIRED(UNAUTHORIZED, "토큰이 만료되었습니다."),
@@ -30,7 +31,8 @@ public enum ExceptionCode {
 
   // NOT_FOUND: 404
   ENTITY_NOT_FOUND(NOT_FOUND, "개체를 찾지 못했습니다."),
-  AUTH_SMS_CODE_NOT_FOUND(BAD_REQUEST, "인증번호를 발급해주세요."),
+  STOMP_HEADER_ACCESSOR_NOT_FOUND_EXCEPTION(NOT_FOUND, "메시지에서 STOMP 헤더 접근자를 가져오지 못했습니다."),
+  AUTH_SMS_CODE_NOT_FOUND(NOT_FOUND, "인증번호를 발급해주세요."),
 
   // Conflict: 409
   EMAIL_CONFLICT(CONFLICT, "이메일이 중복됩니다."),
