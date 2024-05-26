@@ -44,7 +44,7 @@ public class ChatMessageService {
   public ChatMessageDto chat(Long memberId, ChatMessageRequestDto request) {
     ChatMessage chatMessage = createChatMessage(
         request.chatroomId(), memberId, CHAT, request.content());
-    readChatRoomByIdOrThrow(request.chatroomId()).updateByMessage(chatMessage);
+    chatMessage.getChatRoom().updateByMessage(chatMessage);
     return chatMessage.toChatMessageDto();
   }
 
