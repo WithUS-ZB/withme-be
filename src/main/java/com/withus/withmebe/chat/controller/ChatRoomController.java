@@ -47,7 +47,7 @@ public class ChatRoomController {
   @PostMapping
   public ResponseEntity<ChatRoomDto> add(
       @CurrentMemberId Long currentMemberId,
-      @RequestParam Long gatheringId
+      @RequestParam("gatheringid") Long gatheringId
   ) {
     return ResponseEntity.ok(
         chatRoomService.create(currentMemberId, gatheringId)
@@ -66,7 +66,7 @@ public class ChatRoomController {
   public ResponseEntity<Void> join(
       @CurrentMemberId Long currentMemberId
       , @PathVariable("room_id") Long chatroomId
-      , @RequestParam Long participationId
+      , @RequestParam("participationid") Long participationId
   ) {
     ChatMessageDto chatMessageDto = chatRoomService.join(currentMemberId, chatroomId,
         participationId);
@@ -86,7 +86,7 @@ public class ChatRoomController {
   public ResponseEntity<Void> leave(
       @CurrentMemberId Long currentMemberId
       , @PathVariable("room_id") Long chatroomId
-      , @RequestParam Long participationId
+      , @RequestParam("participationid") Long participationId
   ) {
     ChatMessageDto chatMessageDto = chatRoomService.leave(currentMemberId, chatroomId,
         participationId);
