@@ -1,0 +1,14 @@
+### 신규 결제 요청
+POST http://localhost:8080/api/payment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2NjQ2Nzc4LCJleHAiOjE3MTY3MzMxNzh9.wxhBY5_Tbim5Ak5pRQe0RXmg_xJ2RyAvP5t-nAefYAU
+
+### 결제 취소 요청
+PUT http://localhost:8080/api/payment/cancel/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2NjQ2Nzc4LCJleHAiOjE3MTY3MzMxNzh9.wxhBY5_Tbim5Ak5pRQe0RXmg_xJ2RyAvP5t-nAefYAU
+
+### 결제 목록 보기
+GET http://localhost:8080/api/payment/list
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZXMiOlsiUk9MRV9NRU1CRVIiXSwiaWF0IjoxNzE2NjQ2Nzc4LCJleHAiOjE3MTY3MzMxNzh9.wxhBY5_Tbim5Ak5pRQe0RXmg_xJ2RyAvP5t-nAefYAU

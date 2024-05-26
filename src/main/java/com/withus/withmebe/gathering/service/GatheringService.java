@@ -2,8 +2,10 @@ package com.withus.withmebe.gathering.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
+import com.withus.withmebe.common.anotation.GatheringLimit;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
+import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import com.withus.withmebe.gathering.dto.request.SetGatheringRequest;
@@ -12,6 +14,7 @@ import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.entity.Gathering;
+import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.member.repository.MemberRepository;
@@ -41,34 +44,40 @@ import org.springframework.context.ApplicationEventPublisher;
 @EnableScheduling
 public class GatheringService {
 
+  private final ApplicationEventPublisher eventPublisher;
+  private final ParticipationRepository participationRepository;
   private final GatheringRepository gatheringRepository;
   private final MemberRepository memberRepository;
   private final ImgService imgService;
-  private final ParticipationRepository participationRepository;
-  private final ApplicationEventPublisher eventPublisher;
 
   @Transactional
+  @GatheringLimit(value = 5)
   public AddGatheringResponse createGathering(long currentMemberId,
-      AddGatheringRequest addGatheringRequest){
+      AddGatheringRequest addGatheringRequest) {
     Member newMember = findByMemberId(currentMemberId);
-    Gathering gathering = gatheringRepository.save(
-        addGatheringRequest.toEntity(newMember));
+    Gathering gathering = gatheringRepository.save(addGatheringRequest.toEntity(newMember));
     return gathering.toAddGatheringResponse();
   }
 
   @Transactional
-  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+  public SetGatheringResponse createGathering(long gathering, MultipartFile mainImg,
+      MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
-    newGathering.updateGatheringImage(s3UpdateUrl);
+    newGathering.initiateGatheringImages(s3UpdateUrl);
     return newGathering.toSetGatheringResponse();
   }
 
   @Transactional(readOnly = true)
-  public Page<GetGatheringResponse> readGatheringList(Pageable pageable) {
-    return gatheringRepository.findAllByOrderByCreatedDttmDesc(pageable)
-        .map(Gathering::toGetGatheringResponse);
+  public Page<GetGatheringResponse> readGatheringList(GatheringType range, Pageable pageable) {
+    if (range.equals(GatheringType.ALL)) {
+      return gatheringRepository.findAllBy(pageable)
+          .map(Gathering::toGetGatheringResponse);
+    } else {
+      return gatheringRepository.findAllByGatheringType(range, pageable)
+          .map(Gathering::toGetGatheringResponse);
+    }
   }
 
   @Transactional(readOnly = true)
@@ -86,11 +95,12 @@ public class GatheringService {
   }
 
   @Transactional
-  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg, MultipartFile subImg1,
+  public SetGatheringResponse updateGathering(long gathering, MultipartFile mainImg,
+      MultipartFile subImg1,
       MultipartFile subImg2, MultipartFile subImg3) throws IOException {
-    Result s3UpdateUrl = updateImage(mainImg, subImg1, subImg2, subImg3);
+    Result s3UpdateUrl = updateImages(mainImg, subImg1, subImg2, subImg3);
     Gathering newGathering = findByGatheringId(gathering);
-    newGathering.updateGatheringImage(s3UpdateUrl);
+    newGathering.updateGatheringImages(s3UpdateUrl);
     return newGathering.toSetGatheringResponse();
   }
 
@@ -102,6 +112,7 @@ public class GatheringService {
   public DeleteGatheringResponse deleteGathering(long currentMemberId, long gatheringId) {
     Gathering gathering = getGathering(currentMemberId, gatheringId);
     gatheringRepository.deleteById(gatheringId);
+    eventPublisher.publishEvent(new DeleteGatheringEvent(gatheringId));
     return gathering.toDeleteGatheringResponse();
   }
 
@@ -124,7 +135,7 @@ public class GatheringService {
   }
 
   @NotNull
-  private Result updateImage(MultipartFile mainImg, MultipartFile subImg1, MultipartFile subImg2,
+  private Result updateImages(MultipartFile mainImg, MultipartFile subImg1, MultipartFile subImg2,
       MultipartFile subImg3) throws IOException {
     String mainImgUrl = imageCheckNotNull(mainImg);
     String subImgUrl1 = imageCheckNotNull(subImg1);
@@ -141,16 +152,18 @@ public class GatheringService {
   }
 
   public record Result(String mainImgUrl, String subImgUrl1, String subImgUrl2,
-                        String subImgUrl3) {
+                       String subImgUrl3) {
 
   }
 
   @Scheduled(cron = "${spring.gathering.reminder.cron}")
   public void gatheringReminder() {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
-    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow, Status.PROGRESS);
+    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow,
+        Status.PROGRESS);
     for (Gathering gathering : gatherings) {
-      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering, com.withus.withmebe.participation.type.Status.APPROVED)
+      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering,
+              com.withus.withmebe.participation.type.Status.APPROVED)
           .stream().map(Participation::getParticipant)
           .map(Member::getId).collect(Collectors.toList());
       eventPublisher.publishEvent(NotificationEvent.builder()

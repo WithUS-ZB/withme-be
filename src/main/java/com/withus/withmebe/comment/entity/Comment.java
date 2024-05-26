@@ -1,5 +1,6 @@
 package com.withus.withmebe.comment.entity;
 
+import com.withus.withmebe.comment.dto.request.SetCommentRequest;
 import com.withus.withmebe.comment.dto.response.CommentResponse;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.member.entity.Member;
@@ -14,7 +15,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -22,7 +22,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @Getter
 @Where(clause = "deleted_dttm is null")
-@SQLDelete(sql = "UPDATE comment SET deleted_dttm = NOW() WHERE comment_id = ?")
+@SQLDelete(sql = "UPDATE comment SET deleted_dttm = CURRENT_TIMESTAMP, updated_dttm = CURRENT_TIMESTAMP WHERE comment_id = ?")
 public class Comment extends BaseEntity {
 
   @Id
@@ -37,7 +37,6 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "member_id", nullable = false)
   private Member writer;
 
-  @Setter
   @Column(nullable = false)
   private String commentContent;
 
@@ -61,5 +60,9 @@ public class Comment extends BaseEntity {
 
   public boolean isWriter(long memberId) {
     return this.writer.getId() == memberId;
+  }
+
+  public void updateComment(SetCommentRequest request) {
+    this.commentContent = request.commentContent();
   }
 }

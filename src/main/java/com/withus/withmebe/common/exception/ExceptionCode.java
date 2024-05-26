@@ -50,8 +50,8 @@ public enum ExceptionCode {
 
   // Internal Server Error
   FAIL_TO_REQUEST_OPEN_API(INTERNAL_SERVER_ERROR, "오픈 API 정보 요청에 실패했습니다."),
-  FAIL_TO_SEND_NOTIFICATION(INTERNAL_SERVER_ERROR, "알림 전송에 실패했습니다.")
-
+  FAIL_TO_SEND_NOTIFICATION(INTERNAL_SERVER_ERROR, "알림 전송에 실패했습니다."),
+  FAIL_TO_REQUEST_APPROVE_PAYMENT(INTERNAL_SERVER_ERROR, "결제 승인 요청에 실패했습니다.")
   ;
 
   private final HttpStatus status;

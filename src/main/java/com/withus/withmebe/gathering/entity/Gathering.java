@@ -37,7 +37,7 @@ import org.hibernate.annotations.Where;
 @Setter
 @NoArgsConstructor
 @Where(clause = "deleted_dttm is null")
-@SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
+@SQLDelete(sql = "UPDATE gathering SET deleted_dttm = CURRENT_TIMESTAMP, updated_dttm = CURRENT_TIMESTAMP WHERE gathering_id = ?")
 public class Gathering extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -168,7 +168,6 @@ public class Gathering extends BaseEntity {
         .participantsType(this.participantsType)
         .fee(this.fee)
         .participantSelectionMethod(this.participantSelectionMethod)
-        .likeCount(this.likeCount)
         .build();
   }
 
@@ -204,7 +203,6 @@ public class Gathering extends BaseEntity {
     return GetGatheringResponse.builder()
         .memberId(this.member.getId())
         .gatheringId(this.id)
-        .likeCount(this.likeCount)
         .status(this.status)
         .profileImg(this.member.getProfileImg())
         .nickName(this.member.getNickName())
@@ -267,19 +265,17 @@ public class Gathering extends BaseEntity {
     recruitmentEndDt = setGatheringRequest.getRecruitmentEndDt();
     day = setGatheringRequest.getDay();
     time = setGatheringRequest.getTime();
-    likeCount = setGatheringRequest.getLikeCount();
     address = setGatheringRequest.getAddress();
     detailedAddress = setGatheringRequest.getDetailedAddress();
     lat = setGatheringRequest.getLat();
     lng = setGatheringRequest.getLng();
-    mainImg = setGatheringRequest.getMainImg();
     participantsType = setGatheringRequest.getParticipantsType();
     category = setGatheringRequest.getCategory();
     fee = setGatheringRequest.getFee();
     participantSelectionMethod = setGatheringRequest.getParticipantSelectionMethod();
   }
 
-  public void updateGatheringImage(Result s3UpdateUrl) {
+  public void initiateGatheringImages(Result s3UpdateUrl) {
     mainImg = s3UpdateUrl.mainImgUrl();
     subImg1 = s3UpdateUrl.subImgUrl1();
     subImg2 = s3UpdateUrl.subImgUrl2();
@@ -293,4 +289,12 @@ public class Gathering extends BaseEntity {
   public LocalDateTime getGatheringDateTime(){
     return LocalDateTime.of(this.day, this.time);
   }
+  
+  public void updateGatheringImages(Result s3UpdateUrl) {
+    mainImg = (s3UpdateUrl.mainImgUrl().isEmpty())? mainImg:s3UpdateUrl.mainImgUrl();
+    subImg1 = (s3UpdateUrl.subImgUrl1().isEmpty())? subImg1:s3UpdateUrl.subImgUrl1();
+    subImg2 = (s3UpdateUrl.subImgUrl2().isEmpty())? subImg2:s3UpdateUrl.subImgUrl2();
+    subImg3 = (s3UpdateUrl.subImgUrl3().isEmpty())? subImg3:s3UpdateUrl.subImgUrl3();
+  }
+
 }

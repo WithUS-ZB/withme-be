@@ -1,5 +1,6 @@
 package com.withus.withmebe.common.config;
 
+import com.withus.withmebe.gathering.Type.converter.GatheringTypeConverter;
 import com.withus.withmebe.search.type.converter.SearchOptionConverter;
 import com.withus.withmebe.search.type.converter.SearchRangeConverter;
 import org.springframework.context.annotation.Configuration;
@@ -13,5 +14,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
   public void addFormatters(FormatterRegistry registry) {
     registry.addConverter(new SearchRangeConverter());
     registry.addConverter(new SearchOptionConverter());
+    registry.addConverter(new GatheringTypeConverter());
   }
 }

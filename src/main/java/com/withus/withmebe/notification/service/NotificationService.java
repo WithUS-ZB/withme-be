@@ -1,5 +1,6 @@
 package com.withus.withmebe.notification.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.notification.entity.Notification;
@@ -29,8 +30,9 @@ public class NotificationService {
 
   private final NotificationRepository notificationRepository;
   private final ApplicationEventPublisher eventPublisher;
-  private static final long SSE_TIME_OUT = 1000 * 60 * 15;
+  private static final long SSE_TIME_OUT = 1000 * 60 * 60;
   private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+  private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 
   public SseEmitter subscribe(long memberId) {
@@ -55,7 +57,7 @@ public class NotificationService {
     SseEmitter emitter = emitters.get(receiver);
     if (emitter != null) {
       try {
-        emitter.send(notificationSendEvent.toResponse().toString());
+        emitter.send(OBJECT_MAPPER.writeValueAsString(notificationSendEvent.toResponse()));
       } catch (IOException e) {
         emitters.remove(receiver);
         throw new CustomException(ExceptionCode.FAIL_TO_SEND_NOTIFICATION);

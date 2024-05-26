@@ -1,0 +1,2 @@
+### 행사 정보
+GET http://localhost:8080/api/festival

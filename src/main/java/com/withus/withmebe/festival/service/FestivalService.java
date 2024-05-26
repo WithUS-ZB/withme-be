@@ -37,54 +37,60 @@ public class FestivalService {
 
   @Transactional(readOnly = true)
   public Page<FestivalSimpleInfo> readFestivals(Pageable pageable) {
-    Page<Festival> festivals = festivalRepository.findFestivalByStartDttmBeforeAndEndDttmAfter(
-        LocalDateTime.now(), LocalDateTime.now(), pageable);
-    return festivals.map(Festival::toFestivalSimpleInfo);
+
+    LocalDateTime now = LocalDateTime.now();
+
+    return festivalRepository.findFestivalByStartDttmBeforeAndEndDttmAfter(now, now, pageable)
+        .map(Festival::toFestivalSimpleInfo);
   }
 
   @Transactional
-  @Scheduled(cron = "0 0 4 1/1 * ?")
+  @Scheduled(cron = "0 0 4 * * ?")
   public void createFestivals() {
 
-    long savedFestivalCount = festivalRepository.count();
-    int totalCount = getFestivalCountFromOpenApi();
-
-    if (savedFestivalCount >= totalCount) {
-      return;
-    }
-
-    long toLoadDataCount = totalCount - savedFestivalCount;
+    long toLoadDataCount = getToLoadDataCount();
     long startIndex = 1;
 
     while (toLoadDataCount > startIndex) {
       long endIndex = Math.min(startIndex + 999, toLoadDataCount);
 
-      JsonArray jsonArray = readFestivalsFromOpenApi(startIndex, endIndex);
-      List<Festival> festivals = new ArrayList<>(jsonArray.size());
+      JsonArray festivals = getFestivalsFromOpenApi(startIndex, endIndex);
+      festivalRepository.saveAll(parseFestivalsFromJsonArray(festivals));
 
-      for (JsonElement jsonElement : jsonArray) {
-        festivals.add(Festival.builder()
-            .title(jsonElement.getAsJsonObject().get("TITLE").getAsString())
-            .img(jsonElement.getAsJsonObject().get("MAIN_IMG").getAsString())
-            .link(jsonElement.getAsJsonObject().get("ORG_LINK").getAsString())
-            .startDttm(
-                LocalDateTime.parse(jsonElement.getAsJsonObject().get("STRTDATE").getAsString(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")))
-            .endDttm(
-                LocalDateTime.parse(jsonElement.getAsJsonObject().get("END_DATE").getAsString(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).plusDays(1))
-            .build());
-      }
-      festivalRepository.saveAll(festivals);
       startIndex = endIndex + 1;
     }
   }
 
-  private int getFestivalCountFromOpenApi() {
-    String url = apiUrl + "/1/1";
+  private long getToLoadDataCount() {
+    return getFestivalCountFromOpenApi() - festivalRepository.count();
+  }
 
-    RestTemplate restTemplate = new RestTemplate();
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+  private List<Festival> parseFestivalsFromJsonArray(JsonArray jsonArray) {
+
+    List<Festival> festivals = new ArrayList<>(jsonArray.size());
+    for (JsonElement jsonElement : jsonArray) {
+      festivals.add(parseFestivalFromJsonElement(jsonElement));
+    }
+    return festivals;
+  }
+
+  private Festival parseFestivalFromJsonElement(JsonElement jsonElement) {
+    return Festival.builder()
+        .title(jsonElement.getAsJsonObject().get("TITLE").getAsString())
+        .img(jsonElement.getAsJsonObject().get("MAIN_IMG").getAsString())
+        .link(jsonElement.getAsJsonObject().get("ORG_LINK").getAsString())
+        .startDttm(
+            LocalDateTime.parse(jsonElement.getAsJsonObject().get("STRTDATE").getAsString(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")))
+        .endDttm(
+            LocalDateTime.parse(jsonElement.getAsJsonObject().get("END_DATE").getAsString(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).plusDays(1))
+        .build();
+  }
+
+  private int getFestivalCountFromOpenApi() {
+
+    ResponseEntity<String> responseEntity = getResponseFromOpenApi(1, 1);
 
     if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200)) {
       throw new CustomException(FAIL_TO_REQUEST_OPEN_API);
@@ -96,11 +102,9 @@ public class FestivalService {
         .getAsInt();
   }
 
-  private JsonArray readFestivalsFromOpenApi(long startIndex, long endIndex) {
-    String url = apiUrl + "/" + startIndex + "/" + endIndex;
+  private JsonArray getFestivalsFromOpenApi(long startIndex, long endIndex) {
 
-    RestTemplate restTemplate = new RestTemplate();
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+    ResponseEntity<String> responseEntity = getResponseFromOpenApi(startIndex, endIndex);
 
     if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200)) {
       throw new CustomException(FAIL_TO_REQUEST_OPEN_API);
@@ -109,5 +113,12 @@ public class FestivalService {
         .getAsJsonObject().get("culturalEventInfo")
         .getAsJsonObject().get("row")
         .getAsJsonArray();
+  }
+
+  private ResponseEntity<String> getResponseFromOpenApi(long startIndex, long endIndex) {
+
+    String url = apiUrl + "/" + startIndex + "/" + endIndex;
+    RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForEntity(url, String.class);
   }
 }

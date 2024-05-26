@@ -5,12 +5,16 @@ import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.dto.response.LikedGatheringSimpleInfo;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.entity.GatheringLike;
+import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringLikeRepository;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,5 +65,12 @@ public class GatheringLikeService {
   private Gathering readGathering(long gatheringId) {
     return gatheringRepository.findById(gatheringId)
         .orElseThrow(() -> new CustomException(ExceptionCode.ENTITY_NOT_FOUND));
+  }
+
+  @EventListener
+  @Async
+  protected void deleteGatheringLike(DeleteGatheringEvent deleteGatheringEvent) {
+    List<GatheringLike> gatheringLikes = gatheringLikeRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId());
+    gatheringLikeRepository.deleteAll(gatheringLikes);
   }
 }

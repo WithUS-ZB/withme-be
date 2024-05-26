@@ -49,7 +49,7 @@ spring:
     uri: ${ELASTICSEARCH_URI}
   gathering:
     reminder:
-      cron: 0 0/15 * * * ?
+      cron: ${GATHERING_REMAINDER_CRON}
 
 cool-sms:
   api-key: cool-sms.api-key
@@ -77,4 +77,4 @@ front:
 
 festival:
   api:
-    url: "http://openapi.seoul.go.kr:8088/${FESTIVAL_API_KEY}/json/culturalEventInfo"
+    url: http://openapi.seoul.go.kr:8088/${FESTIVAL_API_KEY}/json/culturalEventInfo

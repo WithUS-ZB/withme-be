@@ -7,6 +7,7 @@ import com.withus.withmebe.gathering.dto.response.DeleteGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.GetGatheringResponse;
 import com.withus.withmebe.gathering.dto.response.SetGatheringResponse;
 import com.withus.withmebe.gathering.service.GatheringService;
+import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.security.anotation.CurrentMemberId;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -54,11 +55,12 @@ public class GatheringController {
 
   @GetMapping("/list")
   public ResponseEntity<Page<GetGatheringResponse>> getGatheringList(
-      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable) {
-    return ResponseEntity.ok(gatheringService.readGatheringList(pageable));
+      @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable,
+      @RequestParam GatheringType range) {
+    return ResponseEntity.ok(gatheringService.readGatheringList(range, pageable));
   }
 
-  @GetMapping("/myList")
+  @GetMapping("/mylist")
   public ResponseEntity<Page<GetGatheringResponse>> getGatheringMyList(
       @CurrentMemberId long currentMemberId,
       @PageableDefault(sort = "createdDttm", direction = Direction.DESC) Pageable pageable) {

@@ -74,4 +74,4 @@ front:
 
 festival:
   api:
-    url: "http://openapi.seoul.go.kr:8088/sample/json/culturalEventInfo"
+    url: http://openapi.seoul.go.kr:8088/sample/json/culturalEventInfo
