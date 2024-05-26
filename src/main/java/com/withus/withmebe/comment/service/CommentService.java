@@ -29,8 +29,8 @@ public class CommentService {
   @Transactional
   public CommentResponse createComment(long requesterId, long gatheringId, AddCommentRequest request) {
 
-    validateCreateCommentRequest(gatheringId);
-    Member requester = readRequester(requesterId);
+    validateGatheringExists(gatheringId);
+    Member requester = readMember(requesterId);
 
     Comment newComment = commentRepository.save(request.toEntity(gatheringId, requester));
     return newComment.toResponse();
@@ -47,16 +47,13 @@ public class CommentService {
   public CommentResponse updateComment(long requesterId, long commentId, SetCommentRequest request) {
 
     Comment comment = readEditableComment(requesterId, commentId);
-
-    comment.setCommentContent(request.commentContent());
-    Comment updatedComment = readComment(commentId);
-    return updatedComment.toResponse();
+    comment.updateComment(request);
+    return comment.toResponse();
   }
 
   public CommentResponse deleteComment(long requesterId, long commentId) {
 
     Comment comment = readEditableComment(requesterId, commentId);
-
     commentRepository.delete(comment);
     return comment.toResponse();
   }
@@ -64,10 +61,24 @@ public class CommentService {
   private Comment readEditableComment(long requesterId, long commentId) {
 
     Comment comment = readComment(commentId);
+    validateRequesterIsWriter(requesterId, comment);
+    return comment;
+  }
+
+  private void validateGatheringExists(long gatheringId) {
+    if(!isGatheringExists(gatheringId)) {
+      throw new CustomException(ENTITY_NOT_FOUND);
+    }
+  }
+
+  private void validateRequesterIsWriter(long requesterId, Comment comment) {
     if (!comment.isWriter(requesterId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
-    return comment;
+  }
+
+  private boolean isGatheringExists(long gatheringId) {
+    return gatheringRepository.existsById(gatheringId);
   }
 
   private Comment readComment(long commentId) {
@@ -75,14 +86,8 @@ public class CommentService {
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
   }
 
-  private Member readRequester(long requesterId) {
-    return memberRepository.findById(requesterId)
+  private Member readMember(long memberId) {
+    return memberRepository.findById(memberId)
         .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
-  }
-
-  private void validateCreateCommentRequest(long gatheringId) {
-    if(!gatheringRepository.existsById(gatheringId)) {
-      throw new CustomException(ENTITY_NOT_FOUND);
-    }
   }
 }
