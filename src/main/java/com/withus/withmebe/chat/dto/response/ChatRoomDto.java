@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record ChatRoomDto(
-    Long chatId,
+    Long chatroomId,
 
     Long gatheringId,
 

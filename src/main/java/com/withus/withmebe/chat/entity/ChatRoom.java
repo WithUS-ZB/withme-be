@@ -43,7 +43,7 @@ public class ChatRoom extends BaseEntity {
 
   public ChatRoomDto toDto(){
     return ChatRoomDto.builder()
-        .chatId(this.id)
+        .chatroomId(this.id)
         .title(this.title)
         .gatheringId(this.id)
         .gatheringDttm(this.gathering.getGatheringDateTime())
