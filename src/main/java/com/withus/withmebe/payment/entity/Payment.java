@@ -85,9 +85,9 @@ public class Payment extends BaseEntity {
     return ApproveRequestToKcp.builder()
         .siteCd(siteCd)
         .kcpCertInfo(certInfo)
-        .encInfo(request.encInfo())
-        .encData(request.encData())
-        .tranCd(request.tranCd())
+        .encInfo(request.getEncInfo())
+        .encData(request.getEncData())
+        .tranCd(request.getTranCd())
         .payType(this.payType.toString())
         .ordrNo(this.id.toString())
         .ordrMony(this.goodPrice)
@@ -99,7 +99,7 @@ public class Payment extends BaseEntity {
   }
 
   public boolean isGoodPrice(ApprovePaymentRequest request) {
-    return Objects.equals(this.goodPrice, request.ordrMony());
+    return Objects.equals(this.goodPrice, request.getOrdrMony());
   }
 
   public boolean isStatus(Status status) {

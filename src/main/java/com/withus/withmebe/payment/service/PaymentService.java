@@ -73,7 +73,7 @@ public class PaymentService {
 
   @Transactional
   public PaymentResponse approvePayment(long requesterId, ApprovePaymentRequest request) {
-    Payment payment = readPayment(request.ordrNo());
+    Payment payment = readPayment(request.getOrdrId());
     validateApprovePaymentRequest(requesterId, request, payment);
 
     String tradeNo = requestApproveToKcp(
