@@ -18,6 +18,7 @@ import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.PaymentResponse;
 import com.withus.withmebe.payment.entity.Payment;
 import com.withus.withmebe.payment.repository.PaymentRepository;
+import com.withus.withmebe.payment.type.Currency;
 import com.withus.withmebe.payment.type.PayType;
 import com.withus.withmebe.payment.type.Status;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +68,7 @@ public class PaymentService {
         .goodPrice(PREMIUM_MEMBERSHIP_PRICE)
         .payType(PayType.PACA)
         .build());
-    return newPayment.toAddPaymentResponse(SITE_CD);
+    return newPayment.toAddPaymentResponse(SITE_CD, Currency.WON);
   }
 
   @Transactional
