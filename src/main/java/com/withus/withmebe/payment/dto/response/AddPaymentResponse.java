@@ -9,6 +9,7 @@ public record AddPaymentResponse(
     String payMethod,
     String goodName,
     String goodMny,
+    String currency,
     String shopUserId
 ) {
 
