@@ -162,7 +162,7 @@ class ChatRoomServiceTest {
   }
 
   @Test
-  void readParticipantsByRoom_throwsException() {
+  void readParticipantsByRoom_AUTHORIZATION_ISSUE() {
     when(chatRoomRepository.existsByCurrentMemberIdAndRoomIdAndParticipationStatus(
         CURRENT_MEMBER_ID, ROOM_ID, CHAT_JOINED)).thenReturn(false);
 
@@ -190,7 +190,7 @@ class ChatRoomServiceTest {
   }
 
   @Test
-  void readParticipationJoinInfo_throwsException() {
+  void readParticipationJoinInfo_ENTITY_NOT_FOUND() {
     when(chatRoomRepository.findById(ROOM_ID)).thenReturn(Optional.of(chatRoom));
     when(participationRepository.findByParticipant_IdAndGatheringAndStatus(
         CURRENT_MEMBER_ID, gathering, CHAT_JOINED))
