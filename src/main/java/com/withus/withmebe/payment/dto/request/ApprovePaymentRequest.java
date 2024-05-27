@@ -1,20 +1,32 @@
 package com.withus.withmebe.payment.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record ApprovePaymentRequest(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApprovePaymentRequest{
     @NotBlank
-    String encData,
+    private String encData;
     @NotBlank
-    String encInfo,
+    private String encInfo;
     @NotBlank
-    String tranCd,
-    @NotNull
-    Long ordrMony,
+    private String tranCd;
     @NotBlank
-    Long ordrNo
+    private String ordrChk;
 
-) {
+    public long getOrdrId() {
+        String ordrId = this.ordrChk.split("[|]")[0];
+        return Long.parseLong(ordrId);
+    }
 
+    public long getOrdrMony() {
+        String ordrMony = this.ordrChk.split("[|]")[1];
+        return Long.parseLong(ordrMony);
+    }
 }

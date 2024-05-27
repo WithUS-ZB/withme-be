@@ -5,6 +5,7 @@ import com.withus.withmebe.payment.dto.request.ApprovePaymentRequest;
 import com.withus.withmebe.payment.dto.request.ApproveRequestToKcp;
 import com.withus.withmebe.payment.dto.response.AddPaymentResponse;
 import com.withus.withmebe.payment.dto.response.PaymentResponse;
+import com.withus.withmebe.payment.type.Currency;
 import com.withus.withmebe.payment.type.PayType;
 import com.withus.withmebe.payment.type.Status;
 import jakarta.persistence.Column;
@@ -56,13 +57,14 @@ public class Payment extends BaseEntity {
     this.payType = payType;
   }
 
-  public AddPaymentResponse toAddPaymentResponse(String siteCd) {
+  public AddPaymentResponse toAddPaymentResponse(String siteCd, Currency currency) {
     return AddPaymentResponse.builder()
         .siteCd(siteCd)
         .ordrId(this.id.toString())
         .payMethod(this.payType.getCode())
         .goodName(this.goodName)
         .goodMny(this.goodPrice.toString())
+        .currency(currency.toString())
         .shopUserId(this.memberId.toString())
         .build();
   }
@@ -83,9 +85,9 @@ public class Payment extends BaseEntity {
     return ApproveRequestToKcp.builder()
         .siteCd(siteCd)
         .kcpCertInfo(certInfo)
-        .encInfo(request.encInfo())
-        .encData(request.encData())
-        .tranCd(request.tranCd())
+        .encInfo(request.getEncInfo())
+        .encData(request.getEncData())
+        .tranCd(request.getTranCd())
         .payType(this.payType.toString())
         .ordrNo(this.id.toString())
         .ordrMony(this.goodPrice)
@@ -97,7 +99,7 @@ public class Payment extends BaseEntity {
   }
 
   public boolean isGoodPrice(ApprovePaymentRequest request) {
-    return Objects.equals(this.goodPrice, request.ordrMony());
+    return Objects.equals(this.goodPrice, request.getOrdrMony());
   }
 
   public boolean isStatus(Status status) {

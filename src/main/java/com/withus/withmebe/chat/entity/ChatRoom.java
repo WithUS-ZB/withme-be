@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,12 @@ public class ChatRoom extends BaseEntity {
 
   private String title;
 
+  private String lastMessageContent;
+
+  private LocalDateTime lastMessageDttm;
+
+  private Long memberCount;
+
   @Builder
   public ChatRoom(Gathering gathering){
     this.gathering = gathering;
@@ -36,10 +43,26 @@ public class ChatRoom extends BaseEntity {
 
   public ChatRoomDto toDto(){
     return ChatRoomDto.builder()
-        .chatId(this.id)
+        .chatroomId(this.id)
         .title(this.title)
         .gatheringId(this.id)
-        .localDateTime(this.gathering.getGatheringDateTime())
+        .gatheringDttm(this.gathering.getGatheringDateTime())
+        .lastMessageContent(this.lastMessageContent)
+        .lastMessageDttm(this.lastMessageDttm)
+        .memberCount(this.memberCount)
         .build();
+  }
+
+  public void memberCountUp(){
+    this.memberCount = this.memberCount == null ? 1 : this.memberCount+1;
+  }
+
+  public void memberCountDown(){
+    this.memberCount = this.memberCount == null ? -1 : this.memberCount-1;
+  }
+
+  public void updateByMessage(ChatMessage chatMessage){
+    this.lastMessageContent = chatMessage.getContent();
+    this.lastMessageDttm = chatMessage.getCreatedDttm();
   }
 }

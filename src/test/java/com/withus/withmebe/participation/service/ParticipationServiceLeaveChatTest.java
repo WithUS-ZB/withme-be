@@ -20,7 +20,6 @@ import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.member.entity.Member;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
-import com.withus.withmebe.participation.type.Status;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -61,7 +60,7 @@ class ParticipationServiceLeaveChatTest {
 
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(participation));
 
-    participationService.leaveChat(participantId, participationId);
+    participationService.leaveChatroom(participantId, participationId);
 
     verify(participationRepository, times(1)).findById(participationId);
     verify(participation, times(1)).setStatus(CHAT_LEFT);
@@ -74,7 +73,7 @@ class ParticipationServiceLeaveChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.empty());
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.leaveChat(1L, participationId)
+        participationService.leaveChatroom(1L, participationId)
     );
 
     assertEquals(ENTITY_NOT_FOUND.getStatus(), exception.getHttpStatus());
@@ -104,7 +103,7 @@ class ParticipationServiceLeaveChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.leaveChat(participantId, participationId)
+        participationService.leaveChatroom(participantId, participationId)
     );
 
     assertEquals(INVALID_TIME.getMessage(), exception.getMessage());
@@ -135,7 +134,7 @@ class ParticipationServiceLeaveChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.leaveChat(otherMemberId, participationId)
+        participationService.leaveChatroom(otherMemberId, participationId)
     );
 
     assertEquals(AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
@@ -165,7 +164,7 @@ class ParticipationServiceLeaveChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.leaveChat(participantId, participationId)
+        participationService.leaveChatroom(participantId, participationId)
     );
 
     assertEquals(PARTICIPATION_CONFLICT.getMessage(), exception.getMessage());

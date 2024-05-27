@@ -60,7 +60,8 @@ public class ParticipationService {
     return newParticipation.toResponse();
   }
 
-  public void createParticipationByHost(Long currentMemberId, Gathering gathering) {
+  public void createParticipationByHost(Long currentMemberId, Long gatheringId) {
+    Gathering gathering = readGathering(gatheringId);
     if (!gathering.isHost(currentMemberId)) {
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
@@ -126,14 +127,14 @@ public class ParticipationService {
 
 
   @Transactional
-  public void joinChat(Long currentMemberId, Long participationId) {
+  public void joinChatroom(Long currentMemberId, Long participationId) {
     new JoinChatStatusChanger(
         readParticipation(participationId), currentMemberId)
         .updateStatusTemplateMethod();
   }
 
   @Transactional
-  public void leaveChat(Long currentMemberId, Long participationId) {
+  public void leaveChatroom(Long currentMemberId, Long participationId) {
     new LeaveChatStatusChanger(
         readParticipation(participationId), currentMemberId)
         .updateStatusTemplateMethod();
