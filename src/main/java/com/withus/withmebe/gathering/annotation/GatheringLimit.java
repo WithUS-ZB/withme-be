@@ -1,4 +1,4 @@
-package com.withus.withmebe.common.anotation;
+package com.withus.withmebe.gathering.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

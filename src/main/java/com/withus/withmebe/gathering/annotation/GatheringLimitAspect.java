@@ -1,4 +1,4 @@
-package com.withus.withmebe.common.anotation;
+package com.withus.withmebe.gathering.annotation;
 
 import com.withus.withmebe.gathering.repository.GatheringRepository;
 import com.withus.withmebe.member.entity.Member;
