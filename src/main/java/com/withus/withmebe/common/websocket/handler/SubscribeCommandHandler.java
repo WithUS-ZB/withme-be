@@ -10,8 +10,10 @@ import java.security.Principal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
+@Slf4j
 @RequiredArgsConstructor
 public class SubscribeCommandHandler implements StompCommandHandler {
   private static final Pattern ROOM_ID_PATTERN = Pattern.compile("/topic/chatroom/(\\d+)");
@@ -22,7 +24,9 @@ public class SubscribeCommandHandler implements StompCommandHandler {
   @Override
   public void handle(StompHeaderAccessor accessor) {
     Principal user = accessor.getUser();
+    log.info("[SubscribeCommandHandler][handle]" + user);
     if(user == null){
+
       throw new CustomException(AUTHORIZATION_ISSUE);
     }
     Long currentMemberId = Long.valueOf(user.getName());
@@ -37,6 +41,7 @@ public class SubscribeCommandHandler implements StompCommandHandler {
   }
 
   private static Long extractRoomId(String path) {
+    log.info("[SubscribeCommandHandler][extractRoomId]" + path);
     Matcher matcher = ROOM_ID_PATTERN.matcher(path);
     if (matcher.matches()) {
       return Long.parseLong(matcher.group(1));

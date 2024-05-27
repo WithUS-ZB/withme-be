@@ -7,16 +7,19 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.security.jwt.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.ObjectUtils;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ConnectCommandHandler implements StompCommandHandler{
   private final TokenProvider tokenProvider;
   @Override
   public void handle(StompHeaderAccessor accessor) {
     String accessToken = resolveAccessTokenFromStompHeaderAccessor(accessor);
+    log.info("[ConnectCommandHandler][handle]" + accessToken);
 
     if (!tokenProvider.validAccessToken(accessToken)) {
       throw new CustomException(AUTHENTICATION_ISSUE);

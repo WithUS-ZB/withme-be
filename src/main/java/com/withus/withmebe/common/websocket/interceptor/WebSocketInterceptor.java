@@ -26,6 +26,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
     StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
     if (accessor == null) {
+      log.info("[ConnectCommandHandler][preSend] accessor is null");
       throw new CustomException(STOMP_HEADER_ACCESSOR_NOT_FOUND_EXCEPTION);
     }
 
