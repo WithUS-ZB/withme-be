@@ -95,7 +95,7 @@ public class ChatRoomController {
   }
 
   /**
-   * 내가 참여하고 있는 채팅 목록 조회
+   * 내가 참여하고 있는 채팅방 리스트 조회
    *
    * @param currentMemberId 로그인 멤버 id
    * @param pageable        페이지 설정
@@ -111,7 +111,7 @@ public class ChatRoomController {
   }
 
   /**
-   * 방에 참여하고 있는 참여자 리스트
+   * 방에 참여하고 있는 참여자 리스트 조회
    *
    * @param currentMemberId 로그인 멤버 id
    * @param roomId          채팅방 id
@@ -127,7 +127,7 @@ public class ChatRoomController {
   }
 
   /**
-   * 참여중인 채팅방에 대한 나의 참여 정보
+   * 참여중인 채팅방에 대한 나의 참여 정보 조회
    * <p>
    * 해당 채팅룸에 대한 참여 정보를 가져옵니다.
    *
