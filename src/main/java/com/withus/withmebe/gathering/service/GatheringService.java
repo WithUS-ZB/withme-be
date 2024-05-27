@@ -2,7 +2,7 @@ package com.withus.withmebe.gathering.service;
 
 import static com.withus.withmebe.common.exception.ExceptionCode.ENTITY_NOT_FOUND;
 
-import com.withus.withmebe.common.anotation.GatheringLimit;
+import com.withus.withmebe.gathering.annotation.GatheringLimit;
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.Type.GatheringType;

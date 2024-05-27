@@ -1,6 +1,6 @@
 package com.withus.withmebe.gathering.dto.request;
 
-import com.withus.withmebe.common.anotation.ValidDateRange;
+import com.withus.withmebe.gathering.annotation.ValidDateRange;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
 import com.withus.withmebe.gathering.Type.ParticipantsType;
