@@ -138,7 +138,7 @@ class ChatMessageServiceTest {
   }
 
   @Test
-  void readListByRoomId_throwsException() {
+  void readListByRoomId_AUTHORIZATION_ISSUE() {
     when(chatRoomRepository.existsByCurrentMemberIdAndRoomIdAndParticipationStatus(
         CURRENT_MEMBER_ID, ROOM_ID, CHAT_JOINED))
         .thenReturn(false);
