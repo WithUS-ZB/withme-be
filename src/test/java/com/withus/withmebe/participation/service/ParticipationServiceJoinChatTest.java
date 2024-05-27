@@ -59,7 +59,7 @@ class ParticipationServiceJoinChatTest {
 
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(participation));
 
-    participationService.joinChat(participantId, participationId);
+    participationService.joinChatroom(participantId, participationId);
 
     verify(participationRepository, times(1)).findById(participationId);
     verify(participation, times(1)).setStatus(CHAT_JOINED);
@@ -72,7 +72,7 @@ class ParticipationServiceJoinChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.empty());
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.joinChat(1L, participationId)
+        participationService.joinChatroom(1L, participationId)
     );
 
     assertEquals(ENTITY_NOT_FOUND.getStatus(), exception.getHttpStatus());
@@ -102,7 +102,7 @@ class ParticipationServiceJoinChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.joinChat(participantId, participationId)
+        participationService.joinChatroom(participantId, participationId)
     );
 
     assertEquals(INVALID_TIME.getMessage(), exception.getMessage());
@@ -133,7 +133,7 @@ class ParticipationServiceJoinChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.joinChat(otherMemberId, participationId)
+        participationService.joinChatroom(otherMemberId, participationId)
     );
 
     assertEquals(AUTHORIZATION_ISSUE.getMessage(), exception.getMessage());
@@ -163,7 +163,7 @@ class ParticipationServiceJoinChatTest {
     when(participationRepository.findById(participationId)).thenReturn(Optional.of(stubbedParticipation));
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        participationService.joinChat(participantId, participationId)
+        participationService.joinChatroom(participantId, participationId)
     );
 
     assertEquals(PARTICIPATION_CONFLICT.getMessage(), exception.getMessage());

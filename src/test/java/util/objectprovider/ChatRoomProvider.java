@@ -9,8 +9,11 @@ public class ChatRoomProvider {
 
   public static ChatRoom getStubbedChatRoom(Long chatRoomId, Gathering gathering){
     ChatRoom chatRoom = ChatRoom.builder()
-        .gathering(gathering).build();
+        .gathering(gathering)
+        .build();
     ReflectionTestUtils.setField(chatRoom, "id", chatRoomId);
+    ReflectionTestUtils.setField(chatRoom, "memberCount", 2L);
+
     return chatRoom;
   }
 }

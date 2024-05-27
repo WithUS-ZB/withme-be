@@ -1,5 +1,6 @@
 package com.withus.withmebe.participation.entity;
 
+import com.withus.withmebe.chat.dto.response.ParticipationInfoOfChatroom;
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.member.entity.Member;
@@ -91,6 +92,17 @@ public class Participation extends BaseEntity {
         .gatheringStatus(this.gathering.getStatus())
         .status(this.status)
         .updatedDttm(this.getUpdatedDttm())
+        .build();
+  }
+
+  public ParticipationInfoOfChatroom toParticipationInfoOfChatroom(Long chatroomId, String chatroomTitle){
+    return ParticipationInfoOfChatroom.builder()
+        .participationId(this.id)
+        .chatroomId(chatroomId)
+        .memberId(this.participant.getId())
+        .nickname(this.participant.getNickName())
+        .chatroomTitle(chatroomTitle)
+        .participationStatus(this.status)
         .build();
   }
 

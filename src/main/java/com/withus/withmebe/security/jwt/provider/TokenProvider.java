@@ -3,6 +3,7 @@ package com.withus.withmebe.security.jwt.provider;
 import static com.withus.withmebe.common.exception.ExceptionCode.TOKEN_EXPIRED;
 
 import com.withus.withmebe.common.exception.CustomException;
+import com.withus.withmebe.security.jwt.repository.AccessTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +36,7 @@ public class TokenProvider {
   private SecretKey key;
   @Value("${spring.jwt.secret}")
   private String secretKey;
+  private final AccessTokenRepository accessTokenRepository;
 
   public String generateToken(String username, List<String> roles) {
     Claims claims = Jwts.claims().subject(username).add(KEY_ROLES, roles).build();
@@ -54,8 +56,13 @@ public class TokenProvider {
     UserDetails userDetails = this.userDetailsService.loadUserByUsername(this.getUsername(token));
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
-
-  public boolean validateToken(String token) {
+  public boolean validAccessToken(String token) {
+    return !(
+        !StringUtils.hasText(token)
+            || !validateToken(token)
+            || !token.equals(accessTokenRepository.get(Long.valueOf(getUsername(token)))));
+  }
+  private boolean validateToken(String token) {
     return !getExpiration(token).before(new Date());
   }
 
