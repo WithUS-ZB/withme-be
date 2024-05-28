@@ -1,11 +1,13 @@
 package com.withus.withmebe.gathering.Type;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum GatheringType {
     ALL("all", "전체"),
-    MEETING("meeting","미팅"),
+    MEETING("meeting","모임"),
     EVENT("event","이벤트");
 
     private final String request;

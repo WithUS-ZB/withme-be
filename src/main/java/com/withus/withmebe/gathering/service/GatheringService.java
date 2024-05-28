@@ -49,6 +49,7 @@ public class GatheringService {
   private final GatheringRepository gatheringRepository;
   private final MemberRepository memberRepository;
   private final ImgService imgService;
+  private static final String GATHERING_REMINDER_MESSAGE = "%s [%s] 시작 하루 전입니다.";
 
   @Transactional
   @GatheringLimit(value = 5)
@@ -158,17 +159,23 @@ public class GatheringService {
 
   @Scheduled(cron = "${spring.gathering.reminder.cron}")
   public void gatheringReminder() {
+
     LocalDate tomorrow = LocalDate.now().plusDays(1);
-    List<Gathering> gatherings = gatheringRepository.findAllByDayAndStatusEquals(tomorrow,
-        Status.PROGRESS);
+    List<Gathering> gatherings =
+        gatheringRepository.findAllByDayAndStatusEquals(tomorrow, Status.PROGRESS);
+
     for (Gathering gathering : gatherings) {
-      List<Long> participants = participationRepository.findAllByGatheringAndStatusEquals(gathering,
-              com.withus.withmebe.participation.type.Status.APPROVED)
-          .stream().map(Participation::getParticipant)
+      List<Long> participants = participationRepository.findAllByGathering_Id(gathering.getId())
+          .stream()
+          .filter(Participation::isValidParticipationStatus)
+          .map(Participation::getParticipant)
           .map(Member::getId).collect(Collectors.toList());
+
       eventPublisher.publishEvent(NotificationEvent.builder()
           .receivers(participants)
-          .message("모임 [" + gathering.getTitle() + "] 시작 하루 전입니다.")
+          .message(
+              String.format(GATHERING_REMINDER_MESSAGE, gathering.getGatheringType().getValue(),
+                  gathering.getTitle()))
           .notificationType(NotificationType.GATHERING)
           .build()
       );
