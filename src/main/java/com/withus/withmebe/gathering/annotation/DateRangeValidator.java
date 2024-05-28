@@ -1,5 +1,6 @@
-package com.withus.withmebe.common.anotation;
+package com.withus.withmebe.gathering.annotation;
 
+import com.withus.withmebe.gathering.annotation.ValidDateRange;
 import com.withus.withmebe.gathering.dto.request.AddGatheringRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
