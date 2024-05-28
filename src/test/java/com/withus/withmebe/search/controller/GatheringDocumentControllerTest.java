@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import com.withus.withmebe.search.service.GatheringDocumentService;
 import com.withus.withmebe.search.type.SearchOption;
-import com.withus.withmebe.search.type.SearchRange;
 import com.withus.withmebe.security.jwt.filter.JwtAuthenticationFilter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -54,7 +53,7 @@ class GatheringDocumentControllerTest {
     GatheringSearchResponse gatheringSearchResponse2 =
         getStubbedGatheringDocument(2).toGatheringSearchResponse();
 
-    given(gatheringDocumentService.searchGatheringDocumentsByTitle(any(SearchRange.class),
+    given(gatheringDocumentService.searchGatheringDocumentsByTitle(any(SearchOption.class),
         anyString(), any(
             Pageable.class), any(SearchOption.class)))
         .willReturn(new PageImpl<GatheringSearchResponse>(
@@ -164,7 +163,7 @@ class GatheringDocumentControllerTest {
     GatheringSearchResponse gatheringSearchResponse2 =
         getStubbedGatheringDocument(2).toGatheringSearchResponse();
 
-    given(gatheringDocumentService.searchGatheringDocumentsByTitle(any(SearchRange.class),
+    given(gatheringDocumentService.searchGatheringDocumentsByTitle(any(SearchOption.class),
         argThat(title -> title == null || title.isEmpty()), any(Pageable.class), any(SearchOption.class)))
         .willReturn(new PageImpl<GatheringSearchResponse>(
             List.of(gatheringSearchResponse1, gatheringSearchResponse2),
