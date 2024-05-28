@@ -57,6 +57,7 @@ public class ChatMessage extends BaseEntity {
         .chatId(this.id)
         .content(this.content)
         .memberId(this.chatMember.getId())
+        .profileImg(this.chatMember.getProfileImg())
         .nickName(this.chatMember.getNickName())
         .messageType(this.type)
         .chatDateTime(this.getCreatedDttm())
