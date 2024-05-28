@@ -113,4 +113,8 @@ public class Participation extends BaseEntity {
   public boolean statusEquals(Status status) {
     return this.status == status;
   }
+
+  public boolean isValidParticipationStatus() {
+    return !(this.status.equals(Status.CANCELED) || this.status.equals(Status.REJECTED));
+  }
 }
