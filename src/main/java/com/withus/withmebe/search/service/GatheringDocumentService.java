@@ -7,8 +7,6 @@ import co.elastic.clients.json.JsonData;
 import com.withus.withmebe.gathering.Type.Status;
 import com.withus.withmebe.search.document.GatheringDocument;
 import com.withus.withmebe.search.dto.GatheringSearchResponse;
-import com.withus.withmebe.search.type.Option;
-import com.withus.withmebe.search.type.SearchRange;
 import com.withus.withmebe.search.type.SearchOption;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,13 +30,14 @@ public class GatheringDocumentService {
 
   private final ElasticsearchOperations elasticsearchOperations;
   private static final Query ALL_MATCH_QUERY = QueryBuilders.matchAll().build()._toQuery();
+  private static final String TARGET_INDEX_NAME = "gathering";
 
-  public Page<GatheringSearchResponse> searchGatheringDocumentsByTitle(SearchRange range,
+  public Page<GatheringSearchResponse> searchGatheringDocumentsByTitle(SearchOption range,
       String title, Pageable pageable, SearchOption option) {
 
     SearchHits<GatheringDocument> searchHits = elasticsearchOperations.search(
         getSearchQuery(range, title, pageable, option),
-        GatheringDocument.class, IndexCoordinates.of("gathering"));
+        GatheringDocument.class, IndexCoordinates.of(TARGET_INDEX_NAME));
     List<GatheringSearchResponse> gatheringSearchResponses = StreamUtils.createStreamFromIterator(
             searchHits.iterator())
         .map(hit -> hit.getContent().toGatheringSearchResponse())
@@ -48,7 +47,7 @@ public class GatheringDocumentService {
         searchHits.getTotalHits());
   }
 
-  private NativeQuery getSearchQuery(SearchRange range, String title, Pageable pageable,
+  private NativeQuery getSearchQuery(SearchOption range, String title, Pageable pageable,
       SearchOption option) {
     return new NativeQueryBuilder()
         .withQuery(getBoolQuery(range, title, option))
@@ -56,7 +55,7 @@ public class GatheringDocumentService {
         .build();
   }
 
-  private Query getBoolQuery(SearchRange range, String title, SearchOption option) {
+  private Query getBoolQuery(SearchOption range, String title, SearchOption option) {
     return QueryBuilders.bool()
         .must(
             getTitleQuery(title),
@@ -87,10 +86,10 @@ public class GatheringDocumentService {
     return QueryBuilders.multiMatch().query(query).fields(fields).type(TextQueryType.CrossFields).build()._toQuery();
   }
 
-  private Query getOptionQuery(Option option) {
-    if (option.getName().equals("ALL")) {
+  private Query getOptionQuery(SearchOption option) {
+    if (option.equals(SearchOption.ALL)) {
       return ALL_MATCH_QUERY;
-    } else if (option.getName().equals("PAY_HAS")) {
+    } else if (option.equals(SearchOption.PAY_HAS)) {
       return QueryBuilders.range().field(option.getField()).gt(JsonData.fromJson(option.getValue()))
           .build()._toQuery();
     } else {

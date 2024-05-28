@@ -9,7 +9,6 @@ import static util.objectprovider.GatheringDocumentProvider.getStubbedGatheringD
 import com.withus.withmebe.search.document.GatheringDocument;
 import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import com.withus.withmebe.search.type.SearchOption;
-import com.withus.withmebe.search.type.SearchRange;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +57,7 @@ class GatheringDocumentServiceTest {
 
     //when
     Page<GatheringSearchResponse> gatheringSearchResponses = gatheringDocumentService.searchGatheringDocumentsByTitle(
-        SearchRange.ALL, "제목", Pageable.ofSize(10), SearchOption.ALL);
+        SearchOption.ALL, "제목", Pageable.ofSize(10), SearchOption.ALL);
     //then
     assertEquals(2, gatheringSearchResponses.getTotalElements());
     assertEquals(1, gatheringSearchResponses.getTotalPages());

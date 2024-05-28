@@ -3,7 +3,6 @@ package com.withus.withmebe.search.controller;
 import com.withus.withmebe.search.dto.GatheringSearchResponse;
 import com.withus.withmebe.search.service.GatheringDocumentService;
 import com.withus.withmebe.search.type.SearchOption;
-import com.withus.withmebe.search.type.SearchRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +23,7 @@ public class GatheringDocumentController {
 
   @GetMapping("/title")
   public ResponseEntity<Page<GatheringSearchResponse>> searchGatheringDocuments(
-      @RequestParam SearchRange range,
+      @RequestParam SearchOption range,
       @RequestParam(required = false) String title,
       @PageableDefault(sort = "created_dttm", direction = Direction.DESC) Pageable pageable,
       @RequestParam SearchOption option
