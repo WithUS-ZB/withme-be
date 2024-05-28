@@ -22,12 +22,6 @@ public class LoggingAspect {
 
   @Around("isAllController()")
   public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-    HttpServletRequest request =
-        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-    String clientIp = request.getRemoteAddr();
-
-    log.info("[Aspect][Log]Client IP: {}", clientIp);
-
     log.info("[Aspect][Log][start]logAround:{}:{}"
         , joinPoint.getSignature().getDeclaringTypeName()
         , joinPoint.getSignature().getName());
