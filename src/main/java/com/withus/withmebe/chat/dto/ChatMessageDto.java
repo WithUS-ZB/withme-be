@@ -9,6 +9,7 @@ public record ChatMessageDto(
     Long chatId,
     String content,
     Long memberId,
+    String profileImg,
     String nickName,
     MessageType messageType,
     LocalDateTime chatDateTime
