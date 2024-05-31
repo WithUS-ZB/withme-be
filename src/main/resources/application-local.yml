@@ -41,7 +41,9 @@ spring:
             user-name-attribute: id
   elasticsearch:
     uri : localhost:9200
-
+  gathering:
+    reminder:
+      cron: ${GATHERING_REMAINDER_CRON}
 cool-sms:
   api-key: cool-sms.api-key
   api-secret-key: cool-sms.api-secret-key
