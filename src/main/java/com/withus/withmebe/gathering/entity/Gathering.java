@@ -1,5 +1,7 @@
 package com.withus.withmebe.gathering.entity;
 
+import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
+
 import com.withus.withmebe.common.entity.BaseEntity;
 import com.withus.withmebe.gathering.Type.GatheringType;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
@@ -284,6 +286,10 @@ public class Gathering extends BaseEntity {
 
   public boolean isHost(Long memberId){
     return this.member.getId().equals(memberId);
+  }
+
+  public boolean isProgress(){
+    return this.status == PROGRESS;
   }
 
   public LocalDateTime getGatheringDateTime(){

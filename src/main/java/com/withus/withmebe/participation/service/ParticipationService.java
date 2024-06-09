@@ -2,17 +2,16 @@ package com.withus.withmebe.participation.service;
 
 
 import static com.withus.withmebe.common.exception.ExceptionCode.AUTHORIZATION_ISSUE;
-import static com.withus.withmebe.gathering.Type.Status.PROGRESS;
 import static com.withus.withmebe.participation.type.Status.APPROVED;
 import static com.withus.withmebe.participation.type.Status.CANCELED;
 import static com.withus.withmebe.participation.type.Status.CHAT_JOINED;
+import static com.withus.withmebe.participation.type.Status.CHAT_LEFT;
 import static com.withus.withmebe.participation.type.Status.CREATED;
 import static com.withus.withmebe.participation.type.Status.REJECTED;
 
 import com.withus.withmebe.common.exception.CustomException;
 import com.withus.withmebe.common.exception.ExceptionCode;
 import com.withus.withmebe.gathering.Type.ParticipantSelectionMethod;
-import com.withus.withmebe.gathering.Type.ParticipantsType;
 import com.withus.withmebe.gathering.entity.Gathering;
 import com.withus.withmebe.gathering.event.DeleteGatheringEvent;
 import com.withus.withmebe.gathering.repository.GatheringRepository;
@@ -23,11 +22,8 @@ import com.withus.withmebe.participation.dto.MyParticipationSimpleInfo;
 import com.withus.withmebe.participation.dto.ParticipationResponse;
 import com.withus.withmebe.participation.entity.Participation;
 import com.withus.withmebe.participation.repository.ParticipationRepository;
-import com.withus.withmebe.participation.status.JoinChatStatusChanger;
-import com.withus.withmebe.participation.status.LeaveChatStatusChanger;
+import com.withus.withmebe.participation.status.ParticipationStatusChangerSimpleFactory;
 import com.withus.withmebe.participation.type.Status;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
@@ -42,22 +38,26 @@ public class ParticipationService {
   private final GatheringRepository gatheringRepository;
   private final ParticipationRepository participationRepository;
   private final MemberRepository memberRepository;
+  private final ParticipationStatusChangerSimpleFactory participationStatusChangerSimpleFactory;
 
-  @Transactional
+  private static final int MAX_PARTICIPATION_NON_PREMIUM = 5;
+
   public ParticipationResponse createParticipation(long requesterId, long gatheringId) {
 
     Gathering gathering = readGathering(gatheringId);
     Member requester = readMember(requesterId);
     validateCreateParticipationRequest(requester, gathering);
 
-    Participation newParticipation = participationRepository.save(Participation.builder()
-        .gathering(gathering)
-        .participant(requester)
-        .status(
-            (gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)
-                ? APPROVED : CREATED))
-        .build());
-    return newParticipation.toResponse();
+    Participation newParticipation = updateParticipationStatus(
+        CREATED
+        , Participation.builder().gathering(gathering).participant(requester).build()
+        , requesterId);
+
+    if(gathering.getParticipantSelectionMethod().equals(ParticipantSelectionMethod.FIRST_COME)){
+      newParticipation.setStatus(APPROVED);
+    }
+
+    return participationRepository.save(newParticipation).toResponse();
   }
 
   public void createParticipationByHost(Long currentMemberId, Long gatheringId) {
@@ -79,37 +79,33 @@ public class ParticipationService {
   }
 
   @Transactional(readOnly = true)
-  public Page<GatheringParticipationSimpleInfo> readParticipations(long requesterId,
-      long gatheringId, Pageable pageble) {
+  public Page<GatheringParticipationSimpleInfo> readParticipations(
+      long requesterId, long gatheringId, Pageable pageble) {
 
-    validateRequesterIsHost(requesterId, readGathering(gatheringId));
+    if (!readGathering(gatheringId).isHost(requesterId)) {
+      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
+    }
 
-    Page<Participation> participations = participationRepository.findByGathering_Id(gatheringId,
-        pageble);
-    return participations.map(Participation::toGatheringParticipationSimpleInfo);
+    return participationRepository.findByGathering_Id(gatheringId, pageble)
+        .map(Participation::toGatheringParticipationSimpleInfo);
   }
 
-  @Transactional
   public ParticipationResponse cancelParticipation(long requesterId, long participationId) {
+    updateParticipationStatus(CANCELED, readParticipation(participationId), requesterId);
 
-    Participation participation = readParticipation(participationId);
-    validateCancelParticipationRequest(requesterId, participation);
-
-    participation.setStatus(CANCELED);
-    Participation updatedParticipation = readParticipation(participationId);
-    return updatedParticipation.toResponse();
+    return readParticipation(participationId).toResponse();
   }
 
-  @Transactional
-  public ParticipationResponse updateParticipationStatus(long currentMemberId, long participationId,
-      Status status) {
+  public ParticipationResponse approveParticipation(long requesterId, long participationId) {
+    updateParticipationStatus(APPROVED, readParticipation(participationId), requesterId);
 
-    Participation participation = readParticipation(participationId);
-    validateUpdateParticipationRequest(currentMemberId, participation, status);
+    return readParticipation(participationId).toResponse();
+  }
 
-    participation.setStatus(status);
-    Participation updatedParticipation = readParticipation(participationId);
-    return updatedParticipation.toResponse();
+  public ParticipationResponse rejectParticipation(long requesterId, long participationId) {
+    updateParticipationStatus(REJECTED, readParticipation(participationId), requesterId);
+
+    return readParticipation(participationId).toResponse();
   }
 
   @Transactional(readOnly = true)
@@ -120,151 +116,51 @@ public class ParticipationService {
 
   @Transactional(readOnly = true)
   public Page<MyParticipationSimpleInfo> readMyParticipations(long requesterId, Pageable pageble) {
-    Page<Participation> participations = participationRepository.findByParticipant_IdAndStatusIsNot(
-        requesterId, Status.CANCELED, pageble);
-    return participations.map(Participation::toMyParticipationSimpleInfo);
+    return participationRepository.findByParticipant_IdAndStatusIsNot(
+        requesterId, Status.CANCELED, pageble).map(Participation::toMyParticipationSimpleInfo);
   }
 
 
-  @Transactional
   public void joinChatroom(Long currentMemberId, Long participationId) {
-    new JoinChatStatusChanger(
-        readParticipation(participationId), currentMemberId)
-        .updateStatusTemplateMethod();
+    updateParticipationStatus(CHAT_JOINED, readParticipation(participationId), currentMemberId);
+  }
+
+  public void leaveChatroom(Long currentMemberId, Long participationId) {
+    updateParticipationStatus(CHAT_LEFT, readParticipation(participationId), currentMemberId);
   }
 
   @Transactional
-  public void leaveChatroom(Long currentMemberId, Long participationId) {
-    new LeaveChatStatusChanger(
-        readParticipation(participationId), currentMemberId)
+  public Participation updateParticipationStatus(Status status, Participation participation, Long memberId){
+    return participationStatusChangerSimpleFactory.getChangeable(status, participation, memberId)
         .updateStatusTemplateMethod();
   }
 
   @EventListener
   protected void deleteGatheringParticipations(DeleteGatheringEvent deleteGatheringEvent) {
-    List<Participation> participations = participationRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId());
-    participationRepository.deleteAll(participations);
+    participationRepository.deleteAll(
+        participationRepository.findAllByGathering_Id(deleteGatheringEvent.gatheringId()));
 
   }
 
   private void validateCreateParticipationRequest(Member requester, Gathering gathering) {
-
-    validateParticipantsType(requester, gathering);
-    validateRequesterIsNotHost(requester, gathering);
-    validateGatheringStatus(gathering);
-    validateParticipationIsNotDuplicated(requester, gathering);
-    validateParticipationPeriod(gathering);
-    validateMyParticipationMaximum(requester);
-    validateCurrentParticipantCount(gathering);
-  }
-
-  private void validateCancelParticipationRequest(long requesterId, Participation participation) {
-
-    validateRequesterIsParticipant(requesterId, participation);
-    validateParticipationStatusIsNot(participation, REJECTED);
-  }
-
-  private void validateUpdateParticipationRequest(long requesterId, Participation participation,
-      Status status) {
-
-    validateParticipationStatusIsNot(participation, CANCELED);
-
-    Gathering gathering = participation.getGathering();
-    validateRequesterIsHost(requesterId, gathering);
-
-    if (status == APPROVED) {
-      validateCurrentParticipantCount(gathering);
-    }
-  }
-
-  private void validateParticipantsType(Member requester, Gathering gathering) {
-    if (!isMeetAtParticipantsType(requester, gathering)) {
+    if (!gathering.getParticipantsType().isEligible(requester)) {
       throw new CustomException(ExceptionCode.PARTICIPANTSTYPE_CONFLICT);
     }
-  }
 
-  private void validateRequesterIsNotHost(Member requester, Gathering gathering) {
-    if (isHost(requester.getId(), gathering)) {
-      throw new CustomException(AUTHORIZATION_ISSUE);
-    }
-  }
-
-  private void validateGatheringStatus(Gathering gathering) {
-    if (!isProgressingGathering(gathering)) {
-      throw new CustomException(ExceptionCode.GATHERING_STATUS_CONFLICT);
-    }
-  }
-
-  private void validateParticipationIsNotDuplicated(Member requester, Gathering gathering) {
     if (isParticipated(requester.getId(), gathering.getId())) {
       throw new CustomException(ExceptionCode.PARTICIPATION_DUPLICATED);
     }
-  }
 
-  private void validateParticipationPeriod(Gathering gathering) {
-    if (!isParticipationPeriod(gathering)) {
-      throw new CustomException(ExceptionCode.NOT_PARTICIPATION_PERIOD);
-    }
-  }
-
-  private void validateCurrentParticipantCount(Gathering gathering) {
-    if (isReachedAtMaximumParticipant(gathering)) {
-      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
-    }
-  }
-
-  private void validateRequesterIsHost(long requesterId, Gathering gathering) {
-    if (!isHost(requesterId, gathering)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
-  }
-
-  private void validateRequesterIsParticipant(long requesterId, Participation participation) {
-    if (!participation.isParticipant(requesterId)) {
-      throw new CustomException(ExceptionCode.AUTHORIZATION_ISSUE);
-    }
-  }
-
-  private void validateParticipationStatusIsNot(Participation participation, Status status) {
-    if (participation.statusEquals(status)) {
-      throw new CustomException(ExceptionCode.PARTICIPATION_CONFLICT);
-    }
-  }
-
-  private void validateMyParticipationMaximum(Member requester) {
     if (!requester.isPremiumMember() &&
         participationRepository.countByParticipant_IdAndStatusIsNot(requester.getId(),
-            Status.CANCELED) >= 5) {
+            Status.CANCELED) >= MAX_PARTICIPATION_NON_PREMIUM) {
       throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPATION);
     }
-  }
 
-  private boolean isHost(long requesterId, Gathering gathering) {
-    return gathering.getMember().getId() == requesterId;
-  }
-
-  private boolean isProgressingGathering(Gathering gathering) {
-    return gathering.getStatus() == PROGRESS;
-  }
-
-  private boolean isMeetAtParticipantsType(Member requester, Gathering gathering) {
-    if (gathering.getParticipantsType().equals(ParticipantsType.ADULT)) {
-      return requester.isAdult();
-    } else if (gathering.getParticipantsType().equals(ParticipantsType.MINOR)) {
-      return !requester.isAdult();
+    if (participationRepository.countByGatheringAndStatus(gathering, APPROVED)
+        >= gathering.getMaximumParticipant()) {
+      throw new CustomException(ExceptionCode.REACHED_AT_MAXIMUM_PARTICIPANT);
     }
-    return true;
-  }
-
-  private boolean isReachedAtMaximumParticipant(Gathering gathering) {
-    return participationRepository.countByGatheringAndStatus(gathering, APPROVED)
-        >= gathering.getMaximumParticipant();
-  }
-
-  private boolean isParticipationPeriod(Gathering gathering) {
-    LocalDate now = LocalDate.now();
-    return now.isAfter(gathering.getRecruitmentStartDt().minusDays(1))
-        && now.isBefore(gathering.getRecruitmentEndDt().plusDays(1));
   }
 
   private Member readMember(long requesterId) {

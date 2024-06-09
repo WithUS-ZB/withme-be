@@ -72,15 +72,14 @@ public class ParticipationController {
   public ResponseEntity<ParticipationResponse> approveParticipation(
       @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
     return ResponseEntity.ok(
-        participationService.updateParticipationStatus(currentMemberId, participationId,
-            APPROVED));
+        participationService.approveParticipation(currentMemberId, participationId));
   }
 
   @PutMapping("/reject/{participationId}")
   public ResponseEntity<ParticipationResponse> rejectParticipation(
       @CurrentMemberId long currentMemberId, @PathVariable long participationId) {
     return ResponseEntity.ok(
-        participationService.updateParticipationStatus(currentMemberId, participationId, REJECTED));
+        participationService.rejectParticipation(currentMemberId, participationId));
   }
 
   @GetMapping
