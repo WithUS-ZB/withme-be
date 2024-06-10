@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class LeaveChatStatusChanger extends ParticipationStatusChanger{
-  private static final List<Status> availableStatus = List.of(CHAT_JOINED);
   private static final Status newStatus = CHAT_LEFT;
+  private static final List<Status> availableStatus = List.of(CHAT_JOINED);
   public LeaveChatStatusChanger(
       Participation participation, Long currentMemberId
       ) {
