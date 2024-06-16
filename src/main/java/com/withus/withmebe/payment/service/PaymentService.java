@@ -21,6 +21,7 @@ import com.withus.withmebe.payment.repository.PaymentRepository;
 import com.withus.withmebe.payment.type.Currency;
 import com.withus.withmebe.payment.type.PayType;
 import com.withus.withmebe.payment.type.Status;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +73,7 @@ public class PaymentService {
   }
 
   @Transactional
+  @CircuitBreaker(name = "approvePayment")
   public PaymentResponse approvePayment(long requesterId, ApprovePaymentRequest request) {
     Payment payment = readPayment(request.getOrdrId());
     validateApprovePaymentRequest(requesterId, request, payment);

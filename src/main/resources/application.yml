@@ -72,3 +72,21 @@ front:
 festival:
   api:
     url: http://openapi.seoul.go.kr:8088/${FESTIVAL_API_KEY}/json/culturalEventInfo
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        wait-duration-in-open-state: 60s
+        slow-call-rate-threshold: 100
+        slowCallDurationThreshold: 5s
+        automatic-transition-from-open-to-half-open-enabled: true
+    instances:
+      approvePayment:
+        base-config: default
+        recordFailurePredicate: com.withus.withmebe.payment.circuit.RestTemplateCircuitRecordFailurePredicate
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 6s
+        cancel-running-future: true
